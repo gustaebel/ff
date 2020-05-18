@@ -69,7 +69,7 @@ Useful in that regard is `ff`'s debug mode. It can be activated by starting
 `ff` as a script using the `python` executable:
 
 ```sh
-$ python /usr/bin/ff --debug all ...
+$ python /usr/bin/ff --debug info,cache ...
 ```
 
 Debug mode produces lots of messages which can be limited to certain categories
