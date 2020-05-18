@@ -10,11 +10,12 @@ fi
 # Fail on the first failing command.
 set -e
 
-# Run pylint and the unittests.
-make check
+branch="$(git branch --show-current)"
+changed_files="$(git diff --name-only | grep '^ff$\|\.py$' || true)"
 
-# If on master, increment the version number in __version__.py.
-if [[ $(git branch --show-current) = master ]]; then
+# If on master and code has changed, increment the version number in
+# __version__.py.
+if [[ $branch = master && -n $changed_files ]]; then
     oldver=$(git show master:libff/__version__.py | grep ^__version__ | cut -d = -f 2)
     newver=$((oldver + 1))
     sed -i "/^__version__/c\__version__ = $newver" libff/__version__.py
@@ -22,8 +23,13 @@ if [[ $(git branch --show-current) = master ]]; then
     echo "fixing version number $oldver -> $newver"
 fi
 
-# Sort imports.
-ff name=ff or ext=py -X isort -ls -m2
+if [[ -n $changed_files ]]; then
+    # Run pylint and the unittests.
+    make check
+
+    # Sort imports.
+    ff name=ff or ext=py -X isort -ls -m2
+fi
 
 # Update the manpage.
 make -C doc
