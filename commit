@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Fail if there is nothing to commit. (This does not work in case there are
+# only new files added.)
+if git diff --quiet; then
+    echo "nothing to commit." >&2
+    exit 0
+fi
+
+# Fail on the first failing command.
+set -e
+
+# Run pylint and the unittests.
+make check
+
+# If on master, increment the version number in __version__.py.
+if [[ $(git branch --show-current) = master ]]; then
+    oldver=$(git show master:libff/__version__.py | grep ^__version__ | cut -d = -f 2)
+    newver=$((oldver + 1))
+    sed -i "/^__version__/c\__version__ = $newver" libff/__version__.py
+    git add libff/__version__.py
+    echo "fixing version number $oldver -> $newver"
+fi
+
+# Sort imports.
+ff name=ff or ext=py -X isort -ls -m2
+
+# Update the manpage.
+make -C doc
+git add doc/ff.1
+
+# The pre-commit hook disallows using "git commit" and circumventing this
+# script. Tell it that it is okay to commit.
+export COMMIT_ACTIVE=yes
+
+exec git commit "${@:--av}"

@@ -1,0 +1,13 @@
+foo
+!foo
+
+bar
+!bar
+bar
+
+dir/**/*.txt
+!dir/?.txt
+
+/dir/b/
+
+baz/

@@ -1,0 +1,19 @@
+[REPORTS]
+output-format=colorized
+reports=no
+
+[MISCELLANEOUS]
+notes=FIXME,XXX,TODO,TBD
+
+[BASIC]
+# Good variable names which should always be accepted, separated by a comma
+good-names=_,i
+const-rgx=(([a-zA-Z_][a-zA-Z0-9_]*)|(__.*__))$
+module-rgx=([a-z_][a-z0-9_\-]*)$
+max-args=7
+
+[MESSAGES CONTROL]
+disable=bad-whitespace,bad-continuation,no-self-use,
+    wildcard-import,unused-wildcard-import,
+    no-else-return,no-else-raise,no-else-break,no-else-continue,
+    missing-module-docstring

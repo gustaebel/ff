@@ -1,0 +1,41 @@
+# Test absolute time parsing
+touch --date "2000-01-01 00:00:00" foo
+
+touch --date "2000-01-01 01:00:00" bar
+
+
+ff time-=2000-01-01\ 00:00:00
+foo
+
+
+ff time+=2000-01-01\ 00:00:00
+foo
+bar
+
+
+ff time+2000-01-01\ 00:00:00
+bar
+
+
+ff time-=2000-01-01
+foo
+
+
+ff time+2000-01-01
+bar
+
+
+
+# Test relative time parsing
+touch --date "3 hours ago" foo
+
+touch --date "2 hours ago" bar
+
+
+ff time-=2h30m
+foo
+
+
+ff time+=2h30m
+bar
+

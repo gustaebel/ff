@@ -1,0 +1,8 @@
+# Test the .ignore file.
+ff
+foo
+baz
+dir
+dir/a
+dir/c
+dir/d.txt

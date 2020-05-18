@@ -1,0 +1,256 @@
+ff
+foo
+bar
+baz
+dir
+dir/dir
+dir/dir/empty
+dir/empty_dir
+
+
+
+ff type=d
+dir
+dir/dir
+dir/empty_dir
+
+
+
+ff type=f
+foo
+baz
+dir/dir/empty
+
+
+
+ff -H type=f
+foo
+baz
+dir/dir/empty
+.hidden
+
+
+
+ff type=l
+bar
+
+
+
+ff name%ba?
+bar
+baz
+
+
+
+ff empty=yes
+dir/empty_dir
+dir/dir/empty
+
+
+
+ff empty=yes OR type=l
+dir/empty_dir
+dir/dir/empty
+bar
+
+
+
+ff empty=no
+foo
+bar
+baz
+dir
+dir/dir
+
+
+
+ff depth=0
+foo
+bar
+baz
+dir
+
+
+
+ff depth+=1
+dir/dir
+dir/dir/empty
+dir/empty_dir
+
+
+
+ff size=0
+bar
+dir/dir/empty
+dir
+dir/dir
+dir/empty_dir
+
+
+
+ff size+0
+foo
+baz
+
+
+
+ff size+=10
+baz
+
+
+
+# keep_order
+ff -S
+bar
+baz
+dir
+dir/dir
+dir/dir/empty
+dir/empty_dir
+foo
+
+
+
+ff -S -R
+foo
+dir/empty_dir
+dir/dir/empty
+dir/dir
+dir
+baz
+bar
+
+
+
+ff -S size type=f
+dir/dir/empty
+foo
+baz
+
+
+
+ff -S -1
+bar
+
+
+
+ff -S -R -l 5
+foo
+dir/empty_dir
+dir/dir/empty
+dir/dir
+dir
+
+
+
+# no_order
+ff -o mode:h,links,size:5h,path:h
+lrwxrwxrwx 1     0 bar -> foo
+-rw-r--r-- 1     4 foo
+-rw-r--r-- 1    10 baz
+drwxr-xr-x 4     0 dir
+-rw-r--r-- 1     0 dir/dir/empty
+drwxr-xr-x 2     0 dir/empty_dir
+drwxr-xr-x 2     0 dir/dir
+
+
+
+ff -o size,links,path --sep :
+0:1:bar
+4:1:foo
+10:1:baz
+0:4:dir
+0:1:dir/dir/empty
+0:2:dir/empty_dir
+0:2:dir/dir
+
+
+
+# Test sub testsequences and operators.
+ff type=f \( name=baz or name=foo \)
+foo
+baz
+
+
+ff \( name=bar or name=foo \) \( type=l or type=f \)
+foo
+bar
+
+
+ff \( name=baz or name=foo \) type=f or type=l
+foo
+bar
+baz
+
+
+ff \( path:/dir/ type=f \) or \( name=dir type=d \)
+dir
+dir/dir
+dir/dir/empty
+
+
+ff {{ type=f and not type=l }}
+foo
+baz
+dir/dir/empty
+
+
+ff type=f and not {{ name=baz or name=empty }}
+foo
+
+
+ff type=f and {{ not name=baz and not name=empty }}
+foo
+
+
+# usage
+( cd ..; ff workdir/ type=f and {{ not name=baz and not name=empty }} )
+workdir/foo
+
+( cd ..; ff type=f workdir/ and {{ not name=baz and not name=empty }} )
+
+( cd ..; ff type=f and {{ not name=baz workdir/ and not name=empty }} )
+
+( cd ..; ff type=f and {{ not name=baz and not name=empty }} workdir/ )
+workdir/foo
+
+# --glob, --fixed-strings, --regex
+ff -g 'ba?'
+bar
+baz
+
+ff -F 'ba?'
+
+ff -p -F dir/empty
+dir/dir/empty
+dir/empty_dir
+
+ff --regex 'ba.'
+bar
+baz
+
+
+# JSON
+ff --json -o name,size type=f -S name
+[{"name":"baz","size":10},{"name":"empty","size":0},{"name":"foo","size":4}]
+
+
+
+ff --jsonl -o name,size type=f -S name
+{"name":"baz","size":10}
+{"name":"empty","size":0}
+{"name":"foo","size":4}
+
+
+
+# Regression testing
+
+# Check if sort using a missing field works.
+ff -S duration
+foo
+bar
+baz
+dir
+dir/dir
+dir/dir/empty
+dir/empty_dir

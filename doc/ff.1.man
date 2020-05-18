@@ -1,0 +1,287 @@
+NAME
+  ff - Search for files in the filesystem
+
+SYNOPSIS
+__include_usage__
+
+DESCRIPTION
+  ff(1) is a tool for searching the filesystem for entries that all share a set
+  of common features. It was inspired by fd(1) but is more powerful and
+  versatile without being too complex. ff(1) aims to be a more user-friendly
+  alternative to find(1).
+
+  ff(1)'s primary goal is to be an interactive tool that is intuitive,
+  effective and easy to use. It is optimized for narrowing down a list of
+  entries step by step. It lets you match many file attributes in many
+  different ways and is extensible by plugins.
+
+  ff(1) takes a set of expressions and directories as arguments and uses them
+  for searching. If no arguments are specified, ff(1) lists all files and
+  directories below the directory you are currently in.
+
+  Whether an argument is an expression or a directory is detected
+  automatically. Directories may be at the start or the end of the list of
+  arguments. They are identified as directories when they contain at least one
+  '/' and point to an existing name in the filesystem. However, directories can
+  be explicitly specified using the -D/--directories option, in which case
+  auto-detection will not be used. If no directory argument is found the
+  current directory is used as the starting point.
+
+  ff(1) uses parallel processes to speed up searching by default. The number of
+  processes depends on the number of CPU cores and can be controlled with
+  -j/--jobs.
+
+OPTIONS
+__include_help__
+
+TESTS
+  All command line arguments that do not point to a directory will be used as
+  test expressions. Each filesystem entry is matched against the list of
+  these tests going from left to right. We start with a set of all entries, and
+  the tests are used to narrow this set down, or remove particular entries from
+  the set.
+
+  A test basically has the form:
+
+    [<[plugin.]attribute><operator>]<value>
+
+  An test matches a certain <value> or pattern against a certain <attribute> of
+  a filesystem entry. The type of test performed is denoted by the <operator>.
+
+  The simplest form of a test is to just specify <value>. It is a shorthand for
+
+    file.name~<value>
+
+  which means that each entry's basename is matched against the regular
+  expression <value>. (This default behavior can be changed with the
+  -r/--regex, -F/--fixed-strings, -g/--glob and -p/--full-path options.)
+
+  It is good practice to use full attribute names and to quote either the value
+  or the whole expression to prevent the shell from interfering with characters
+  like '*', '(', ')', '<', '>', etc.
+
+  Tests can be grouped with 'AND' and 'OR' operators and parenthesis, whereas
+  the 'AND' can be omitted, because it is redundant. Please note that
+  parenthesis must be escaped or quoted properly to prevent the shell from
+  interpreting them. Alternatively, you can use '{{' and '}}' instead.
+
+ATTRIBUTES
+  ff(1) lets you search in a wide variety of file attributes. This list of
+  attributes is provided by plugins. Essential plugins are built in, and you
+  can also add your own plugins written in python(1).
+
+  You can list all available attributes this way: `ff --list-attributes`.
+
+  The full name of an attribute consists of the <plugin> name, a dot, and the
+  <attribute> name. The plugin part of the attribute is optional unless the
+  same attribute name is provided by multiple plugins. It will produce an error
+  if an attribute name in an expression is ambiguous. An exception is the
+  'file' plugin whose attribute names are global, always take precedence and
+  will never produce an error. For all other attributes it is recommended to
+  always write the full attribute name including the <plugin> portion, e.g. to
+  avoid possible runtime errors in shell scripts.
+
+  The builtin attributes are as follows:
+
+__include_file__
+  There are also some attributes available for media files. Their availability
+  depends on the presence of the 'pymediafile' python module.
+
+__include_medium__
+
+TYPES
+  Each attribute has been assigned a certain type that describes how its value
+  is supposed to be interpreted and which operators it supports. Beside the
+  usual 'string', 'number' and 'boolean' types there are types for file sizes,
+  file permissions, timestamps, durations etc.
+
+  Durations consist of one or more partial time designations that are summed up, e.g.:
+
+    1h30m25s
+
+  The valid units are: 's' for seconds, 'm' for minutes, 'h' for hours, 'd' for
+  days, 'w' for weeks (7 days), 'M' for months (30 days) and 'y' for years (365
+  days). If no unit is given 'm' for minutes is assumed.
+
+  There are a number of predefined date and time parsing patterns for
+  attributes providing a 'time' type.
+
+__include_time_patterns__
+
+OPERATORS
+  The third component in a test beside the <attribute> and the <value> is the
+  <operator>.
+
+  There are operators for numbers:
+
+  =       attribute is equal to <value>
+  += >=   attribute is greater than or equal to <value>
+  -= <=   attribute is less than or equal to <value>
+  + >     attribute is greater than <value>
+  - <     attribute is less than <value>
+
+  Please note that the > and < characters must be properly quoted to avoid
+  being interpreted as redirections by the shell, which is why the + and -
+  forms are preferred.
+
+  Operators for strings:
+  =       attribute is equal to <value>
+  :       contains substring <value>
+  ~       matches regular expression <value>
+  %       matches glob pattern <value>
+
+  Operators for lists of strings:
+  =       one string in the list is equal to <value>
+  :       one string contains substring <value>
+  ~       one string matches regular expression <value>
+  %       one string matches glob pattern <value>
+
+  Operators for booleans:
+  =       attribute is equal to <value>, which may be one of (true, t, 1, yes,
+          y, on) or (false, f, 0, no, n, off). The case is ignored.
+
+  Operators for mode:
+  =       all bits from the attribute are exactly equal to <value>
+  :       all bits that are set in <value> are also set in the attribute
+  ~       any of the bits that are set in <value> are set in the attribute
+
+FILE REFERENCES
+  It is possible to pass a path of a file as reference instead of a value. To
+  use a reference you pass a '^' followed by the path name as the value. For
+  example, to find all files newer than foo/bar/example.txt you do:
+
+    ff mtime+^foo/bar/example.txt
+
+  It is even possible to use a different attribute from the referenced file:
+
+    ff mtime+^atime^foo/bar/example.txt
+
+OUTPUT
+  The contents of what is printed to standard output can be controlled using
+  the -o/--output and the --sep options. -o/--output is a comma-separated list
+  of attribute names, that will be printed using the separator string from the
+  --sep option. -o/--output defaults to 'path'.
+
+  The -v/--verbose option produces output in the style of 'ls -lh'.
+
+  The --json option causes each record to printed as a JSON object consisting
+  of all attributes from -o/--output.
+
+  By default, pathnames are printed in color according to dircolors(1) rules,
+  unless NO_COLOR is set, --color=never, or ff(1)'s output is not connected to
+  a terminal. Color output can be forced with --color=always.
+
+EXECUTION
+  The -x/--exec and -X/--exec-batch options allow to execute commands with
+  search results as arguments. -x/--exec starts one subprocess for every search
+  result, whereas -X/--exec-batch starts only one subprocess that gets all
+  search results at once.
+  The exit status of ff(1) will be set accordingly if one of the commands
+  terminates with an error, see EXIT CODES below:
+
+  The following placeholders are substituted in the command:
+
+  {}  full path, alias for {path}
+
+  {/}  basename, alias for {name}
+
+  {//}  parent directory, alias for {dir}
+
+  {.}  path without file extension, alias for {pathx}
+
+  {/.}  basename without file extension, alias for {namex}
+
+  {..}  file extension, alias for {ext}
+
+  {attribute}  replaced with the value of attribute
+
+PLUGINS
+
+  It is possible to write your own plugins and extend ff(1)'s functionality. A
+  plugin is an ordinary python module. There are many examples included in the
+  source distribution and a plugin_template.py. User plugins are imported from
+  ~/.ff.
+
+EXCLUSION
+  The -e/--exclude option allows to exclude entries that match the
+  <expression>. Excluding takes place before all other tests are evaluated.
+  If a directory matches it will not be descended into, so entries below it
+  will not be produced.
+
+  Please note: Unless -H/--hidden is given, all hidden files will be excluded
+  using this method (the same as '--exclude hide=yes'). So it is not possible
+  to find hidden entries with
+
+    ff hidden=yes
+
+  unless -H/--hidden is specified. The same applies to -I/--ignored.
+
+IGNORE FILES
+  By default, ff(1) reads .gitignore, .ignore, .fdignore, and .ffignore files
+  and excludes all entries that match the set of patterns in one of these
+  files. The ignore syntax is described in gitignore(5).
+
+SORTING
+  Sorting is controlled with -S/--sort option. It is off by default, this way
+  entries are processed and printed as they are found. This makes better use
+  of ff(1)'s parallel processing capabilities and is much faster.
+
+  -S/--sort takes an optional <attribute-list> argument. Without it, sorting is
+  done alphabetically on the entry's path. <attribute-list> is a
+  comma-separated list of attribute names that will be used as sort criteria.
+  The order can be reversed with -R/--reverse.
+
+EXAMPLES
+
+  Find only regular files in the current directory and all its subdirectories:
+
+      $ ff -tf
+
+  Find only hidden files in directory /home/user:
+
+      $ ff -H hidden=yes /home/user
+
+  Find files matching the glob pattern:
+
+      $ ff -g '*.txt'
+
+  Find files executable by the user:
+
+      $ ff type=f perm:700
+
+      $ ff type=f perm:u+x
+
+      $ ff exec=yes
+
+
+EXIT CODES
+  0  Everything went fine.
+
+  1  There was an error in the arguments provided by the user.
+
+  2  One or more --exec or --exec-batch subprocesses had errors.
+
+  3  One or more ff processes had unrecoverable errors.
+
+  10  A plugin had an unrecoverable error.
+
+  11  An attribute was specified that does not exist.
+
+  12  There was an error in a test expression.
+
+ENVIRONMENT
+  FF_OPTIONS  Default options to use for every invocation of ff(1).
+
+  FF_PLUGIN_DIRS  A colon-separated list of additional directories from which to load plugins.
+
+  LS_COLORS  A list of dircolors rules, see dircolors(1) and dir_colors(5).
+
+  NO_COLOR  Do not produce colorful terminal output regardless of ff(1)'s options.
+
+SEE ALSO
+  fd(1)
+
+AUTHOR
+  Lars Gustaebel <lars@gustaebel.de>
+
+  https://github.com/gustaebel/ff/

@@ -1,0 +1,247 @@
+# -----------------------------------------------------------------------
+#
+# ff - a tool to search the filesystem
+# Copyright (C) 2020 Lars Gustäbel <lars@gustaebel.de>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+# -----------------------------------------------------------------------
+
+import os
+import queue
+import signal
+import subprocess
+import multiprocessing
+
+from . import TIMEOUT, EX_SUBPROCESS, Entries, BaseClass, Directory
+from .entry import Entry
+from .ignore import GitIgnore
+
+
+class FilesystemWalker(BaseClass):
+    """Walk through the directories of a filesystem using multiple processes,
+       collect information about the entries that were found and process them
+       accordingly.
+    """
+
+    def __init__(self, context):
+        super().__init__(context)
+
+        self.processes = []
+        self.queue = multiprocessing.Queue()
+
+    def close(self):
+        """Close the FilesystemWalker and clean up.
+        """
+        self.queue.close()
+
+    def put(self, chunk):
+        """Put a chunk of objects in the queue for processing by the
+           FilesystemWalker. Either these objects are Directory objects for
+           searching or lists of arguments from an ImmediateExecProcessing
+           processor to run as subprocesses in the context of the
+           FilesystemWalker.
+        """
+        self.queue.put(chunk)
+
+    def start_processes(self):
+        """Start a pool of processes that walk through the filesystem.
+        """
+        # We set the processes daemon=True because this seems to make them more
+        # reactive on KeyboardInterrupt.
+        for index in range(self.args.jobs):
+            process = multiprocessing.Process(target=self.loop, args=(index,))
+            process.daemon = True
+            process.start()
+            self.processes.append(process)
+
+    def wait_processes(self):
+        """Wait for all processes to terminate.
+        """
+        for process in self.processes:
+            process.join()
+
+    def loop(self, index):
+        """Get arguments from the queue and process them until searching has
+           finished.
+        """
+        # pylint:disable=too-many-branches,attribute-defined-outside-init
+        if __debug__:
+            self.index = index
+
+        if not self.args.profile:
+            # When profiling, loop() runs in the main thread, so we have to
+            # allow KeyboardInterrupt.
+            signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+        try:
+            while not self.context.is_stopping():
+                try:
+                    objs = self.queue.get(timeout=TIMEOUT)
+                except queue.Empty:
+                    if self.context.barrier_wait():
+                        break
+                    else:
+                        continue
+
+                if isinstance(objs, Entries):
+                    if __debug__:
+                        self.context.debug_proc(self.index,
+                                f"got Entries object with {len(objs.entries)} entries "\
+                                f"from {objs.parent.start.root}")
+
+                    self.process_entries(*objs)
+
+                elif isinstance(objs[0], Directory):
+                    if __debug__:
+                        self.context.debug_proc(self.index, f"got {len(objs)} Directory entries")
+
+                    for obj in objs:
+                        self.process_directory(obj)
+
+                else:
+                    if __debug__:
+                        self.context.debug_proc(self.index, f"got {len(objs)} process arguments")
+
+                    for obj in objs:
+                        self.process_arguments(obj)
+
+        except Exception:
+            # Terminate all processes if an unexpected error occurs.
+            self.context.stop()
+            raise
+
+        self.cache.close()
+
+    def scan_directory(self, parent):
+        """Scan the directory `parent` and produce a list of entries and the
+           names of .*ignore files that were found.
+        """
+        entries = []
+        ignore_files = []
+
+        try:
+            with os.scandir(os.path.join(parent.start.root, parent.relpath)) as direntries:
+                for direntry in direntries:
+                    try:
+                        status = direntry.stat(follow_symlinks=self.args.follow_symlinks)
+                        entry = Entry(parent.start, os.path.join(parent.relpath, direntry.name),
+                                status)
+
+                    except OSError as exc:
+                        self.context.warning(exc)
+                        continue
+
+                    entries.append(entry)
+
+                    if entry.name in GitIgnore.IGNORE_NAMES:
+                        ignore_files.append(entry.name)
+
+        except OSError as exc:
+            self.context.warning(exc)
+
+        return entries, ignore_files
+
+    def prepare_ignores(self, parent, ignore_files):
+        """Parse .*ignore files and return a list of rules.
+        """
+        # Add the ignore files we just found to the ones we got from the
+        # parent.
+        if self.args.ignored and ignore_files:
+            ignores = parent.ignores.copy()
+            for ignore_file in ignore_files:
+                try:
+                    ignores.append(GitIgnore(self.context,
+                        os.path.abspath(os.path.join(parent.start.root, parent.relpath)),
+                        ignore_file))
+                except OSError as exc:
+                    self.context.warning(exc)
+            return ignores
+
+        else:
+            return parent.ignores
+
+    def process_directory(self, parent):
+        """Scan the directory `parent` for entries, collect .*ignore files, and
+           process the entries or distribute them to other FilesystemWalkers
+           for processing.
+        """
+        entries, ignore_files = self.scan_directory(parent)
+
+        if entries:
+            ignores = self.prepare_ignores(parent, ignore_files)
+            self.process_entries(parent, entries, ignores)
+
+    def process_entries(self, parent, entries, ignores):
+        """Go through the list of entries and see which ones we have to ignore,
+           and exclude, which ones match and will be taken to further
+           processing and which directory entries to descend into.
+        """
+        search = []
+        process = []
+
+        try:
+            while entries:
+                entry = entries.pop(0)
+                is_dir = entry.is_dir()
+
+                if any(ignore.match(entry.abspath, entry.name, is_dir) for ignore in ignores):
+                    continue
+
+                elif self.excluder.test(entry):
+                    continue
+
+                elif self.matcher.test(entry):
+                    process.append(entry)
+
+                if is_dir:
+                    search.append(Directory(parent.start, entry.relpath, ignores))
+
+                # If there are plugins in action that use the cache, that means
+                # that processing entries may take more time than usual (except
+                # when they are already cached). Here we share the load of this
+                # process with another process that is currently idle.
+                if self.registry.optimize_for_caching_plugins and \
+                        self.context.idle_processes() / self.args.jobs > 0.25 and \
+                        len(entries) > 10:
+                    split = len(entries) // 2 + 1
+                    self.queue.put(Entries(parent, entries[split:], ignores))
+                    entries = entries[:split]
+
+        except OSError as exc:
+            self.context.warning(exc)
+
+        if search:
+            # Calculate a reasonable size for a chunk of Entry objects based on
+            # the number of parallel jobs, use at least 10 and at most 100
+            # entries to avoid unnecessary overhead.
+            chunk_size = min(100, max(10, int(len(search) / self.args.jobs) + 1))
+
+            for i in range(0, len(search), chunk_size):
+                self.queue.put(search[i:i + chunk_size])
+
+        if process:
+            self.processing.process(process)
+
+    def process_arguments(self, arguments):
+        """Call a subprocess with a list of arguments and wait for its
+           completion.
+        """
+        try:
+            process = subprocess.run(arguments, check=False)
+            if process.returncode != 0:
+                self.context.set_exitcode(EX_SUBPROCESS)
+        except OSError as exc:
+            # Show an error, but don't kill this FilesystemWalker process.
+            self.context.error(exc, None)

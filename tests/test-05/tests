@@ -1,0 +1,99 @@
+# -----------------------------------------------------------------------
+#
+# ff - a simple, powerful and user-friendly alternative to 'find'
+# Copyright (C) 2020 Lars Gustäbel <lars@gustaebel.de>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+#
+# -----------------------------------------------------------------------
+
+ff type=f -x echo
+dir/foo
+dir/bar
+dir/baz
+
+
+
+ff type=f -S -X echo
+dir/bar dir/baz dir/foo
+
+
+
+ff type=f -x echo {}
+dir/foo
+dir/bar
+dir/baz
+
+
+
+ff type=f -x echo {/}
+foo
+bar
+baz
+
+
+
+ff type=f -x echo {//}
+dir
+dir
+dir
+
+
+
+ff type=f -x echo {size} {/}
+4 foo
+4 bar
+7 baz
+
+
+
+ff type=f -x test -e {name} 2>/dev/null; echo $?
+2
+
+
+
+ff type=f -x echo a b c
+a b c dir/bar
+a b c dir/baz
+a b c dir/foo
+
+
+
+ff type=f -x echo a b {} c
+a b dir/bar c
+a b dir/baz c
+a b dir/foo c
+
+
+
+ff type=f -x echo a b {//} {/} c
+a b dir bar c
+a b dir baz c
+a b dir foo c
+
+
+
+ff type=f -S -X echo a b c
+a b c dir/bar dir/baz dir/foo
+
+
+
+ff type=f -S -X echo a b {} c
+a b dir/bar dir/baz dir/foo c
+
+
+
+ff type=f -S -X echo a b {//} {/} c
+a b dir dir dir bar baz foo c
