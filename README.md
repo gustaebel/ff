@@ -5,8 +5,8 @@
 `ff` is a tool for searching the filesystem. It was inspired by
 [fd](https://github.com/sharkdp/fd).
 
-`ff` is in the early stages of development, expect things to break and syntax
-to change.
+**`ff` is in the early stages of development, expect things to break and syntax
+to change.**
 
 ### Summary
 
@@ -20,6 +20,18 @@ It features parallel processing, many different ways of output, sorting, an
 extensible plugin framework and many more things.
 
 Examples:
+
+```sh
+# Find all files that were changed more than 7 days ago.
+
+$ ff type=f time-=7d
+```
+
+```sh
+# Find all files whose modification time is newer than that of `foo`.
+
+$ ff type=f mtime+=^foo
+```
 
 ```sh
 # Find all files with the extension '.mp4' that are bigger than 100 megabytes.
@@ -39,6 +51,17 @@ $ ff type=f -S size -o path,size --json
 # according to running time.
 
 $ ff class=video height+=1080 -S duration
+```
+
+```sh
+# Find files in the directory `Videos/` that end with `.mkv` or `.mp4` and are
+# at between 720 and 1080 pixels high.
+
+$ ff Videos/ {{ ext=mkv or ext=mp4 }} and {{ height+=720 and height-=1080 }}
+
+This is equivalent:
+
+$ ff Videos/ \( 'ext = mkv' or 'ext = mp4' \) and \( 'height >= 720' and 'height <= 1080' \)
 ```
 
 ### Installation
