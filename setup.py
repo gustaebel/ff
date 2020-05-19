@@ -30,13 +30,30 @@ from libff.__version__ import __version__
 if sys.version_info[:2] < (3, 6):
     raise SystemExit("ERROR: Python >=3.6 required")
 
+with open("README.md") as fobj:
+    long_description = fobj.read()
+
 kwargs = {
     "name":         "ff",
     "version":      str(__version__),
     "author":       "Lars Gustäbel",
     "author_email": "lars@gustaebel.de",
-    "url":          "http://github.com/gustaebel/ff/",
+    "url":          "https://github.com/gustaebel/ff/",
     "description":  "A tool for searching the filesystem",
+    "long_description": long_description,
+    "long_description_content_type": "text/markdown",
+    "license":      "GPLv3+",
+    "classifiers":  ["Development Status :: 3 - Alpha",
+                     "Environment :: Console",
+                     "Intended Audience :: Developers",
+                     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+                     "Operating System :: POSIX",
+                     "Operating System :: POSIX :: Linux",
+                     "Topic :: System :: Filesystems",
+                     "Topic :: Utilities",
+                     "Programming Language :: Python :: 3"],
+    "python_requires": ">=3.6",
+
     "packages":     ["libff", "libff.builtin"],
     "scripts":      ["ff"],
     "data_files":   [("/usr/share/man/man1", ["doc/ff.1"]),
