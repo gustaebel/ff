@@ -22,9 +22,9 @@ extensible plugin framework and many more things.
 Examples:
 
 ```sh
-# Find all files that were changed more than 7 days ago.
+# Find all files that were changed within the last one and a half hours.
 
-$ ff type=f time-=7d
+$ ff type=f time+=1h30m
 ```
 
 ```sh
