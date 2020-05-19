@@ -88,7 +88,7 @@ class FlatParser(BaseClass):
 
     expression_regex = re.compile(r"^\s*((?:\w+\.)?\w+?)\s*"\
                                   r"(=|:|~|%|>=|>|<=|<|\+=|\+|\-=|\-)"\
-                                  r"(\^(?:\w+\.)?\w+?\^|\^)?"\
+                                  r"(\[(?:\w+\.)?\w+?\]|\[\])?"\
                                   r"\s*(.+)\s*$")
 
     def __init__(self, context, tokens, attribute=None, operator=None):
@@ -132,7 +132,7 @@ class FlatParser(BaseClass):
             attribute, operator, reference, value = match.groups()
             attribute = self.registry.setup_attribute(attribute)
             if reference is not None:
-                reference = reference.strip("^")
+                reference = reference.strip("[]")
 
             # Normalize operators that contain > and <.
             operator = operator.replace(">", "+").replace("<", "-")

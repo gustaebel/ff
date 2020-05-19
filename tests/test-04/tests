@@ -25,42 +25,42 @@ bar
 
 
 
-ff size=^foo
+ff size=[]foo
 foo
 bar
 
 
 
-ff name~^foo
+ff name~[]foo
 foo
 foobar
 
 
 
-ff name:^foo
+ff name:[]foo
 foo
 foobar
 
 
 
-ff path~^bar
+ff path~[]bar
 bar
 foobar
 
 
 
-ff perm=^bar
+ff perm=[]bar
 bar
 foobar
 
 
 
-ff size+=^links^foo
+ff size+=[links]foo
 foo
 bar
 foobar
 
 
 
-ff size-=^name^foo
+ff size-=[name]foo
 ERROR: file.size and file.name have different types and cannot be compared

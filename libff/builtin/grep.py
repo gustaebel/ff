@@ -22,6 +22,8 @@ from libff.plugin import *
 
 
 class Grep(Plugin):
+    """Plugin that gives access to the lines of a text file.
+    """
 
     use_cache = False
     attributes = [
