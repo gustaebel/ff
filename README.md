@@ -53,7 +53,7 @@ This installs the python sources, the `ff` script, the man page and a set of
 plugins.
 
 To build a slightly faster version of `ff` you can use
-[cython](https://www.cython.org/):
+[cython](https://cython.org/):
 
 ```sh
 $ CYTHONIZE=yes python setup.py install
