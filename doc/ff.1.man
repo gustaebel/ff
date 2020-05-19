@@ -258,6 +258,23 @@ EXAMPLES
 
       $ ff exec=yes
 
+GET HELP
+
+  View a list of available plugins:
+
+    $ ff --list-plugins
+
+  Get help on a specific plugin, including the attributes it provides:
+
+    $ ff --help <plugin>
+
+  View a list of all available attributes:
+
+    $ ff --list-attributes
+
+  View a list of all available types and their supported operators:
+
+    $ ff --list-types
 
 EXIT CODES
   0  Everything went fine.
