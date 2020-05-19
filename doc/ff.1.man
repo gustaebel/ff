@@ -301,7 +301,7 @@ ENVIRONMENT
   NO_COLOR  Do not produce colorful terminal output regardless of ff(1)'s options.
 
 SEE ALSO
-  fd(1)
+  find(1) fd(1)
 
 AUTHOR
   Lars Gustaebel <lars@gustaebel.de>
