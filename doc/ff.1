@@ -587,8 +587,11 @@ of attribute names, that will be printed using the separator string from the
 .PP
 The \fB-v\fP/\fB--verbose\fP option produces output in the style of 'ls \fB-lh\fP'.
 .PP
-The \fB--json\fP option causes each record to printed as a JSON object consisting
-of all attributes from \fB-o\fP/\fB--output\fP.
+The \fB--json\fP and \fB--jsonl\fP options print each record as a JSON object to standard
+output. The attributes of the JSON object are the same as in \fB-o\fP/\fB--output\fP. The
+difference between both options is that \fB--json\fP produces one big JSON list
+object containing all the records, whereas the \fB--jsonl\fP prints one JSON object
+per record per line.
 .PP
 By default, pathnames are printed in color according to \fBdircolors\fP(1) rules,
 unless NO_COLOR is set, \fB--color\fP=never, or \fBff\fP(1)'s output is not connected to

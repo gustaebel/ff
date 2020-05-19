@@ -166,8 +166,11 @@ OUTPUT
 
   The -v/--verbose option produces output in the style of 'ls -lh'.
 
-  The --json option causes each record to printed as a JSON object consisting
-  of all attributes from -o/--output.
+  The --json and --jsonl options print each record as a JSON object to standard
+  output. The attributes of the JSON object are the same as in -o/--output. The
+  difference between both options is that --json produces one big JSON list
+  object containing all the records, whereas the --jsonl prints one JSON object
+  per record per line.
 
   By default, pathnames are printed in color according to dircolors(1) rules,
   unless NO_COLOR is set, --color=never, or ff(1)'s output is not connected to

@@ -43,7 +43,7 @@ $ ff ext=mp4 size+=100M
 # List all files ordered by their size and print a JSON object for each one
 # containing their path name and their size.
 
-$ ff type=f -S size -o path,size --json
+$ ff type=f -S size -o path,size --jsonl
 ```
 
 ```sh
