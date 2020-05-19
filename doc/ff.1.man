@@ -156,6 +156,11 @@ FILE REFERENCES
 
     ff mtime+^atime^foo/bar/example.txt
 
+  If you want to avoid a leading '^' of a regular expression to be interpreted
+  as a reference put a space between the operator and the regex.
+
+    ff name~\\ ^foo\\$
+
 OUTPUT
   The contents of what is printed to standard output can be controlled using
   the -o/--output and the --sep options. -o/--output is a comma-separated list
