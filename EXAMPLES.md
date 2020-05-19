@@ -1,6 +1,6 @@
 ## Examples
 
-### Builtin plugins
+### File plugin
 
 Find all files that were changed within the last one and a half hours:
 
@@ -39,9 +39,13 @@ containing their path name and their size:
 $ ff type=f -S size -o path,size --jsonl
 ```
 
-### Additional plugins
+List all files that have multiple hard links to their inode.
 
-#### Media plugin
+```sh
+$ ff type=f links+1
+```
+
+### Media plugin
 
 Find video files that are at least 1080 pixels high and order them
 according to running time:
@@ -63,7 +67,7 @@ This is equivalent:
 $ ff Videos/ \( 'ext = mkv' or 'ext = mp4' \) and \( 'height >= 720' and 'height <= 1080' \)
 ```
 
-#### Git plugin
+### Git plugin
 
 Store all files from the current directory that are tracked by `git(1)` in a
 `tar(1)` archive:
@@ -72,7 +76,7 @@ Store all files from the current directory that are tracked by `git(1)` in a
 $ ff type=f git.tracked=yes -S -X tar cvzf git-tracked.tar.gz
 ```
 
-#### Introspection plugin
+### Introspection plugin
 
 Find all python scripts in the Python-3.8.3 directory that import the _shutil_
 module:
@@ -99,7 +103,7 @@ Find all executables in `/usr/bin` that require the `libz.so.1` shared library:
 $ ff sonames=libz.so.1 /usr/bin
 ```
 
-#### Filesystem
+### Filesystem
 
 Print all files in the root filesystem but don't descend into remote filesystems:
 
@@ -113,7 +117,7 @@ Find all mountpoints and print which filesystem they contain.
 $ ff / type=d mount=yes -o fstype,path
 ```
 
-#### Tar archives
+### Tar archives
 
 Find all tar archives that contain a file called `setup.py`.
 
