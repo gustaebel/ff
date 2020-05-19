@@ -30,7 +30,7 @@ $ ff type=f time+=1h30m
 ```sh
 # Find all files whose modification time is newer than that of `foo`.
 
-$ ff type=f mtime+=^foo
+$ ff type=f mtime+={}foo
 ```
 
 ```sh
