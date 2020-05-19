@@ -96,7 +96,7 @@ class Shebang(Plugin):
         return None
 
     def can_handle(self, entry):
-        return entry.is_file()
+        return entry.text
 
     def process(self, entry):
         shebang = self.extract_shebang(entry.path)
@@ -137,7 +137,7 @@ class Py(Plugin):
                 yield node.names[0].name
 
     def can_handle(self, entry):
-        return entry.is_file()
+        return entry.text
 
     def process(self, entry):
         shebang = Shebang.extract_shebang(entry.path)
