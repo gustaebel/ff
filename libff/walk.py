@@ -139,6 +139,9 @@ class FilesystemWalker(BaseClass):
                         entry = Entry(parent.start, os.path.join(parent.relpath, direntry.name),
                                 status)
 
+                    except FileNotFoundError:
+                        # Do not warn about files that have vanished.
+                        pass
                     except OSError as exc:
                         self.context.warning(exc)
                         continue
@@ -148,6 +151,9 @@ class FilesystemWalker(BaseClass):
                     if entry.name in GitIgnore.IGNORE_NAMES:
                         ignore_files.append(entry.name)
 
+        except FileNotFoundError:
+            # Do not warn about directories that have vanished.
+            pass
         except OSError as exc:
             self.context.warning(exc)
 
