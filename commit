@@ -11,7 +11,7 @@ fi
 set -e
 
 branch="$(git branch --show-current)"
-changed_files="$(git diff --name-only | grep '^ff$\|\.py$' || true)"
+changed_files="$(git status --short --untracked no | grep '^ff$\|\.py$' || true)"
 
 # If on master and code has changed, increment the version number in
 # __version__.py.
