@@ -80,7 +80,7 @@ class FilesystemWalker(BaseClass):
         if __debug__:
             self.index = index
 
-        if not self.args.profile:
+        if not (__debug__ and self.args.profile):
             # When profiling, loop() runs in the main thread, so we have to
             # allow KeyboardInterrupt.
             signal.signal(signal.SIGINT, signal.SIG_IGN)

@@ -163,7 +163,7 @@ if __name__ == "__main__":
 
     # Start processing.
     try:
-        if args.profile:
+        if __debug__ and args.profile:
             # Start profiling. No multiprocessing is involved, Walker.loop() is
             # run in the main thread.
             profiler = cProfile.Profile()
@@ -179,7 +179,7 @@ if __name__ == "__main__":
         # involved.
         processing.finalize()
 
-        if args.profile:
+        if __debug__ and args.profile:
             # Stop profiling and print the statistics.
             profiler.disable()
             stats = pstats.Stats(profiler, stream=sys.stderr)

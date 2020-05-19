@@ -63,7 +63,11 @@ class Context:
 
         # Create a Barrier with the number of processes plus one for the main
         # process.
-        self.barrier = multiprocessing.Barrier((self.args.jobs if not self.args.profile else 0) + 1)
+        if __debug__ and self.args.profile:
+            num_jobs = 1
+        else:
+            num_jobs = self.args.jobs + 1
+        self.barrier = multiprocessing.Barrier(num_jobs)
 
         # The exitcode object provides a way for --exec and --exec-batch
         # processes to feed back errors to the main process.

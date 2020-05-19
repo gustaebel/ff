@@ -94,8 +94,9 @@ def create_parser(formatter_class=HelpFormatter):
 
     group = parser.add_argument_group("Global options")
 
-    group.add_argument("--profile", action="store_true", default=False, help=argparse.SUPPRESS)
     if __debug__:
+        group.add_argument("--profile", action="store_true", default=False,
+                help="Do a profiling run on the given arguments and suppress the output.")
         group.add_argument("--debug", type=type_list, default=None,
                 help="Show only debug messages of certain categories, default is to show all.")
         group.add_argument("--ignore-parent-ignorefiles", action="store_true", default=False,
@@ -218,9 +219,10 @@ def check_arguments_sanity(context, args):
     if args.sort and args.exec and args.jobs != 1:
         context.warning("Using both --sort and --exec makes no sense unless you set --jobs=1!")
 
-    if args.profile and (args.exec or args.exec_batch):
-        context.error("You cannot use --exec or --exec-batch together with --profile",
-                EX_USAGE)
+    if __debug__:
+        if args.profile and (args.exec or args.exec_batch):
+            context.error("You cannot use --exec or --exec-batch together with --profile",
+                    EX_USAGE)
 
     if args.output != ["path"] and (args.exec or args.exec_batch):
         context.warning("--output has no effect with --exec and --exec-batch")

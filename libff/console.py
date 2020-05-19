@@ -54,7 +54,7 @@ class JsonlConsole(BaseConsole):
     def __init__(self, context):
         super().__init__(context)
 
-        if self.args.profile:
+        if __debug__ and self.args.profile:
             # Suppress output when profiling.
             self.print_record = lambda record: None
         else:
@@ -126,7 +126,7 @@ class Console(BaseConsole):
         super().__init__(context)
         self.field_separator = self.args.separator.replace("\\t", "\t").replace("\\n", "\n")
 
-        if self.args.profile:
+        if __debug__ and self.args.profile:
             # Suppress output when profiling.
             self.write_line = lambda line: None
         else:
