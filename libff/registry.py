@@ -138,7 +138,6 @@ class Registry(BaseClass):
                                     EX_BAD_PLUGIN)
 
             except OSError as exc:
-                self.context.warning(f"unable to open plugin directory {directory!r}: {exc}")
                 continue
 
         # Sort file attributes first.
