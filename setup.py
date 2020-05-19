@@ -58,7 +58,7 @@ kwargs = {
     "scripts":      ["ff"],
     "data_files":   [("/usr/share/man/man1", ["doc/ff.1"]),
                      ("/usr/lib/ff", glob.glob("contrib/*.py")),
-                     ("/usr/share/ff", ["plugin_template.py"])]
+                     ("/usr/share/ff", ["doc/plugin_template.py"])]
 }
 
 if os.environ.get("CYTHONIZE") == "yes":

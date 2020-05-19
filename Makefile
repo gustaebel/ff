@@ -1,5 +1,5 @@
 lint:
-	pylint --rcfile pylintrc -j0 ff libff contrib
+	pylint --rcfile aux/pylintrc -j0 ff libff contrib
 
 test:
 	python tests/runtests.py
