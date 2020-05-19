@@ -343,6 +343,25 @@ class Entry:
         except OSError:
             return False
 
+    @property
+    def mount(self):
+        """Whether the entry is a mountpoint.
+        """
+        if not self.is_dir():
+            return False
+
+        parent = os.path.realpath(os.path.join(self.path, ".."))
+
+        if parent == self.path:
+            return True
+
+        try:
+            status = os.lstat(parent)
+        except OSError:
+            return False
+
+        return self.status.st_dev != status.st_dev
+
     #
     # Private properties.
     #

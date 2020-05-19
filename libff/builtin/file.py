@@ -70,7 +70,8 @@ class File(Plugin):
                               "not exist."),
         ("mime",    String,   Entry.mime.__doc__),
         ("class",   String,   Entry.class_.__doc__),
-        ("text",    Boolean,  Entry.text.__doc__)
+        ("text",    Boolean,  Entry.text.__doc__),
+        ("mount",   Boolean,  Entry.mount.__doc__)
     ]
 
     def can_handle(self, entry):
