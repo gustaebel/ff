@@ -19,7 +19,7 @@ written in [Python](https://www.python.org/).
 It features parallel processing, many different ways of output, sorting, an
 extensible plugin framework and many more things.
 
-Examples are [here](EXAMPLES.md)
+Examples are [here](EXAMPLES.md).
 
 
 ### Installation
