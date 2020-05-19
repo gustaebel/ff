@@ -27,7 +27,7 @@ class Grep(Plugin):
 
     use_cache = False
     attributes = [
-        ("lines", ListOfStrings, "The lines of the file if the file is a text file.")
+        ("lines", ListOfStrings, "The lines of the file.")
     ]
 
     def can_handle(self, entry):
