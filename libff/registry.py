@@ -58,7 +58,7 @@ class Registry(BaseClass):
         """
         yield "builtin", self.PLUGIN_DIR_BUILTIN
         if __debug__:
-            yield "contrib", os.path.join(os.path.dirname(sys.argv[0]), "contrib")
+            yield "contrib", os.path.join(os.path.dirname(sys.argv[0]), "plugins")
         else:
             yield "contrib", self.PLUGIN_DIR_CONTRIB
         plugin_dirs = os.environ.get("FF_PLUGIN_DIRS")

@@ -57,7 +57,7 @@ kwargs = {
     "packages":     ["libff", "libff.builtin"],
     "scripts":      ["ff"],
     "data_files":   [("/usr/share/man/man1", ["doc/ff.1"]),
-                     ("/usr/lib/ff", glob.glob("contrib/*.py")),
+                     ("/usr/lib/ff", glob.glob("plugins/*.py")),
                      ("/usr/share/ff", ["doc/plugin_template.py"])]
 }
 
