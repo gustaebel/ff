@@ -1,4 +1,4 @@
-ff
+ff -H
 foo
 bar
 baz
@@ -16,14 +16,14 @@ dir/empty_dir
 
 
 
-ff type=f
+ff -H type=f
 foo
 baz
 dir/dir/empty
 
 
 
-ff -H type=f
+ff type=f
 foo
 baz
 dir/dir/empty
@@ -42,13 +42,13 @@ baz
 
 
 
-ff empty=yes
+ff -H empty=yes
 dir/empty_dir
 dir/dir/empty
 
 
 
-ff empty=yes OR type=l
+ff -H empty=yes OR type=l
 dir/empty_dir
 dir/dir/empty
 bar
@@ -64,7 +64,7 @@ dir/dir
 
 
 
-ff depth=0
+ff -H depth=0
 foo
 bar
 baz
@@ -79,7 +79,7 @@ dir/empty_dir
 
 
 
-ff size=0
+ff -H size=0
 bar
 dir/dir/empty
 dir
@@ -100,7 +100,7 @@ baz
 
 
 # keep_order
-ff -S
+ff -H -S
 bar
 baz
 dir
@@ -111,7 +111,7 @@ foo
 
 
 
-ff -S -R
+ff -H -S -R
 foo
 dir/empty_dir
 dir/dir/empty
@@ -122,14 +122,14 @@ bar
 
 
 
-ff -S size type=f
+ff -H -S size type=f
 dir/dir/empty
 foo
 baz
 
 
 
-ff -S -1
+ff -H -S -1
 bar
 
 
@@ -144,7 +144,7 @@ dir
 
 
 # no_order
-ff -o mode:h,links,size:5h,path:h
+ff -H -o mode:h,links,size:5h,path:h
 lrwxrwxrwx 1     0 bar -> foo
 -rw-r--r-- 1     4 foo
 -rw-r--r-- 1    10 baz
@@ -155,7 +155,7 @@ drwxr-xr-x 2     0 dir/dir
 
 
 
-ff -o size,links,path --sep :
+ff -H -o size,links,path --sep :
 0:1:bar
 4:1:foo
 10:1:baz
@@ -189,29 +189,29 @@ dir/dir
 dir/dir/empty
 
 
-ff {{ type=f and not type=l }}
+ff -H {{ type=f and not type=l }}
 foo
 baz
 dir/dir/empty
 
 
-ff type=f and not {{ name=baz or name=empty }}
+ff -H type=f and not {{ name=baz or name=empty }}
 foo
 
 
-ff type=f and {{ not name=baz and not name=empty }}
+ff -H type=f and {{ not name=baz and not name=empty }}
 foo
 
 
 # usage
-( cd ..; ff workdir/ type=f and {{ not name=baz and not name=empty }} )
+( cd ..; ff -H workdir/ type=f and {{ not name=baz and not name=empty }} )
 workdir/foo
 
 ( cd ..; ff type=f workdir/ and {{ not name=baz and not name=empty }} )
 
 ( cd ..; ff type=f and {{ not name=baz workdir/ and not name=empty }} )
 
-( cd ..; ff type=f and {{ not name=baz and not name=empty }} workdir/ )
+( cd ..; ff -H type=f and {{ not name=baz and not name=empty }} workdir/ )
 workdir/foo
 
 # --glob, --fixed-strings, --regex
@@ -231,12 +231,12 @@ baz
 
 
 # JSON
-ff --json -o name,size type=f -S name
+ff -H --json -o name,size type=f -S name
 [{"name":"baz","size":10},{"name":"empty","size":0},{"name":"foo","size":4}]
 
 
 
-ff --jsonl -o name,size type=f -S name
+ff -H --jsonl -o name,size type=f -S name
 {"name":"baz","size":10}
 {"name":"empty","size":0}
 {"name":"foo","size":4}
@@ -246,7 +246,7 @@ ff --jsonl -o name,size type=f -S name
 # Regression testing
 
 # Check if sort using a missing field works.
-ff -S duration
+ff -H -S duration
 foo
 bar
 baz

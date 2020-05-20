@@ -126,10 +126,10 @@ def create_parser(formatter_class=HelpFormatter):
             help="Show the list of available types.")
 
     group = parser.add_argument_group("Search options")
-    group.add_argument("-H", "--hidden", action="store_false", dest="hide", default=True,
-            help="Show hidden files and directories.")
-    group.add_argument("-I", "--ignored", action="store_false", dest="ignored", default=True,
-            help="Show files that are normally excluded by patterns from .(git|fd|ff)ignore files.")
+    group.add_argument("-H", "--hide", action="store_true", dest="hide", default=False,
+            help="Do not show hidden files and directories.")
+    group.add_argument("-I", "--ignore", action="store_true", dest="ignored", default=False,
+            help="Do not show files that are excluded by patterns from .(git|fd|ff)ignore files.")
     group.add_argument("-e", "--exclude", action="append", default=[], metavar="<expression>",
             help="Exclude entries that match the given expression.")
     group.add_argument("-g", "--glob", action="store_const", const="%", dest="default_operator",

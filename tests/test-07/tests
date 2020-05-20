@@ -1,5 +1,5 @@
 # Test the .ignore file.
-ff
+ff -HI
 foo
 baz
 dir
