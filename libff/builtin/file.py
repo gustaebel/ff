@@ -29,6 +29,9 @@ class File(Plugin):
     # This is basically a dummy plugin for the file namespace. Most attributes
     # are redirected directly to the Entry object in Registry.get_attribute().
 
+    # Since 2.5 pylint warns about properties not having __doc__ attributes...
+    # pylint:disable=no-member
+
     attributes = [
         ("path",    String,   "The full pathname of the file. It will be relative to the current "\
                               "working directory depending on the <directory> arguments that were "\

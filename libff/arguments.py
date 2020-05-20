@@ -40,7 +40,7 @@ def type_number(string):
     """
     num = int(string)
     if num < 0:
-        raise ValueError(f"number must be greater than zero")
+        raise ValueError("number must be greater than zero")
     return num
 
 def type_list(string):

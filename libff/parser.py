@@ -288,7 +288,7 @@ class Parser(FlatParser):
         self.parse_sequence(sub_sequences)
 
         if not self.tokens:
-            raise ParserError(f"incomplete sub sequence")
+            raise ParserError("incomplete sub sequence")
         self.tokens.pop(0)
 
         sequences[-1].append(sub_sequences)

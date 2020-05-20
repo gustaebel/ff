@@ -206,7 +206,7 @@ if __name__ == "__main__":
         if hits or misses:
             context.debug("cache", f"Cache stats: {hits} hits, {misses} misses")
         else:
-            context.debug("cache", f"Cache was not used")
+            context.debug("cache", "Cache was not used")
 
     if context.exitcode == EX_SUBPROCESS:
         context.error("One or more --exec/--exec-batch commands had errors", EX_SUBPROCESS)
