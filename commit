@@ -11,19 +11,18 @@ fi
 set -e
 
 branch="$(git branch --show-current)"
-changed_files="$(git status --short --untracked no | grep '^ff$\|\.py$' || true)"
 
-# If on master and code has changed, increment the version number in
-# __version__.py.
-if [[ $branch = master && -n $changed_files ]]; then
-    oldver=$(git show master:libff/__version__.py | grep ^__version__ | cut -d = -f 2)
-    newver=$((oldver + 1))
-    sed -i "/^__version__/c\__version__ = $newver" libff/__version__.py
-    git add libff/__version__.py
-    echo "fixing version number $oldver -> $newver"
-fi
+if git status --short --untracked no | grep --quiet '^ff$\|\.py$'; then
+    # If on master and code has changed, increment the version number in
+    # __version__.py.
+    if [[ $branch = master ]]; then
+        oldver=$(git show master:libff/__version__.py | grep ^__version__ | cut -d = -f 2)
+        newver=$((oldver + 1))
+        sed -i "/^__version__/c\__version__ = $newver" libff/__version__.py
+        git add libff/__version__.py
+        echo "fixing version number $oldver -> $newver"
+    fi
 
-if [[ -n $changed_files ]]; then
     # Run pylint and the unittests.
     make check
 
