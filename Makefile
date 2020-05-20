@@ -1,3 +1,7 @@
+clean:
+	ff -I ext=egg-info -X rm -rf
+	rm -rf build dist
+
 lint:
 	pylint --rcfile aux/pylintrc -j0 ff libff plugins
 
