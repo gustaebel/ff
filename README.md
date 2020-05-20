@@ -51,16 +51,14 @@ To build and install `ff` simply type:
 $ python setup.py install
 ```
 
-This installs the python sources, the `ff` script, the man page and a set of
-plugins.
-
-To build a slightly faster version of `ff` you can use
-[cython](https://cython.org/):
+or
 
 ```sh
-$ CYTHONIZE=yes python setup.py install
+$ pip install find-ff
 ```
 
+This installs the python sources, the `ff` script, the man page and a set of
+plugins.
 
 ### Developing plugins and debug mode
 
