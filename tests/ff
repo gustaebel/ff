@@ -2,4 +2,4 @@
 # Run ff in debug mode, i.e. with -O off. Don't show debug messages but run all
 # assert statements.
 
-exec python ../../../ff --debug assert --ignore-parent-ignorefiles "$@"
+PYTHONPATH=$(dirname "$0")/.. exec python -m libff --debug none --ignore-parent-ignorefiles "$@"

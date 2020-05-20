@@ -26,8 +26,7 @@ import subprocess
 
 from libff.ignore import Glob
 
-test_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-source_directory = os.path.dirname(test_directory)
+tests_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
 
 
 class ShellTest(unittest.TestCase):
@@ -36,7 +35,7 @@ class ShellTest(unittest.TestCase):
     def add_test(cls, test, test_number, workdir, command, output, keep_order):
         def shell(self):
             env = os.environ.copy()
-            env["PATH"] = source_directory + os.pathsep + env["PATH"]
+            env["PATH"] = tests_directory + os.pathsep + env["PATH"]
 
             try:
                 stdout = subprocess.check_output(command, shell=True, env=env,
@@ -129,7 +128,7 @@ class GlobTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    for path in glob.glob(os.path.join(test_directory, "test-??/tests")):
+    for path in glob.glob(os.path.join(tests_directory, "test-??/tests")):
         test = os.path.basename(os.path.dirname(path))
 
         test_number = 0

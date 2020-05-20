@@ -31,4 +31,4 @@
 import os
 import sys
 
-os.execv(sys.executable, [sys.executable, "-O", "-m", "libff"])
+os.execv(sys.executable, [sys.executable, "-O", "-m", "libff"] + sys.argv[1:])

@@ -27,7 +27,6 @@ import setuptools
 
 from libff.__version__ import __version__
 
-
 with open("README.md") as fobj:
     long_description = fobj.read()
 

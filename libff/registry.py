@@ -137,7 +137,7 @@ class Registry(BaseClass):
                             self.context.exception(f"Plugin file {direntry.path!r} failed to load",
                                     EX_BAD_PLUGIN)
 
-            except OSError as exc:
+            except OSError:
                 continue
 
         # Sort file attributes first.

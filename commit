@@ -12,7 +12,7 @@ set -e
 
 branch="$(git branch --show-current)"
 
-if git status --short --untracked no | grep --quiet '^ff$\|\.py$'; then
+if git status --short --untracked=no | grep --quiet '^ff$\|\.py$'; then
     # If on master and code has changed, increment the version number in
     # __version__.py.
     if [[ $branch = master ]]; then
