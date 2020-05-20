@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -----------------------------------------------------------------------
 #
-# ff - a simple, powerful and user-friendly alternative to 'find'.
+# ff - a tool to search the filesystem
 # Copyright (C) 2020 Lars Gustäbel <lars@gustaebel.de>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -22,19 +22,17 @@
 import os
 import sys
 import glob
-from distutils.core import Extension, setup
-from distutils.sysconfig import get_python_lib
+
+import setuptools
 
 from libff.__version__ import __version__
 
-if sys.version_info[:2] < (3, 6):
-    raise SystemExit("ERROR: Python >=3.6 required")
 
 with open("README.md") as fobj:
     long_description = fobj.read()
 
 kwargs = {
-    "name":         "ff",
+    "name":         "find-ff",
     "version":      str(__version__),
     "author":       "Lars Gustäbel",
     "author_email": "lars@gustaebel.de",
@@ -65,7 +63,7 @@ if os.environ.get("CYTHONIZE") == "yes":
     from Cython.Build import cythonize
     extensions = []
     for name in glob.iglob("libff/[a-z]*.py"):
-        extensions.append(Extension(name[:-3].replace("/", "."), [name]))
+        extensions.append(setuptools.Extension(name[:-3].replace("/", "."), [name]))
     kwargs["ext_modules"] = cythonize(extensions, language_level=3)
 
-setup(**kwargs)
+setuptools.setup(**kwargs)

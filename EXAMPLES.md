@@ -36,7 +36,7 @@ List all files ordered by their size and print a JSON object for each one
 containing their path name and their size:
 
 ```sh
-$ ff type=f -S size -o path,size --jsonl
+$ ff type=f --sort size --output path,size --jsonl
 ```
 
 List all files that have multiple hard links to their inode.
@@ -51,7 +51,7 @@ Find video files that are at least 1080 pixels high and order them
 according to running time:
 
 ```sh
-$ ff class=video height+=1080 -S duration
+$ ff class=video height+=1080 --sort duration
 ```
 
 Find files in the directory `Videos/` that end with `.mkv` or `.mp4` and are
@@ -73,7 +73,7 @@ Store all files from the current directory that are tracked by `git(1)` in a
 `tar(1)` archive:
 
 ```sh
-$ ff type=f git.tracked=yes -S -X tar cvzf git-tracked.tar.gz
+$ ff type=f git.tracked=yes --sort --exec-batch tar cvzf git-tracked.tar.gz
 ```
 
 ### Introspection plugin
@@ -108,13 +108,13 @@ $ ff sonames=libz.so.1 /usr/bin
 Print all files in the root filesystem but don't descend into remote filesystems:
 
 ```sh
-$ ff / -e remote=yes
+$ ff / --exclude remote=yes
 ```
 
 Find all mountpoints and print which filesystem they contain.
 
 ```sh
-$ ff / type=d mount=yes -o fstype,path
+$ ff / type=d mount=yes --output fstype,path
 ```
 
 ### Tar archives
