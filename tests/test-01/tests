@@ -99,6 +99,13 @@ baz
 
 
 
+ff -H -o perm:o,size:o,name not type=d depth=0
+777 0 bar
+644 4 foo
+644 12 baz
+
+
+
 # keep_order
 ff -H -S
 bar
