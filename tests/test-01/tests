@@ -239,14 +239,34 @@ baz
 
 # JSON
 ff -H --json -o name,size type=f -S name
-[{"name":"baz","size":10},{"name":"empty","size":0},{"name":"foo","size":4}]
+[{"name": "baz", "size": 10},{"name": "empty", "size": 0},{"name": "foo", "size": 4}]
 
 
 
 ff -H --jsonl -o name,size type=f -S name
-{"name":"baz","size":10}
-{"name":"empty","size":0}
-{"name":"foo","size":4}
+{"name": "baz", "size": 10}
+{"name": "empty", "size": 0}
+{"name": "foo", "size": 4}
+
+
+
+# Counts
+ff -H --count size type=f
+file.size=14
+_total=3
+
+
+
+ff -H --count type
+file.type[directory]=3
+file.type[file]=3
+file.type[symlink]=1
+_total=7
+
+
+
+ff -H --count size,type --json
+{"_total": 7, "file.size": 14, "file.type": {"directory": 3, "file": 3, "symlink": 1}}
 
 
 

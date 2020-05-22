@@ -34,5 +34,5 @@ class Grep(Plugin):
         return entry.text
 
     def process(self, entry):
-        with open(entry.path) as lines:
+        with open(entry.path, errors="surrogateescape") as lines:
             yield "lines", list(lines)

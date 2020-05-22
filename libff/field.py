@@ -24,6 +24,7 @@ import re
 import collections
 
 from . import EX_USAGE, Attribute
+from .type import Count
 
 Field = collections.namedtuple("Field", "attribute type width modifier")
 
@@ -67,6 +68,19 @@ class OutputFields(Fields):
     def store(self, argument):
         for string in argument:
             self.append(self.make_field(string))
+
+
+class CountFields(OutputFields):
+    """Store a list of fields that help with formatting statistics output.
+    """
+
+    def store(self, argument):
+        super().store(argument)
+
+        for field in self:
+            if field.type.count is Count.UNCOUNTABLE:
+                self.context.error(f"Attribute {field.attribute} is not suited for --count!",
+                        EX_USAGE)
 
 
 class SortFields(OutputFields):

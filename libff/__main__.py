@@ -27,7 +27,8 @@ from libff import EX_OK, EX_USAGE, EX_PROCESS, EX_SUBPROCESS, Directory
 from libff.walk import FilesystemWalker
 from libff.cache import Cache, NullCache
 from libff.entry import StartDirectory
-from libff.field import ExecFields, SortFields, OutputFields, ExecBatchFields
+from libff.field import ExecFields, SortFields, CountFields, OutputFields, \
+    ExecBatchFields
 from libff.filter import Matcher, Excluder
 from libff.ignore import GitIgnore
 from libff.parser import ParserError
@@ -71,6 +72,8 @@ if __name__ == "__main__":
     args.output = OutputFields(context, args.output)
     if args.sort is not None:
         args.sort = SortFields(context, args.sort)
+    if args.count is not None:
+        args.count = CountFields(context, args.count)
     if args.exec is not None:
         args.exec = ExecFields(context, args.exec)
     if args.exec_batch is not None:
@@ -106,7 +109,7 @@ if __name__ == "__main__":
     # Set up processing. There are two modes of operation: Either collect all
     # results and process them in their entirety, or process results
     # immediately as they come in.
-    if args.sort or args.limit or args.exec_batch or args.json == "json":
+    if args.sort or args.count or args.limit or args.exec_batch or args.json == "json":
         if args.exec or args.exec_batch:
             processing = CollectiveExecProcessing(context)
             context.processing = processing

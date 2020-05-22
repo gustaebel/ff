@@ -20,14 +20,18 @@
 # -----------------------------------------------------------------------
 
 import sys
+import json
 import time
 import queue
 import threading
 import subprocess
+import collections
 import multiprocessing
 
 from . import TIMEOUT, EX_PROCESS, EX_SUBPROCESS, BaseClass
-from .console import Console, JsonConsole, ColorConsole, JsonlConsole
+from .type import Count
+from .console import Console, JsonConsole, NullConsole, ColorConsole, \
+    JsonlConsole
 
 
 class Parallel(BaseClass):
@@ -152,7 +156,10 @@ class BaseConsoleProcessing(ImmediateBaseProcessing):
     def __init__(self, context):
         super().__init__(context)
 
-        if self.args.json == "json":
+        if self.args.count is not None:
+            console_cls = NullConsole
+
+        elif self.args.json == "json":
             console_cls = JsonConsole
 
         elif self.args.json == "jsonl":
@@ -169,6 +176,11 @@ class BaseConsoleProcessing(ImmediateBaseProcessing):
     def process(self, entries):
         for entry in entries:
             self.console.process(entry)
+
+    def close(self):
+        super().close()
+
+        self.console.close()
 
 
 class ImmediateExecProcessing(ImmediateBaseProcessing):
@@ -198,6 +210,7 @@ class CollectiveMixin(BaseProcessing):
 
         self.out_queue = multiprocessing.Queue()
         self.entries = []
+        self.count = collections.Counter()
 
     def process(self, entries):
         self.out_queue.put(entries)
@@ -205,13 +218,20 @@ class CollectiveMixin(BaseProcessing):
     def loop(self):
         while True:
             try:
-                self.entries += self.out_queue.get(timeout=TIMEOUT)
+                entries = self.out_queue.get(timeout=TIMEOUT)
             except queue.Empty:
                 if self.context.barrier_wait():
                     break
                 else:
                     if self.check_for_failed_processes():
                         break
+                    else:
+                        continue
+
+            if self.args.count is not None:
+                self.collect_count(entries)
+
+            self.entries += entries
 
             # Exit prematurely if there are already enough entries to satisfy
             # the limit, unless sorting is enabled in which case we want to
@@ -227,7 +247,82 @@ class CollectiveMixin(BaseProcessing):
             self.entries.sort(key=self.args.sort.render, reverse=self.args.reverse)
 
     def close(self):
+        super().close()
+
         self.out_queue.close()
+
+        if self.args.count is not None:
+            self.print_count()
+
+    def collect_count(self, entries):
+        """Collect value count.
+        """
+        for entry in entries:
+            # Count the total number of entries found.
+            self.count["_total"] += 1
+
+            for field in self.args.count:
+                try:
+                    value = self.registry.get_attribute(entry, field.attribute)
+                except KeyError:
+                    continue
+
+                if field.type.count is Count.TOTAL:
+                    # Create a total of all the values.
+                    self.count[field] += value
+
+                elif field.type.count is Count.COUNT:
+                    # Count each value individually.
+                    self.count.setdefault(field, collections.Counter())[value] += 1
+
+    def prepare_count(self):
+        """Prepare the collected value count for printing.
+        """
+        # First prepare a plain dictionary structure suited for JSON output.
+        count = {}
+        for field, value in self.count.items():
+            if isinstance(field, str):
+                # E.g. "_total".
+                count[field] = value
+
+            else:
+                name = str(field.attribute)
+
+                if isinstance(value, dict):
+                    # This is a dictionary with a by-value count.
+                    count[name] = {}
+                    for key, val in value.items():
+                        # Format the key which is the counted value in this case,
+                        # JSON objects allow only string keys anyway.
+                        key = field.type.output(self.args, field.modifier, key)
+                        count[name][key] = val
+
+                else:
+                    if field.modifier is not None:
+                        # Format the value only in case there is a modifier, so
+                        # that numbers won't turn out as strings.
+                        value = field.type.output(self.args, field.modifier, value)
+                    count[name] = value
+
+        return count
+
+    def print_count(self):
+        """Print collected value count.
+        """
+        count = self.prepare_count()
+
+        # Print the count to stdout.
+        if self.args.json is not None:
+            json.dump(count, sys.stdout, sort_keys=True)
+
+        else:
+            for key, value in sorted(count.items()):
+                if isinstance(value, dict):
+                    for k, v in sorted(value.items(),
+                            key=lambda t: int(t[0]) if t[0].isdigit() else t[0]):
+                        print(f"{key}[{k}]={v}")
+                else:
+                    print(f"{key}={value}")
 
 
 class CollectiveConsoleProcessing(CollectiveMixin, BaseConsoleProcessing):

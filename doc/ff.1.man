@@ -236,6 +236,24 @@ SORTING
   comma-separated list of attribute names that will be used as sort criteria.
   The order can be reversed with -R/--reverse.
 
+COUNTING
+  If the --count option is specified, instead of printing the search result,
+  count the entries and the attributes from <attribute-list> and print these
+  counts to standard output. If --count is given without a list of attributes
+  the total file size and statistics about the different file types is
+  displayed. If <attribute-list> is present a total or a count of these
+  attributes is done. There is always a "_total" field that contains the number
+  of all entries that matched.
+
+  There are two ways of counting attributes that depend on their type. Types
+  like file size or duration that vary widely are summed up to a total and for
+  all other types each individual value is counted. This way you can get an
+  overview on the variety of values of an attribute. For some attributes
+  --count makes not much sense, e.g. path or time. It is best suited for
+  attributes like type, perm, hidden, depth, uid, gid, etc.
+
+  The way a type is counted can be checked with --list-types.
+
 EXAMPLES
 
   Find only regular files in the current directory and all its subdirectories:

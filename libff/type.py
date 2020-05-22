@@ -20,9 +20,19 @@
 
 import re
 import stat
+from enum import Enum
 
 from .convert import parse_size, parse_time, format_size, format_time, \
     parse_duration, format_duration
+
+
+class Count(Enum):
+    """Specify if a value shall be summed up (TOTAL), counted individually
+       (COUNT) or raise an error (UNCOUNTABLE).
+    """
+    COUNT = 0
+    TOTAL = 1
+    UNCOUNTABLE = 2
 
 
 class Type:
@@ -51,6 +61,15 @@ class Type:
     # comparison to another value of this Type, e.g. the empty string for
     # strings or 0 for integers.
     sort_none = None
+
+    # Return how this attribute and value shall be included in the statistics.
+    # If the value itself shall be summed up to a total (TOTAL) or whether each
+    # individual value increases a count by 1 (COUNT). TOTAL is most suited for
+    # things like size or duration whose values vary widely but are interesting
+    # in total, COUNT is best for string values like e.g. extension, type etc.
+    # to count how many files have a certain extension or a certain type.
+    # If a type is uncountable it must use UNCOUNTABLE.
+    count = Count.COUNT
 
     # Indicate whether this Type is a string type. This affects case
     # conversion, see test().
@@ -117,6 +136,7 @@ class String(Type):
 
     operators = ("=", ":", "~", "%")
     sort_none = ""
+    count = Count.COUNT
     string_type = True
 
     @staticmethod
@@ -152,6 +172,7 @@ class FileType(Type):
 
     operators = ("=",)
     sort_none = ""
+    count = Count.COUNT
     choices = set(["d", "directory", "f", "file", "l", "symlink", "s",
         "socket", "p", "pipe", "fifo", "char", "block", "door", "port",
         "whiteout", "other"])
@@ -178,6 +199,7 @@ class ListOfStrings(Type):
 
     operators = String.operators
     sort_none = []
+    count = Count.UNCOUNTABLE
     string_type = True
     name = String.name + "[]"
 
@@ -236,6 +258,7 @@ class Mode(Type):
 
     operators = ("=", ":", "~")
     sort_none = 0
+    count = Count.COUNT
 
     regex = re.compile(r"([ugoa]*)([-+=])([rwxXst]+)|([-+=])?([0-7]+)$")
 
@@ -331,6 +354,8 @@ class Size(Number):
     """File size. Example: 'file.size+=100M'
     """
 
+    count = Count.TOTAL
+
     @classmethod
     def input(cls, value):
         return parse_size(value)
@@ -364,6 +389,8 @@ class Duration(Number):
     """Duration in seconds. Example: 'medium.duration+=1h30m'
     """
 
+    count = Count.TOTAL
+
     @classmethod
     def input(cls, value):
         return parse_duration(value)
@@ -383,6 +410,7 @@ class Boolean(Type):
 
     operators = ("=",)
     sort_none = False
+    count = Count.COUNT
 
     true = ("true", "t", "1", "yes", "y", "on")
     false = ("false", "f", "0", "no", "n", "off")

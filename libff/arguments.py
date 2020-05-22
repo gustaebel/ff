@@ -168,6 +168,11 @@ def create_parser(formatter_class=HelpFormatter):
             metavar="<attribute-list>", help="Sort entries by path or any other attribute.")
     group.add_argument("-R", "--reverse", action="store_true", default=False,
             help="Reverse the sort order.")
+    group.add_argument("--count", nargs="?", type=type_list, const="file.size:h,file.type",
+            default=None, metavar="<attribute-list>",
+            help="Count the attributes from <attribute-list> and print statistics, "\
+                 "instead of the result, the default is to count the total size and "\
+                 "the file types of the entries found. Add --json for JSON output.")
     group.add_argument("-l", "--limit", action="store", type=type_number, default=None, metavar="N",
             help="Limit output to at most N entries.")
     group.add_argument("-1", action="store_const", const=1, dest="limit",
@@ -213,19 +218,40 @@ def print_help(parser, args):
         raise SystemExit(EX_OK)
 
 
-def check_arguments_sanity(context, args):
+def check_for_errors(context, args):
+    """Check some of the arguments for semantic conflicts with other arguments.
+    """
+    if __debug__:
+        if args.profile and (args.exec or args.exec_batch):
+            context.error("You cannot use --exec or --exec-batch together with --profile!",
+                    EX_USAGE)
+
+    if args.count and (args.exec or args.exec_batch):
+        context.error("You cannot use --exec or --exec-batch together with --count!",
+                EX_USAGE)
+
+    if args.count and args.limit is not None:
+        context.error("You cannot use --limit together with --count!", EX_USAGE)
+
+
+def check_for_warnings(context, args):
     """Check some of the arguments for semantic conflicts with other arguments.
     """
     if args.sort and args.exec and args.jobs != 1:
         context.warning("Using both --sort and --exec makes no sense unless you set --jobs=1!")
 
-    if __debug__:
-        if args.profile and (args.exec or args.exec_batch):
-            context.error("You cannot use --exec or --exec-batch together with --profile",
-                    EX_USAGE)
-
     if args.output != ["path"] and (args.exec or args.exec_batch):
-        context.warning("--output has no effect with --exec and --exec-batch")
+        args.output = ["path"]
+        context.warning("Switching off --output, it has no effect with --exec and --exec-batch.")
+
+    if args.count:
+        if args.sort:
+            args.sort = None
+            context.warning("Switching off --sort, it has no effect with --count.")
+
+        if args.output != ["path"]:
+            args.output = ["path"]
+            context.warning("Switching off --output, it has no effect with --count.")
 
 
 def postprocess_directories(context, args):
@@ -283,10 +309,12 @@ def parse_arguments(context):
 
     print_help(parser, args)
 
-    check_arguments_sanity(context, args)
-
     postprocess_directories(context, args)
 
     postprocess_arguments(args)
+
+    check_for_errors(context, args)
+
+    check_for_warnings(context, args)
 
     return args

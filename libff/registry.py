@@ -352,7 +352,8 @@ class Registry(BaseClass):
     def print_types(self):
         """Print a table of available types.
         """
-        table = Table(("Name", "Operators", "Help"), wrap_last_column=True)
+        table = Table(("Name", "Operators", "Count", "Help"), wrap_last_column=True)
         for type_cls in sorted(self.registered_types, key=lambda t: t.name):
-            table.add([type_cls.name, "  ".join(type_cls.operators), type_cls.__doc__])
+            table.add([type_cls.name, "  ".join(type_cls.operators), type_cls.count.name.lower(),
+                type_cls.__doc__])
         table.print()

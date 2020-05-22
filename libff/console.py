@@ -46,6 +46,18 @@ class BaseConsole(BaseClass):
         """
         raise NotImplementedError
 
+    def close(self):
+        """Do some final operations.
+        """
+
+
+class NullConsole(BaseConsole):
+    """Do not format and print anything.
+    """
+
+    def process(self, entry):
+        pass
+
 
 class JsonlConsole(BaseConsole):
     """Print entries as newline-delimited JSON objects.
@@ -55,7 +67,8 @@ class JsonlConsole(BaseConsole):
         super().__init__(context)
 
         if __debug__ and self.args.profile:
-            # Suppress output when profiling.
+            # Suppress output when profiling but still go through all the
+            # moves.
             self.print_record = lambda record: None
         else:
             self.print_record = self._print_record
@@ -90,7 +103,7 @@ class JsonlConsole(BaseConsole):
     def _print_record(self, record):
         """Dump a newline delimited JSON object to standard output.
         """
-        json.dump(record, sys.stdout, separators=",:")
+        json.dump(record, sys.stdout)
         print()
 
 
@@ -109,10 +122,10 @@ class JsonConsole(JsonlConsole):
         """
         if self.print_comma:
             print(",", end="")
-        json.dump(record, sys.stdout, separators=",:")
+        json.dump(record, sys.stdout)
         self.print_comma = True
 
-    def __del__(self):
+    def close(self):
         print("]")
 
 
@@ -127,7 +140,6 @@ class Console(BaseConsole):
         self.field_separator = self.args.separator.replace("\\t", "\t").replace("\\n", "\n")
 
         if __debug__ and self.args.profile:
-            # Suppress output when profiling.
             self.write_line = lambda line: None
         else:
             self.write_line = self._write_line
