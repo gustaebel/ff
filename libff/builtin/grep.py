@@ -27,6 +27,7 @@ class Grep(Plugin):
 
     use_cache = False
     attributes = [
+        ("linecount", Number, "The number of lines in the file."),
         ("lines", ListOfStrings, "The lines of the file.")
     ]
 
@@ -35,4 +36,6 @@ class Grep(Plugin):
 
     def process(self, entry):
         with open(entry.path, errors="surrogateescape") as lines:
-            yield "lines", list(lines)
+            lines = list(lines)
+            yield "linecount", len(lines)
+            yield "lines", lines
