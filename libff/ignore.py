@@ -154,7 +154,7 @@ class GitIgnore:
                     try:
                         ignores.append(cls(context, parent, name))
                     except OSError as exc:
-                        context.warning(exc)
+                        context.logger.warning(exc)
         return ignores
 
     def __init__(self, context, dirname, name):
@@ -162,7 +162,7 @@ class GitIgnore:
         self.dirname = dirname
 
         if __debug__:
-            context.debug("walk", f"Found ignore file {name!r} in {dirname!r}")
+            context.logger.debug("walk", f"Found ignore file {name!r} in {dirname!r}")
 
         with open(os.path.join(dirname, name)) as lines:
             self.lines = list(lines)

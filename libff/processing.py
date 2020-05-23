@@ -28,7 +28,7 @@ import subprocess
 import collections
 import multiprocessing
 
-from . import TIMEOUT, EX_PROCESS, EX_SUBPROCESS, SubprocessError, BaseClass
+from . import TIMEOUT, EX_PROCESS, EX_SUBPROCESS, BaseClass, SubprocessError
 from .type import Count
 from .console import Console, JsonConsole, NullConsole, ColorConsole, \
     JsonlConsole
@@ -102,7 +102,7 @@ class BaseProcessing(BaseClass):
         if time.time() >= self.next_processes_check:
             for index, process in enumerate(self.walker.processes):
                 if not process.is_alive():
-                    self.context.warning(f"process #{index} terminated abnormally")
+                    self.logger.warning(f"process #{index} terminated abnormally")
                     self.context.set_exitcode(EX_PROCESS)
                     self.context.stop()
                     return True

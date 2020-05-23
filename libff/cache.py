@@ -23,15 +23,12 @@ import pickle
 import string
 import sqlite3
 
-from . import NOTSET
+from . import NOTSET, BaseClass
 
 
-class NullCache:
+class NullCache(BaseClass):
     """A cache that stores nothing and also acts as a base class.
     """
-
-    def __init__(self, context):
-        self.context = context
 
     def close(self):
         """Close the cache.
@@ -111,7 +108,7 @@ class Cache(NullCache):
 
         for table in tables:
             if __debug__:
-                self.context.debug("cache", f"Removing old cache table {table!r}")
+                self.logger.debug("cache", f"Removing old cache table {table!r}")
             self.conn.execute(f"drop table {table}")
 
     def get_sql_create_table(self, plugin_cls):
@@ -145,7 +142,7 @@ class Cache(NullCache):
         if time.time() >= self.last_commit + self.commit_every_seconds or \
                 self.num_cached_rows == self.commit_every_count:
             if __debug__:
-                self.context.debug("cache", f"commit cache with {self.num_cached_rows} entries "\
+                self.logger.debug("cache", f"commit cache with {self.num_cached_rows} entries "\
                         f"after {time.time() - self.last_commit:.1f} seconds")
             self.commit()
 
@@ -161,7 +158,7 @@ class Cache(NullCache):
                     self.conn.commit()
                 except sqlite3.OperationalError as exc:
                     if "database is locked" in str(exc):
-                        self.context.warning("Database is locked, retrying ...")
+                        self.logger.warning("Database is locked, retrying ...")
                         time.sleep(0.5)
                     else:
                         raise

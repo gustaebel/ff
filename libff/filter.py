@@ -32,7 +32,7 @@ class MatcherParser(Parser):
     def create_test(self, attribute, operator, reference, value):
         if self.args.hide and attribute.plugin == "file" and \
                 attribute.name in ("hide", "hidden"):
-            self.context.warning("file.hide and file.hidden have no effect with -H/--hide",
+            self.logger.warning("file.hide and file.hidden have no effect with -H/--hide",
                     tag="hide")
         return super().create_test(attribute, operator, reference, value)
 

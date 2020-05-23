@@ -20,33 +20,34 @@
 
 import os
 import sys
-import cProfile
-import pstats
 import shlex
+import pstats
 import argparse
+import cProfile
 
-from . import EX_OK, EX_SUBPROCESS, EX_PROCESS, BaseError, UsageError, SubprocessError, ProcessError
-from .arguments import Defaults, ArgumentsPostProcessor
-from .context import Context
-from .cache import NullCache, Cache
-from .registry import Registry
+from . import EX_OK, EX_PROCESS, EX_SUBPROCESS, BaseClass, BaseError, \
+    UsageError, ProcessError, SubprocessError
+from .walk import Directory, FilesystemWalker
+from .cache import Cache, NullCache
+from .entry import StartDirectory
 from .field import ExecFields, SortFields, CountFields, OutputFields, \
     ExecBatchFields
 from .filter import Matcher, Excluder
-from .parser import ParserError
-from .processing import ImmediateGenerator, CollectiveGenerator, \
-    ImmediateExecProcessing, \
-    CollectiveExecProcessing, ImmediateConsoleProcessing, \
-    CollectiveConsoleProcessing
 from .ignore import GitIgnore
-from .walk import FilesystemWalker, Directory
-from .entry import StartDirectory
+from .logger import Logger
+from .parser import ParserError
+from .context import Context
+from .registry import Registry
+from .arguments import Defaults, ArgumentsPostProcessor
+from .processing import ImmediateGenerator, CollectiveGenerator, \
+    ImmediateExecProcessing, CollectiveExecProcessing, \
+    ImmediateConsoleProcessing, CollectiveConsoleProcessing
 
 
-class _Base:
+class _Base(BaseClass):
 
     def __init__(self):
-        self.context = Context()
+        super().__init__(Context())
 
     def setup_processing(self):
         """Set up the required Processing object.
@@ -58,10 +59,12 @@ class _Base:
            components.
         """
         for warning in warnings:
-            self.context.warning(warning)
+            self.logger.warning(warning)
 
         self.context.args = args
         self.context.setup()
+
+        self.context.logger = Logger()
 
     def setup_components(self):
         """Set up all remaining components like the registry, the cache and so
@@ -136,23 +139,23 @@ class _Base:
         self.context.walker = walker
 
         if __debug__:
-            self.context.debug("info", f"Using {self.context.processing.__class__.__name__}.")
+            self.logger.debug("info", f"Using {self.context.processing.__class__.__name__}.")
 
             # Show some debug output.
-            self.context.debug("info", "Directories to search:")
+            self.logger.debug("info", "Directories to search:")
             for directory in self.context.args.directories:
-                self.context.debug("info",
+                self.logger.debug("info",
                         f"    {directory if directory != '.' else os.path.abspath(directory)}")
 
             if not self.context.excluder.is_empty():
-                self.context.debug("info", "Exclude Sequence:")
+                self.logger.debug("info", "Exclude Sequence:")
                 for line in self.context.excluder.parser.format():
-                    self.context.debug("info", "  " + line)
+                    self.logger.debug("info", "  " + line)
 
             if not self.context.matcher.is_empty():
-                self.context.debug("info", "Test Sequence:")
+                self.logger.debug("info", "Test Sequence:")
                 for line in self.context.matcher.parser.format():
-                    self.context.debug("info", "  " + line)
+                    self.logger.debug("info", "  " + line)
 
         # Preload the in-queue with the path arguments.
         for path in self.context.args.directories:
@@ -293,9 +296,9 @@ class Main(_Base):
         """Print a BaseError exception using the correct formatting and exit.
         """
         if exc.traceback is not None:
-            self.context.exception(exc.message, exc.traceback, exc.exitcode)
+            self.logger.exception(exc.message, exc.traceback, exc.exitcode)
         else:
-            self.context.error(exc.message, exc.exitcode)
+            self.logger.error(exc.message, exc.exitcode)
 
     def setup_processing(self):
         args = self.context.args
@@ -359,9 +362,9 @@ class Main(_Base):
             hits = self.context.cache_hits.value
             misses = self.context.cache_misses.value
             if hits or misses:
-                self.context.debug("cache", f"Cache stats: {hits} hits, {misses} misses")
+                self.logger.debug("cache", f"Cache stats: {hits} hits, {misses} misses")
             else:
-                self.context.debug("cache", "Cache was not used")
+                self.logger.debug("cache", "Cache was not used")
 
         if self.context.exitcode == EX_SUBPROCESS:
             raise SubprocessError("One or more --exec/--exec-batch commands had errors")

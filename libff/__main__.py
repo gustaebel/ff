@@ -18,9 +18,8 @@
 #
 # -----------------------------------------------------------------------
 
-from .arguments import parse_arguments
 from .search import Main
-
+from .arguments import parse_arguments
 
 args, warnings = parse_arguments()
 main = Main(args, warnings)

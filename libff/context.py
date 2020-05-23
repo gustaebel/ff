@@ -18,14 +18,12 @@
 #
 # -----------------------------------------------------------------------
 
-import sys
 import queue
-import textwrap
 import threading
 import multiprocessing
 import multiprocessing.sharedctypes
 
-from . import TIMEOUT, OUTPUT_WIDTH
+from . import TIMEOUT
 
 
 class Context:
@@ -39,6 +37,7 @@ class Context:
     def __init__(self):
         # These are added later.
         self.args = None
+        self.logger = None
         self.cache = None
         self.registry = None
         self.matcher = None
@@ -126,55 +125,3 @@ class Context:
         """
         for _ in range(self.args.jobs):
             self.stop_queue.put(None)
-
-    def wrap(self, category, message):
-        """Format and wrap the text of a message for output.
-        """
-        return textwrap.fill(category + ": " + str(message), width=OUTPUT_WIDTH,
-                subsequent_indent=" " * (len(category) + 2))
-
-    def warning(self, message, tag=None):
-        """Print a warning to standard error output. If tag is not None hide
-           the warning if there has already been another warning with that tag.
-        """
-        if tag is not None:
-            if tag in self.warnings_emitted:
-                return
-            else:
-                self.warnings_emitted.add(tag)
-
-        print(self.wrap("WARNING", message), file=sys.stderr)
-
-    def error(self, message, exitcode):
-        """Print an error message to standard error output and exit.
-        """
-        print(self.wrap("ERROR", message), file=sys.stderr)
-        if exitcode is not None:
-            raise SystemExit(exitcode)
-
-    def info(self, message):
-        """Print an info message to standard error output.
-        """
-        print(self.wrap("INFO", message), file=sys.stderr)
-
-    if __debug__:
-        def debug(self, category, message):
-            """Print a debug message to standard error output if --debug is
-               switched on.
-            """
-            if self.args.debug is None or category in self.args.debug:
-                print(f"DEBUG:{category}: {message}", file=sys.stderr)
-
-        def debug_proc(self, index, message):
-            """Print a debug message to standard error output if --debug-processes
-               is switched on.
-            """
-            self.debug("mp", f"#{index:02d} {message}")
-
-    def exception(self, message, traceback, exitcode):
-        """Print an error message and a traceback to standard error output and
-           exit.
-        """
-        print(self.wrap("INTERNAL", message + ":"), file=sys.stderr)
-        sys.stderr.write(traceback)
-        raise SystemExit(exitcode)

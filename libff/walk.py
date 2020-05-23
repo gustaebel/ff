@@ -91,7 +91,7 @@ class FilesystemWalker(BaseClass):
 
                 if isinstance(objs, Entries):
                     if __debug__:
-                        self.context.debug_proc(self.index,
+                        self.logger.debug_proc(self.index,
                                 f"got Entries object with {len(objs.entries)} entries "\
                                 f"from {objs.parent.start.root}")
 
@@ -99,14 +99,14 @@ class FilesystemWalker(BaseClass):
 
                 elif isinstance(objs[0], Directory):
                     if __debug__:
-                        self.context.debug_proc(self.index, f"got {len(objs)} Directory entries")
+                        self.logger.debug_proc(self.index, f"got {len(objs)} Directory entries")
 
                     for obj in objs:
                         self.process_directory(obj)
 
                 else:
                     if __debug__:
-                        self.context.debug_proc(self.index, f"got {len(objs)} process arguments")
+                        self.logger.debug_proc(self.index, f"got {len(objs)} process arguments")
 
                     for obj in objs:
                         self.process_arguments(obj)
@@ -137,7 +137,7 @@ class FilesystemWalker(BaseClass):
                         # Do not warn about files that have vanished.
                         pass
                     except OSError as exc:
-                        self.context.warning(exc)
+                        self.logger.warning(exc)
                         continue
 
                     entries.append(entry)
@@ -149,7 +149,7 @@ class FilesystemWalker(BaseClass):
             # Do not warn about directories that have vanished.
             pass
         except OSError as exc:
-            self.context.warning(exc)
+            self.logger.warning(exc)
 
         return entries, ignore_files
 
@@ -166,7 +166,7 @@ class FilesystemWalker(BaseClass):
                         os.path.abspath(os.path.join(parent.start.root, parent.relpath)),
                         ignore_file))
                 except OSError as exc:
-                    self.context.warning(exc)
+                    self.logger.warning(exc)
             return ignores
 
         else:
@@ -220,7 +220,7 @@ class FilesystemWalker(BaseClass):
                     entries = entries[:split]
 
         except OSError as exc:
-            self.context.warning(exc)
+            self.logger.warning(exc)
 
         if search:
             # Calculate a reasonable size for a chunk of Entry objects based on

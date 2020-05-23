@@ -24,7 +24,7 @@ import shlex
 import argparse
 
 # These imports must be absolute because of __main__.
-from libff import EX_OK, MAX_CPU, __version__, __copyright__, UsageError
+from libff import EX_OK, MAX_CPU, UsageError, __version__, __copyright__
 
 
 class Defaults:

@@ -23,8 +23,8 @@ import binascii
 import textwrap
 import importlib.util
 
-from . import NOTSET, UsageError, BadPluginError, BadAttributeError, NoData, \
-    Attribute, BaseClass
+from . import NOTSET, NoData, Attribute, BaseClass, UsageError, \
+    BadPluginError, BadAttributeError
 from .type import Type
 from .table import Table
 from .plugin import Plugin
@@ -100,7 +100,7 @@ class Registry(BaseClass):
         """Register and initialize Plugin classes.
         """
         if plugin_cls.name in self.registered_plugins:
-            self.context.warning(f"Skipping already loaded plugin {plugin_cls.name!r} "\
+            self.logger.warning(f"Skipping already loaded plugin {plugin_cls.name!r} "\
                     f"from {module_path!r}")
             return
 
@@ -232,7 +232,7 @@ class Registry(BaseClass):
                 data = self.cache.get(plugin, entry.abspath, entry.time)
                 if data is NOTSET:
                     if __debug__:
-                        self.context.debug("cache",
+                        self.logger.debug("cache",
                                 f"Cache {plugin.name!r} data for {entry.path!r}")
                     # There is no cached result for this entry, so we ask
                     # the plugin for the data. If the plugin fails to

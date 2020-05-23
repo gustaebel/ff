@@ -21,7 +21,7 @@
 import re
 import collections
 
-from . import UsageError, ExpressionError, Attribute, BaseClass
+from . import Attribute, BaseClass, UsageError, ExpressionError
 from .type import Type
 from .entry import Entry
 from .ignore import Glob
@@ -240,7 +240,7 @@ class FlatParser(BaseClass):
                         # Guarantee that glob patterns are always matched against
                         # the path relative to the start directory, because that
                         # is what you want.
-                        self.context.warning(f"{value.pattern!r} is a full-path glob pattern "\
+                        self.logger.warning(f"{value.pattern!r} is a full-path glob pattern "\
                                 "that is supposed to be used relative to the start directory. "\
                                 "Changing 'file.path' attribute to 'file.relpath'.",
                                 tag="glob-anchored-path")
@@ -250,7 +250,7 @@ class FlatParser(BaseClass):
                         # If the glob pattern contains path separators it is
                         # supposed to match the whole path name, so we implicitly
                         # adjust the attribute name.
-                        self.context.warning(f"{value.pattern!r} is a full-path glob pattern "\
+                        self.logger.warning(f"{value.pattern!r} is a full-path glob pattern "\
                                 "that will not match on the basename. "\
                                 "Changing 'file.name' attribute to 'file.relpath'.",
                                 tag="glob-anchored-name")

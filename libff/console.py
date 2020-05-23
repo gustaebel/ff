@@ -270,7 +270,7 @@ class ColorConsole(Console):
 
         colors = os.environ.get("LS_COLORS", "")
         if not colors:
-            self.context.warning("You chose console colour output "\
+            self.logger.warning("You chose console colour output "\
                     "but the LS_COLORS environment variable is not set")
             return
 
