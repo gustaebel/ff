@@ -25,7 +25,7 @@ from . import Attribute, BaseClass
 from .type import Type
 from .entry import Entry
 from .ignore import Glob
-from .exceptions import UsageError, ExpressionError
+from .exceptions import UsageError, ExpressionError, BadAttributeError
 
 
 class ParserError(Exception):
@@ -144,6 +144,9 @@ class FlatParser(BaseClass):
             return self.create_test(attribute, operator, reference, value)
 
         else:
+            if self.default_attribute is None or self.default_operator is None:
+                raise BadAttributeError(f"Simple patterns like {expression!r} are not allowed!")
+
             return self.create_test(Attribute("file", self.default_attribute),
                     self.default_operator, None, expression)
 

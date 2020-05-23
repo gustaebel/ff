@@ -186,6 +186,9 @@ class SearchNamespace(argparse.Namespace):
     profile = None
     json = None
 
+    default_attribute = None
+    default_operator = None
+
     # Options that have no relevance for the Python API but will be referenced
     # somewhere in the code. Would be nice to remove these one day.
     count = None
@@ -206,8 +209,6 @@ class Search(_Base):
             sort=[], reverse=False,
             hide=False, ignore=False, one_file_system=False,
             case=Defaults.case,
-            default_attribute=Defaults.default_attribute,
-            default_operator=Defaults.default_operator,
             si=Defaults.si,
             follow_symlinks=Defaults.follow_symlinks,
             absolute_path=False, jobs=Defaults.jobs, cache=Defaults.cache):
@@ -224,8 +225,6 @@ class Search(_Base):
         args.ignore = ignore
         args.one_file_system = one_file_system
         args.case = case
-        args.default_attribute = default_attribute
-        args.default_operator = default_operator
         args.si = si
         args.follow_symlinks = follow_symlinks
         args.absolute_path = absolute_path
