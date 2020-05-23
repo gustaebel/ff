@@ -82,11 +82,7 @@ class OutputFields(Fields):
                 if field.modifier == "h":
                     value = type_cls.output(self.args, field.modifier, value)
 
-            key = str(field.attribute)
-            if field.attribute.plugin == "file":
-                key = key[5:]
-
-            record[key] = value
+            record[str(field.attribute)] = value
 
         return record
 

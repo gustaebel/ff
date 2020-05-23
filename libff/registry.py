@@ -176,11 +176,11 @@ class Registry(BaseClass):
             # The file plugin always has precedence. This way we avoid
             # essential attributes being overwritten by rogue plugins.
             if "file" in plugin_names:
-                attribute = Attribute("file", name)
+                attribute = Attribute("file", name, name)
 
             elif len(plugin_names) == 1:
                 # The attribute is provided by exactly one plugin.
-                attribute = Attribute(plugin_names.pop(), name)
+                attribute = Attribute(plugin_names.pop(), name, name)
 
             elif not plugin_names:
                 # We could not find the attribute in any of the plugins.

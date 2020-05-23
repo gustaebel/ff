@@ -62,5 +62,5 @@ foobar
 
 
 
-ff size-={name}foo
+ff file.size-={file.name}foo
 ERROR: file.size and file.name have different types and cannot be compared

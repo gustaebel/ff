@@ -51,13 +51,27 @@ OUTPUT_WIDTH = shutil.get_terminal_size((100, 100))[0] - 2
 Directory = collections.namedtuple("Directory", "start relpath ignores")
 Entries = collections.namedtuple("Entries", "parent entries ignores")
 
-class Attribute(collections.namedtuple("Attribute", "plugin name")):
+class _Attribute(collections.namedtuple("Attribute", "plugin name alias")):
     """An Attribute namedtuple that contains the plugin name and the attribute
        name.
     """
 
     def __str__(self):
-        return f"{self.plugin}.{self.name}"
+        return self.alias
+
+    def __eq__(self, other):
+        return self[:2] == other[:2]
+
+    def __hash__(self):
+        return hash(self[:2])
+
+def Attribute(plugin, name, alias=None):
+    """Factory function to create Attribute objects.
+    """
+    # pylint:disable=invalid-name
+    if alias is None:
+        alias = f"{plugin}.{name}"
+    return _Attribute(plugin, name, alias)
 
 
 class BaseClass:
