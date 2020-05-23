@@ -38,6 +38,7 @@ class Defaults:
     follow_symlinks = False
     jobs = MAX_CPU
     cache = os.path.expanduser("~/.cache/ff.db")
+    si = False
 
 
 def type_jobs(string):
@@ -199,7 +200,7 @@ def create_parser(formatter_class=HelpFormatter):
             help="Print attributes as one big json object to stdout.")
     group.add_argument("--jsonl", action="store_const", const="jsonl", dest="json",
             help="Print attributes as jsonl (one json object per line) to stdout.")
-    group.add_argument("--si", action="store_true", default=False,
+    group.add_argument("--si", action="store_true", default=Defaults.si,
             help="Parse and print file sizes in units of 1K=1000 bytes instead of 1K=1024 bytes.")
 
     return parser

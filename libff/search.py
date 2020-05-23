@@ -200,7 +200,7 @@ class SearchNamespace(argparse.Namespace):
 class Search(_Base):
     """Query the filesystem and yield the resulting entries.
     """
-    # pylint:disable=too-many-arguments,too-many-locals,dangerous-default-value
+    # pylint:disable=too-many-arguments,too-many-locals,dangerous-default-value,invalid-name
 
     def __init__(self, query, directories=["."], exclude=[], output=["file"],
             sort=[], reverse=False,
@@ -208,6 +208,7 @@ class Search(_Base):
             case=Defaults.case,
             default_attribute=Defaults.default_attribute,
             default_operator=Defaults.default_operator,
+            si=Defaults.si,
             follow_symlinks=Defaults.follow_symlinks,
             absolute_path=False, jobs=Defaults.jobs, cache=Defaults.cache):
         super().__init__()
@@ -225,6 +226,7 @@ class Search(_Base):
         args.case = case
         args.default_attribute = default_attribute
         args.default_operator = default_operator
+        args.si = si
         args.follow_symlinks = follow_symlinks
         args.absolute_path = absolute_path
         args.jobs = jobs
