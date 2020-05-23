@@ -22,6 +22,8 @@ import io
 import re
 import sys
 
+import libff
+from libff import BaseError
 from libff.builtin import file, media
 from libff.convert import time_formats
 from libff.arguments import HelpFormatter, create_parser
@@ -92,6 +94,11 @@ def include_plugin_help(name):
 
     return lines
 
+def include_exit_codes():
+    for name, obj in vars(libff).items():
+        if type(obj) is type and issubclass(obj, BaseError) and obj is not BaseError:
+            yield f"  {obj.exitcode}  {obj.__doc__}"
+
 
 path_in, path_out = sys.argv[1:]
 
@@ -112,6 +119,9 @@ with open(path_out, "w") as fobj:
                         def repl(m):
                             return m.group(1)*2
                         print("  - " + re.sub(r"%([YmdHMS])", repl, fmt) + "  ", file=fobj)
+                elif name == "exit_codes":
+                    for line in include_exit_codes():
+                        print(line, file=fobj)
                 else:
                     for line in include_plugin_help(name):
                         print(line, file=fobj)

@@ -40,7 +40,6 @@ class MatcherParser(Parser):
 class Filter(BaseClass):
     """Basic Filter class to build Excluder and Matcher upon.
     """
-    # pylint:disable=too-few-public-methods
 
     def __init__(self, context, parser):
         super().__init__(context)

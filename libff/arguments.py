@@ -24,7 +24,19 @@ import shlex
 import argparse
 
 # These imports must be absolute because of __main__.
-from libff import EX_OK, MAX_CPU, EX_USAGE, __version__, __copyright__
+from libff import EX_OK, MAX_CPU, __version__, __copyright__, UsageError
+
+
+class Defaults:
+    """Provide the defaults for both the ArgumentParser as well as the API.
+    """
+
+    case = "smart"
+    default_attribute = "name"
+    default_operator = "~"
+    follow_symlinks = False
+    jobs = MAX_CPU
+    cache = os.path.expanduser("~/.cache/ff.db")
 
 
 def type_jobs(string):
@@ -101,11 +113,11 @@ def create_parser(formatter_class=HelpFormatter):
                 help="Show only debug messages of certain categories, default is to show all.")
         group.add_argument("--ignore-parent-ignorefiles", action="store_true", default=False,
                 help="Do not read ignore files from parent directories.")
-    group.add_argument("--cache", default=os.path.expanduser("~/.cache/ff.db"),
+    group.add_argument("--cache", default=Defaults.cache,
             help="Location of the metadata cache (default: %(default)s).")
     group.add_argument("--no-cache", action="store_const", dest="cache", const=None,
             help="Do not use the metadata cache.")
-    group.add_argument("-j", "--jobs", type=type_jobs, default=MAX_CPU, metavar="<num>",
+    group.add_argument("-j", "--jobs", type=type_jobs, default=Defaults.jobs, metavar="<num>",
             help="Set number of processes to use for searching and executing "\
                  "(default: the number of CPU cores).")
     group.add_argument("expressions", nargs="*", metavar="<expression/directory>",
@@ -116,37 +128,37 @@ def create_parser(formatter_class=HelpFormatter):
     group = parser.add_argument_group("Commands")
     group.add_argument("-h", "--help", nargs="?", const="all", metavar="<plugin>",
             help="Show this help message or the help message for a particular plugin.")
-    group.add_argument("--version", action="store_true", default=False,
-            help="Show program's version number and exit.")
-    group.add_argument("--list-attributes", action="store_true", default=False,
+    group.add_argument("--version", action="store_const", const="version", dest="action",
+            default=None, help="Show program's version number and exit.")
+    group.add_argument("--list-attributes", action="store_const", const="attributes", dest="action",
             help="Show a list of available attributes to use for searching, sorting and output.")
-    group.add_argument("--list-plugins", action="store_true", default=False,
+    group.add_argument("--list-plugins", action="store_const", const="plugins", dest="action",
             help="Show the list of available plugins.")
-    group.add_argument("--list-types", action="store_true", default=False,
+    group.add_argument("--list-types", action="store_const", const="types", dest="action",
             help="Show the list of available types.")
 
     group = parser.add_argument_group("Search options")
-    group.add_argument("-H", "--hide", action="store_true", dest="hide", default=False,
+    group.add_argument("-H", "--hide", action="store_true",  default=False,
             help="Do not show hidden files and directories.")
-    group.add_argument("-I", "--ignore", action="store_true", dest="ignored", default=False,
+    group.add_argument("-I", "--ignore", action="store_true", default=False,
             help="Do not show files that are excluded by patterns from .(git|fd|ff)ignore files.")
     group.add_argument("-e", "--exclude", action="append", default=[], metavar="<expression>",
             help="Exclude entries that match the given expression.")
     group.add_argument("-g", "--glob", action="store_const", const="%", dest="default_operator",
-            default="~", help="Treat the pattern as a literal string.")
+            default=Defaults.default_operator, help="Treat the pattern as a literal string.")
     group.add_argument("-r", "--regex", action="store_const", const="~", dest="default_operator",
             help="Perform a regular-expression based search (default).")
     group.add_argument("-F", "--fixed-strings", action="store_const", const=":",
             dest="default_operator", help="Treat the pattern as a literal string.")
-    group.add_argument("-c", "--case", choices=["smart", "ignore", "sensitive"], dest="case_mode",
-            default="smart", metavar="<mode>",
+    group.add_argument("-c", "--case", choices=["smart", "ignore", "sensitive"], dest="case",
+            default=Defaults.case, metavar="<mode>",
             help="How to treat the case of text attributes (smart, ignore or sensitive).")
     group.add_argument("-a", "--absolute-path", action="store_true", default=False,
             help="Show absolute instead of relative paths.")
-    group.add_argument("-L", "--follow", action="store_true", dest="follow_symlinks", default=False,
-            help="Follow symbolic links.")
+    group.add_argument("-L", "--follow", action="store_true", dest="follow_symlinks",
+            default=Defaults.follow_symlinks, help="Follow symbolic links.")
     group.add_argument("-p", "--full-path", action="store_const", const="path",
-            dest="default_attribute", default="name",
+            dest="default_attribute", default=Defaults.default_attribute,
             help="Search full path (default: file-/dirname only).")
     group.add_argument("--one-file-system", "--mount", "--xdev", action="store_true", default=False,
             help="Do not descend into different file systems.")
@@ -205,100 +217,102 @@ def collect_arguments():
     return argv
 
 
-def print_help(parser, args):
-    """Print help and version information.
+class ArgumentsPostProcessor:
+    """Check and postprocess the arguments in an argparse.Namespace.
     """
-    if args.help == "all":
-        # Help on plugins is taken care of in the main script.
-        parser.print_help()
-        raise SystemExit(EX_OK)
 
-    elif args.version:
-        print(__copyright__)
-        raise SystemExit(EX_OK)
+    def __init__(self, args):
+        self.args = args
+
+    def process(self):
+        """Check and postprocess the arguments.
+        """
+        self.process_directories()
+        self.process_arguments()
+        self.check_for_errors()
+        return self.collect_warnings()
+
+    def check_for_errors(self):
+        """Check some of the arguments for semantic conflicts with other arguments.
+        """
+        if __debug__:
+            if self.args.profile and (self.args.exec or self.args.exec_batch):
+                raise UsageError("You cannot use --exec or --exec-batch together with --profile!")
+
+        if self.args.count and (self.args.exec or self.args.exec_batch):
+            raise UsageError("You cannot use --exec or --exec-batch together with --count!")
+
+        if self.args.count and self.args.limit is not None:
+            raise UsageError("You cannot use --limit together with --count!")
+
+    def collect_warnings(self):
+        """Check some of the arguments for semantic conflicts with other arguments.
+        """
+        warnings = []
+
+        if self.args.sort and self.args.exec and self.args.jobs != 1:
+            warnings.append("Using both --sort and --exec makes no sense unless you set --jobs=1!")
+
+        if self.args.output != ["path"] and (self.args.exec or self.args.exec_batch):
+            self.args.output = ["path"]
+            warnings.append(
+                    "Switching off --output, it has no effect with --exec and --exec-batch.")
+
+        if self.args.count:
+            if self.args.sort:
+                self.args.sort = None
+                warnings.append("Switching off --sort, it has no effect with --count.")
+
+            if self.args.output != ["path"]:
+                self.args.output = ["path"]
+                warnings.append("Switching off --output, it has no effect with --count.")
+
+        return warnings
+
+    def process_directories(self):
+        """Arrange directory arguments and check them for validity.
+        """
+        if not self.args.directories:
+            # Check which arguments are existing directories and append them to
+            # self.args.directories. We allow directory arguments only at the start or
+            # the end of the list of expressions.
+            for expressions in (list(self.args.expressions), reversed(self.args.expressions)):
+                for expression in expressions:
+                    if os.sep in expression and os.path.isdir(expression):
+                        self.args.expressions.remove(expression)
+                        directory = os.path.normpath(expression)
+                        self.args.directories.append(directory)
+                    else:
+                        break
+
+        # Default to the current directory if no directory arguments are specified
+        # or detected.
+        if not self.args.directories:
+            self.args.directories = ["."]
+
+        # Check if directory arguments are sub-directories of one another.
+        for directory in sorted(self.args.directories, reverse=True):
+            for subdir in self.args.directories:
+                if subdir == directory:
+                    continue
+                if os.path.commonpath([directory, subdir]) == subdir:
+                    raise UsageError(f"{directory!r} is a sub-directory of {subdir!r}")
+
+    def process_arguments(self):
+        """Check existing arguments and arrange them in specific ways.
+        """
+        if self.args.json:
+            self.args.color = "never"
+            self.args.absolute_path = True
+
+        if self.args.hide:
+            self.args.exclude.append("hide=yes")
+
+        if self.args.one_file_system:
+            self.args.exclude.append("samedev=no")
 
 
-def check_for_errors(context, args):
-    """Check some of the arguments for semantic conflicts with other arguments.
-    """
-    if __debug__:
-        if args.profile and (args.exec or args.exec_batch):
-            context.error("You cannot use --exec or --exec-batch together with --profile!",
-                    EX_USAGE)
-
-    if args.count and (args.exec or args.exec_batch):
-        context.error("You cannot use --exec or --exec-batch together with --count!",
-                EX_USAGE)
-
-    if args.count and args.limit is not None:
-        context.error("You cannot use --limit together with --count!", EX_USAGE)
-
-
-def check_for_warnings(context, args):
-    """Check some of the arguments for semantic conflicts with other arguments.
-    """
-    if args.sort and args.exec and args.jobs != 1:
-        context.warning("Using both --sort and --exec makes no sense unless you set --jobs=1!")
-
-    if args.output != ["path"] and (args.exec or args.exec_batch):
-        args.output = ["path"]
-        context.warning("Switching off --output, it has no effect with --exec and --exec-batch.")
-
-    if args.count:
-        if args.sort:
-            args.sort = None
-            context.warning("Switching off --sort, it has no effect with --count.")
-
-        if args.output != ["path"]:
-            args.output = ["path"]
-            context.warning("Switching off --output, it has no effect with --count.")
-
-
-def postprocess_directories(context, args):
-    """Arrange directory arguments and check them for validity.
-    """
-    if not args.directories:
-        # Check which arguments are existing directories and append them to
-        # args.directories. We allow directory arguments only at the start or
-        # the end of the list of expressions.
-        for expressions in (list(args.expressions), reversed(args.expressions)):
-            for expression in expressions:
-                if os.sep in expression and os.path.isdir(expression):
-                    args.expressions.remove(expression)
-                    directory = os.path.normpath(expression)
-                    args.directories.append(directory)
-                else:
-                    break
-
-    # Default to the current directory if no directory arguments are specified
-    # or detected.
-    if not args.directories:
-        args.directories = ["."]
-
-    # Check if directory arguments are sub-directories of one another.
-    for directory in sorted(args.directories, reverse=True):
-        for subdir in args.directories:
-            if subdir == directory:
-                continue
-            if os.path.commonpath([directory, subdir]) == subdir:
-                context.error(f"{directory!r} is a sub-directory of {subdir!r}", EX_USAGE)
-
-
-def postprocess_arguments(args):
-    """Check existing arguments and arrange them in specific ways.
-    """
-    if args.json:
-        args.color = "never"
-        args.absolute_path = True
-
-    if args.hide:
-        args.exclude.append("hide=yes")
-
-    if args.one_file_system:
-        args.exclude.append("samedev=no")
-
-
-def parse_arguments(context):
+def parse_arguments():
     """Parse the arguments from the command line, check for conflicts and
        postprocess them for later use.
     """
@@ -307,14 +321,16 @@ def parse_arguments(context):
     argv = collect_arguments()
     args = parser.parse_args(argv)
 
-    print_help(parser, args)
+    if args.help == "all":
+        # Help on plugins is taken care of in the main script.
+        parser.print_help()
+        raise SystemExit(EX_OK)
 
-    postprocess_directories(context, args)
+    elif args.action == "version":
+        print(__copyright__)
+        raise SystemExit(EX_OK)
 
-    postprocess_arguments(args)
+    processor = ArgumentsPostProcessor(args)
+    warnings = processor.process()
 
-    check_for_errors(context, args)
-
-    check_for_warnings(context, args)
-
-    return args
+    return args, warnings

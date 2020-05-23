@@ -41,7 +41,6 @@ class StartDirectory:
        passed to Entry objects as the reference point for relpath, depth and
        samedev.
     """
-    # pylint:disable=too-few-public-methods
 
     def __init__(self, args, root):
         self.root = root

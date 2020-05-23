@@ -18,12 +18,10 @@
 #
 # -----------------------------------------------------------------------
 
-# pylint:disable=too-few-public-methods
-
 import re
 import collections
 
-from . import EX_USAGE, Attribute
+from . import UsageError, Attribute
 from .type import Count
 
 Field = collections.namedtuple("Field", "attribute type width modifier")
@@ -49,7 +47,7 @@ class Fields(list):
         """
         match = self.regex.match(string.strip())
         if match is None:
-            self.context.error(f"Invalid attribute {string!r}", EX_USAGE)
+            raise UsageError(f"Invalid attribute {string!r}")
         name, width, modifier = match.groups()
         attribute = self.registry.setup_attribute(name)
         type_cls = self.registry.get_attribute_type(attribute)
@@ -69,6 +67,28 @@ class OutputFields(Fields):
         for string in argument:
             self.append(self.make_field(string))
 
+    def to_dict(self, entry):
+        """Create a dictionary from the list of fields.
+        """
+        record = {}
+        for field in self:
+            try:
+                value, type_cls = \
+                        self.context.registry.get_attribute_and_type(entry, field.attribute)
+            except KeyError:
+                value = None
+            else:
+                if field.modifier == "h":
+                    value = type_cls.output(self.args, field.modifier, value)
+
+            key = str(field.attribute)
+            if field.attribute.plugin == "file":
+                key = key[5:]
+
+            record[key] = value
+
+        return record
+
 
 class CountFields(OutputFields):
     """Store a list of fields that help with formatting statistics output.
@@ -79,8 +99,7 @@ class CountFields(OutputFields):
 
         for field in self:
             if field.type.count is Count.UNCOUNTABLE:
-                self.context.error(f"Attribute {field.attribute} is not suited for --count!",
-                        EX_USAGE)
+                raise UsageError(f"Attribute {field.attribute} is not suited for --count!")
 
 
 class SortFields(OutputFields):

@@ -28,7 +28,7 @@ import subprocess
 import collections
 import multiprocessing
 
-from . import TIMEOUT, EX_PROCESS, EX_SUBPROCESS, BaseClass
+from . import TIMEOUT, EX_PROCESS, EX_SUBPROCESS, SubprocessError, BaseClass
 from .type import Count
 from .console import Console, JsonConsole, NullConsole, ColorConsole, \
     JsonlConsole
@@ -77,7 +77,7 @@ class Parallel(BaseClass):
                 if process.returncode != 0:
                     self.context.set_exitcode(EX_SUBPROCESS)
             except OSError as exc:
-                self.context.error(exc, EX_SUBPROCESS)
+                raise SubprocessError(str(exc))
 
     def add_job(self, entry):
         """Add a subprocess to the queue for an Entry object.
@@ -111,6 +111,12 @@ class BaseProcessing(BaseClass):
 
         return False
 
+    def processing_done(self, timeout=TIMEOUT):
+        """Check if processing is done (because all processes wait on the
+           barrier) or one or more processes failed unexpectedly.
+        """
+        return self.context.barrier_wait(timeout) or self.check_for_failed_processes()
+
     def process(self, entries):
         """Process a chunk of Entry objects.
         """
@@ -138,15 +144,8 @@ class ImmediateBaseProcessing(BaseProcessing):
     # pylint:disable=abstract-method
 
     def loop(self):
-        while not self.context.barrier_wait(1):
-            if self.check_for_failed_processes():
-                break
-
-    def finalize(self):
-        # If we don't actively wait here for the processes to terminate,
-        # results will be lost. That is because when the main process exits,
-        # all subprocesses terminate as well because they are daemon=True.
-        self.walker.wait_processes()
+        while not self.processing_done(1):
+            pass
 
 
 class BaseConsoleProcessing(ImmediateBaseProcessing):
@@ -220,13 +219,10 @@ class CollectiveMixin(BaseProcessing):
             try:
                 entries = self.out_queue.get(timeout=TIMEOUT)
             except queue.Empty:
-                if self.context.barrier_wait():
+                if self.processing_done():
                     break
                 else:
-                    if self.check_for_failed_processes():
-                        break
-                    else:
-                        continue
+                    continue
 
             if self.args.count is not None:
                 self.collect_count(entries)
@@ -359,7 +355,71 @@ class CollectiveExecProcessing(CollectiveMixin, BaseProcessing):
                 if process.returncode != 0:
                     self.context.set_exitcode(EX_SUBPROCESS)
             except OSError as exc:
-                self.context.error(exc, EX_SUBPROCESS)
+                raise SubprocessError(str(exc))
 
         else:
             raise AssertionError("wrong usage of CollectiveExecProcessing class")
+
+
+class ImmediateGenerator(ImmediateBaseProcessing):
+    """Processing class that allows immediate iteration over the results.
+    """
+
+    def __init__(self, context):
+        super().__init__(context)
+
+        self.out_queue = multiprocessing.Queue()
+
+    def loop(self):
+        pass
+
+    def finalize(self):
+        pass
+
+    def process(self, entries):
+        self.out_queue.put(entries)
+
+    def __iter__(self):
+        while True:
+            try:
+                for entry in self.out_queue.get(timeout=TIMEOUT):
+                    yield self.args.output.to_dict(entry)
+            except queue.Empty:
+                if self.processing_done():
+                    break
+                else:
+                    continue
+
+
+class CollectiveGenerator(ImmediateGenerator):
+    """Processing class that allows iteration over the results after they have
+       been postprocessed.
+    """
+
+    def __init__(self, context):
+        super().__init__(context)
+
+        self.entries = []
+
+    def process(self, entries):
+        self.out_queue.put(entries)
+
+    def loop(self):
+        while True:
+            try:
+                entries = self.out_queue.get(timeout=TIMEOUT)
+            except queue.Empty:
+                if self.processing_done():
+                    break
+                else:
+                    continue
+
+            self.entries += entries
+
+    def finalize(self):
+        super().finalize()
+
+        self.entries.sort(key=self.args.sort.render, reverse=self.args.reverse)
+
+    def __iter__(self):
+        yield from (self.args.output.to_dict(entry) for entry in self.entries)

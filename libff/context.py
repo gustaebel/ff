@@ -22,7 +22,6 @@ import sys
 import queue
 import textwrap
 import threading
-import traceback
 import multiprocessing
 import multiprocessing.sharedctypes
 
@@ -98,17 +97,11 @@ class Context:
         """Wait for all processes to reach the Barrier. If all processes do
            that means that there is no more input and processing is finished.
         """
-        # Use a Barrier object to determine if all processes are currently
-        # waiting for input, which means the operation is finished.
         try:
             self.barrier.wait(timeout)
         except threading.BrokenBarrierError:
-            if self.is_stopping():
-                # Stop immediately without waiting for all processes to finish.
-                return True
-            else:
-                self.barrier.reset()
-                return False
+            self.barrier.reset()
+            return self.is_stopping()
         else:
             return True
 
@@ -178,11 +171,10 @@ class Context:
             """
             self.debug("mp", f"#{index:02d} {message}")
 
-    def exception(self, message, exitcode=None):
+    def exception(self, message, traceback, exitcode):
         """Print an error message and a traceback to standard error output and
            exit.
         """
         print(self.wrap("INTERNAL", message + ":"), file=sys.stderr)
-        traceback.print_exc(file=sys.stderr)
-        if exitcode is not None:
-            raise SystemExit(exitcode)
+        sys.stderr.write(traceback)
+        raise SystemExit(exitcode)

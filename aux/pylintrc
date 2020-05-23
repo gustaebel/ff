@@ -16,4 +16,4 @@ max-args=7
 disable=bad-whitespace,bad-continuation,no-self-use,
     wildcard-import,unused-wildcard-import,
     no-else-return,no-else-raise,no-else-break,no-else-continue,
-    missing-module-docstring
+    missing-module-docstring,too-few-public-methods

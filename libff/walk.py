@@ -66,12 +66,6 @@ class FilesystemWalker(BaseClass):
             process.start()
             self.processes.append(process)
 
-    def wait_processes(self):
-        """Wait for all processes to terminate.
-        """
-        for process in self.processes:
-            process.join()
-
     def loop(self, index):
         """Get arguments from the queue and process them until searching has
            finished.
@@ -164,7 +158,7 @@ class FilesystemWalker(BaseClass):
         """
         # Add the ignore files we just found to the ones we got from the
         # parent.
-        if self.args.ignored and ignore_files:
+        if self.args.ignore and ignore_files:
             ignores = parent.ignores.copy()
             for ignore_file in ignore_files:
                 try:

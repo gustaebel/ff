@@ -23,7 +23,7 @@ import binascii
 import textwrap
 import importlib.util
 
-from . import NOTSET, EX_USAGE, EX_BAD_PLUGIN, EX_BAD_ATTRIBUTE, NoData, \
+from . import NOTSET, UsageError, BadPluginError, BadAttributeError, NoData, \
     Attribute, BaseClass
 from .type import Type
 from .table import Table
@@ -115,8 +115,8 @@ class Registry(BaseClass):
 
         for name, type_cls, _ in plugin_cls.attributes:
             if not issubclass(type_cls, tuple(self.registered_types)):
-                self.context.exception(f"plugin {plugin_cls.name!r} attribute {name!r} uses "\
-                        f"invalid type {type_cls!r}", EX_BAD_PLUGIN)
+                raise BadPluginError.from_exception(f"plugin {plugin_cls.name!r} attribute "\
+                        f"{name!r} uses invalid type {type_cls!r}")
 
     def load_plugins(self):
         """Load all available plugins from the designated plugin directories.
@@ -133,8 +133,8 @@ class Registry(BaseClass):
                         try:
                             self.load_plugin(direntry.name[:-3], source, direntry.path)
                         except Exception:
-                            self.context.exception(f"Plugin file {direntry.path!r} failed to load",
-                                    EX_BAD_PLUGIN)
+                            raise BadPluginError.from_exception(
+                                    f"Plugin file {direntry.path!r} failed to load")
 
             except OSError:
                 continue
@@ -156,9 +156,9 @@ class Registry(BaseClass):
                 self.cache.register_plugin(plugin_cls)
             self.plugins[name] = plugin_cls()
         except ImportError as exc:
-            self.context.error(f"Unable to setup plugin {name!r}: {exc}", EX_BAD_PLUGIN)
+            raise BadPluginError(f"Unable to setup plugin {name!r}: {exc}")
         except Exception:
-            self.context.exception(f"Unable to setup plugin {name!r}", EX_BAD_PLUGIN)
+            raise BadPluginError.from_exception(f"Unable to setup plugin {name!r}")
 
         if plugin_cls.use_cache:
             # See FilesystemWalker for an explanation.
@@ -184,14 +184,13 @@ class Registry(BaseClass):
 
             elif not plugin_names:
                 # We could not find the attribute in any of the plugins.
-                self.context.error(f"No plugin found for attribute {name!r}", EX_BAD_ATTRIBUTE)
+                raise BadAttributeError(f"No plugin found for attribute {name!r}")
 
             else:
                 # There is more than one plugin providing this attribute, we
                 # cannot continue.
-                self.context.error(f"Attribute {name!r} is ambiguous (choose between " \
-                        f"{', '.join(f'{plugin_name}.{name}' for plugin_name in plugin_names)})",
-                        EX_BAD_ATTRIBUTE)
+                raise BadAttributeError(f"Attribute {name!r} is ambiguous (choose between " \
+                        f"{', '.join(f'{plugin_name}.{name}' for plugin_name in plugin_names)})")
 
         return attribute
 
@@ -202,7 +201,7 @@ class Registry(BaseClass):
         attribute = self.parse_attribute(attribute)
 
         if attribute.plugin not in self.registered_plugins:
-            self.context.error(f"No such plugin {attribute.plugin!r}", EX_BAD_ATTRIBUTE)
+            raise BadAttributeError(f"No such plugin {attribute.plugin!r}")
 
         if attribute.plugin not in self.plugins:
             self.init_plugin(attribute.plugin)
@@ -219,11 +218,11 @@ class Registry(BaseClass):
         except NoData:
             return {}
         except NotImplementedError:
-            self.context.exception(f"Plugin {plugin.name!r} is not completely implemented",
-                    EX_BAD_PLUGIN)
+            raise BadPluginError.from_exception(
+                    f"Plugin {plugin.name!r} is not completely implemented")
         except Exception:
-            self.context.exception(f"Plugin {plugin.name!r} had an unhandled exception",
-                    EX_BAD_PLUGIN)
+            raise BadPluginError.from_exception(
+                    f"Plugin {plugin.name!r} had an unhandled exception")
 
     def get_data_from_plugin(self, entry, plugin):
         """Let the plugin process the entry.
@@ -251,9 +250,9 @@ class Registry(BaseClass):
             for key, value in data.items():
                 type_cls = self.get_attribute_type(Attribute(plugin.name, key))
                 if not type_cls.check_type(value):
-                    self.context.error(
+                    raise BadPluginError(
                         f"plugin {plugin.name!r} produced value {key}={value!r} that is "\
-                        f"not of type {type_cls.name!r}", EX_BAD_PLUGIN)
+                        f"not of type {type_cls.name!r}")
 
         return data
 
@@ -285,8 +284,8 @@ class Registry(BaseClass):
         try:
             return self.attributes[attribute]
         except KeyError:
-            self.context.error(f"{attribute.plugin!r} plugin has no attribute {attribute.name!r}",
-                    EX_BAD_ATTRIBUTE)
+            raise BadAttributeError(
+                    f"{attribute.plugin!r} plugin has no attribute {attribute.name!r}")
 
     def get_file_attributes(self):
         """Get all attributes associated with the 'file' plugin.
@@ -306,7 +305,7 @@ class Registry(BaseClass):
         try:
             plugin = self.registered_plugins[name]
         except KeyError:
-            self.context.error(f"Plugin {name!r} not found", EX_USAGE)
+            raise UsageError(f"Plugin {name!r} not found")
 
         print(f"Plugin: {name}")
         print()

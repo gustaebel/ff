@@ -18,8 +18,6 @@
 #
 # -----------------------------------------------------------------------
 
-# pylint:disable=too-few-public-methods
-
 import os
 import sys
 import json
@@ -73,38 +71,17 @@ class JsonlConsole(BaseConsole):
         else:
             self.print_record = self._print_record
 
-    def create_record(self, entry):
-        """Create a record from the Entry object that can be used as as JSON
-           output.
-        """
-        record = {}
-        for field in self.fields:
-            try:
-                value, type_cls = self.registry.get_attribute_and_type(entry, field.attribute)
-            except KeyError:
-                value = None
-            else:
-                if field.modifier == "h":
-                    value = type_cls.output(self.args, field.modifier, value)
-
-            key = str(field.attribute)
-            if field.attribute.plugin == "file":
-                key = key[5:]
-
-            record[key] = value
-
-        return record
-
     def process(self, entry):
         """Print a JSON record for the Entry object.
         """
-        self.print_record(self.create_record(entry))
+        self.print_record(self.fields.to_dict(entry))
 
     def _print_record(self, record):
         """Dump a newline delimited JSON object to standard output.
         """
         json.dump(record, sys.stdout)
         print()
+        sys.stdout.flush()
 
 
 class JsonConsole(JsonlConsole):
@@ -137,6 +114,7 @@ class Console(BaseConsole):
 
     def __init__(self, context):
         super().__init__(context)
+
         self.field_separator = self.args.separator.replace("\\t", "\t").replace("\\n", "\n")
 
         if __debug__ and self.args.profile:
@@ -268,6 +246,11 @@ class Console(BaseConsole):
         except UnicodeEncodeError:
             print(line.encode(self.encoding, "backslashreplace").decode(self.encoding),
                     end=self.args.newline)
+
+        # If we don't flush stdout, printed results may be lost. That is
+        # because when the main process exits, all multiprocessing processes
+        # vanish instantly without pending output buffers being written.
+        sys.stdout.flush()
 
 
 class ColorConsole(Console):

@@ -21,6 +21,7 @@
 import queue
 import shutil
 import threading
+import traceback
 import collections
 import multiprocessing
 
@@ -43,6 +44,7 @@ class NoData(Exception):
     """Exception for when a plugin cannot process an entry.
     """
 
+
 EX_OK = 0
 EX_USAGE = 1
 EX_SUBPROCESS = 2
@@ -50,6 +52,56 @@ EX_PROCESS = 3
 EX_BAD_PLUGIN = 10
 EX_BAD_ATTRIBUTE = 11
 EX_EXPRESSION = 12
+
+class BaseError(Exception):
+    """Base exception for all other exceptions.
+    """
+    # pylint:disable=redefined-outer-name
+
+    exitcode = None
+
+    def __init__(self, message, traceback=None):
+        super().__init__(message)
+        self.message = message
+        self.traceback = traceback
+
+    @classmethod
+    def from_exception(cls, message):
+        """Create a BaseError exception with the traceback of the current
+           exception.
+        """
+        return cls(message, traceback.format_exc())
+
+class UsageError(BaseError):
+    """There was an error in the arguments provided by the user.
+    """
+    exitcode = EX_USAGE
+
+class SubprocessError(BaseError):
+    """One or more --exec or --exec-batch subprocesses had errors.
+    """
+    exitcode = EX_SUBPROCESS
+
+class ProcessError(BaseError):
+    """One or more ff processes had unrecoverable errors.
+    """
+    exitcode = EX_PROCESS
+
+class BadPluginError(BaseError):
+    """A plugin had an unrecoverable error.
+    """
+    exitcode = EX_BAD_PLUGIN
+
+class BadAttributeError(BaseError):
+    """An attribute was specified that does not exist.
+    """
+    exitcode = EX_BAD_ATTRIBUTE
+
+class ExpressionError(BaseError):
+    """There was an error in a test expression.
+    """
+    exitcode = EX_EXPRESSION
+
 
 OUTPUT_WIDTH = shutil.get_terminal_size((100, 100))[0] - 2
 
@@ -66,7 +118,6 @@ class Attribute(collections.namedtuple("Attribute", "plugin name")):
         return f"{self.plugin}.{self.name}"
 
 
-# pylint:disable=too-few-public-methods
 class BaseClass:
     """This class can be used as the base for each class that depends on
        Context and access to args, registry, etc. It offers shortcuts to the

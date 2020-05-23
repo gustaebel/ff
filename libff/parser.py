@@ -21,7 +21,7 @@
 import re
 import collections
 
-from . import EX_USAGE, EX_EXPRESSION, Attribute, BaseClass
+from . import UsageError, ExpressionError, Attribute, BaseClass
 from .type import Type
 from .entry import Entry
 from .ignore import Glob
@@ -161,8 +161,8 @@ class FlatParser(BaseClass):
         try:
             self.get_common_super_type(type_cls, ref_type_cls)
         except ValueError:
-            self.context.error(f"{attribute} and {ref_attribute} have different types "\
-                    "and cannot be compared", EX_EXPRESSION)
+            raise ExpressionError(f"{attribute} and {ref_attribute} have different types "\
+                    "and cannot be compared")
 
         entry = Entry.as_reference(self.args, value)
         return self.registry.get_attribute(entry, ref_attribute)
@@ -192,8 +192,8 @@ class FlatParser(BaseClass):
         type_cls = self.registry.get_attribute_type(attribute)
 
         if operator not in type_cls.operators:
-            self.context.error(f"Attribute {attribute} of type {type_cls.name!r} does not "\
-                    f"support operator {operator!r}", EX_EXPRESSION)
+            raise ExpressionError(f"Attribute {attribute} of type {type_cls.name!r} does not "\
+                    f"support operator {operator!r}")
 
         ignore_case = None
 
@@ -206,22 +206,22 @@ class FlatParser(BaseClass):
                 value = type_cls.input(value)
 
         except Exception as exc:
-            self.context.error(exc, EX_USAGE)
+            raise UsageError(str(exc))
 
         if type_cls.choices is not None and value not in type_cls.choices:
-            self.context.error(f"You specified an invalid value {value!r} "\
+            raise UsageError(f"You specified an invalid value {value!r} "\
                     f"for attribute '{attribute}'! Allowed values are: " + \
-                    ",".join(sorted(type_cls.choices)) + ".", EX_USAGE)
+                    ",".join(sorted(type_cls.choices)) + ".")
 
         # Do some preparation for Type classes that claim to be string types,
         # i.e. handle case sensitivity and compile regexes.
         if type_cls.string_type:
-            if self.args.case_mode == "smart":
+            if self.args.case == "smart":
                 # If the value is in lower case compare ignoring the case, if
                 # it contains uppercase letters compare using sensitive case.
                 ignore_case = value == value.lower()
             else:
-                ignore_case = self.args.case_mode == "ignore"
+                ignore_case = self.args.case == "ignore"
 
             if ignore_case:
                 value = value.lower()
@@ -231,7 +231,7 @@ class FlatParser(BaseClass):
                 try:
                     value = re.compile(value)
                 except re.error as exc:
-                    self.context.error(f"Invalid regex pattern {value!r}: {exc}", EX_EXPRESSION)
+                    raise ExpressionError(f"Invalid regex pattern {value!r}: {exc}")
 
             elif operator == "%":
                 value = Glob(value)
