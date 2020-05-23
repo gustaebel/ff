@@ -27,7 +27,7 @@ if git status --short --untracked=no | grep --quiet '^ff$\|\.py$'; then
     make check
 
     # Sort imports.
-    ff name=ff or ext=py -X isort -ls -m2
+    ff -HI name=ff or ext=py -X isort -ls -m2
 fi
 
 # Update the manpage.
