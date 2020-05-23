@@ -23,11 +23,11 @@ import binascii
 import textwrap
 import importlib.util
 
-from . import NOTSET, NoData, Attribute, BaseClass, UsageError, \
-    BadPluginError, BadAttributeError
+from . import NOTSET, NoData, Attribute, BaseClass
 from .type import Type
 from .table import Table
 from .plugin import Plugin
+from .exceptions import UsageError, BadPluginError, BadAttributeError
 
 
 class Registry(BaseClass):

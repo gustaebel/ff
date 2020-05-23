@@ -25,8 +25,7 @@ import pstats
 import argparse
 import cProfile
 
-from . import EX_OK, EX_PROCESS, EX_SUBPROCESS, BaseClass, BaseError, \
-    UsageError, ProcessError, SubprocessError
+from . import BaseClass
 from .walk import Directory, FilesystemWalker
 from .cache import Cache, NullCache
 from .entry import StartDirectory
@@ -39,6 +38,8 @@ from .parser import ParserError
 from .context import Context
 from .registry import Registry
 from .arguments import Defaults, ArgumentsPostProcessor
+from .exceptions import EX_OK, EX_PROCESS, EX_SUBPROCESS, BaseError, \
+    UsageError, ProcessError, SubprocessError
 from .processing import ImmediateGenerator, CollectiveGenerator, \
     ImmediateExecProcessing, CollectiveExecProcessing, \
     ImmediateConsoleProcessing, CollectiveConsoleProcessing

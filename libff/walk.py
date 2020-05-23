@@ -24,9 +24,10 @@ import signal
 import subprocess
 import multiprocessing
 
-from . import TIMEOUT, EX_SUBPROCESS, Entries, BaseClass, Directory
+from . import TIMEOUT, Entries, BaseClass, Directory
 from .entry import Entry
 from .ignore import GitIgnore
+from .exceptions import EX_SUBPROCESS
 
 
 class FilesystemWalker(BaseClass):

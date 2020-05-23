@@ -21,10 +21,11 @@
 import re
 import collections
 
-from . import Attribute, BaseClass, UsageError, ExpressionError
+from . import Attribute, BaseClass
 from .type import Type
 from .entry import Entry
 from .ignore import Glob
+from .exceptions import UsageError, ExpressionError
 
 
 class ParserError(Exception):

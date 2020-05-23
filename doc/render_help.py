@@ -22,11 +22,11 @@ import io
 import re
 import sys
 
-import libff
-from libff import BaseError
+from libff import exceptions
 from libff.builtin import file, media
 from libff.convert import time_formats
 from libff.arguments import HelpFormatter, create_parser
+from libff.exceptions import BaseError
 
 
 class ManPageHelpFormatter(HelpFormatter):
@@ -95,7 +95,7 @@ def include_plugin_help(name):
     return lines
 
 def include_exit_codes():
-    for name, obj in vars(libff).items():
+    for name, obj in vars(exceptions).items():
         if type(obj) is type and issubclass(obj, BaseError) and obj is not BaseError:
             yield f"  {obj.exitcode}  {obj.__doc__}"
 

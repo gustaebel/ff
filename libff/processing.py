@@ -28,10 +28,11 @@ import subprocess
 import collections
 import multiprocessing
 
-from . import TIMEOUT, EX_PROCESS, EX_SUBPROCESS, BaseClass, SubprocessError
+from . import TIMEOUT, BaseClass
 from .type import Count
 from .console import Console, JsonConsole, NullConsole, ColorConsole, \
     JsonlConsole
+from .exceptions import EX_PROCESS, EX_SUBPROCESS, SubprocessError
 
 
 class Parallel(BaseClass):
