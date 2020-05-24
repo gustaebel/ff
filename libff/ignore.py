@@ -136,25 +136,40 @@ class GitIgnore:
     """Parse a .gitignore file according to the rules in the gitignore(5)
        manpage.
     """
+    # XXX See gitignore(5). This class does not fully support all features of
+    # gitignore described in the manpage yet. It does not read
+    # $GIT_DIR/info/exclude or read core.excludesFile from the git(1)
+    # configuration.
 
     IGNORE_NAMES = set([".gitignore", ".ignore", ".fdignore", ".ffignore"])
 
     @classmethod
-    def from_directory(cls, context, path):
-        """Find ignore files in the parent directories of 'path', that
-           must be applied.
+    def find_ignore_files(cls, dirname):
+        """Find ignore files in the current and in the parent directories of
+           'dirname', that must be applied.
         """
+        assert os.path.isabs(dirname)
         ignores = []
-        dirname = os.path.dirname(os.path.abspath(path))
         parent = os.sep
         for part in dirname.split(os.sep):
             parent = os.path.join(parent, part)
             for name in cls.IGNORE_NAMES:
                 if os.path.exists(os.path.join(parent, name)):
-                    try:
-                        ignores.append(cls(parent, name))
-                    except OSError as exc:
-                        context.logger.warning(exc)
+                    ignores.append((parent, name))
+        return ignores
+
+    @classmethod
+    def from_parent_directories(cls, context, path):
+        """Return a list of GitIgnore objects from the parent directories of
+           'path'.
+        """
+        path = os.path.abspath(path)
+        ignores = []
+        for parent, name in cls.find_ignore_files(os.path.dirname(path)):
+            try:
+                ignores.append(cls(parent, name))
+            except OSError as exc:
+                context.logger.warning(exc)
         return ignores
 
     def __init__(self, dirname, name):
@@ -205,4 +220,24 @@ class GitIgnore:
             test_path = relpath if key.anchored else name
             if pattern.match(test_path):
                 exclude = key.include
+        return exclude
+
+    @staticmethod
+    def match_all(ignores, path, name, is_dir):
+        """Match the path or basename against the sequence of patterns from all
+           the ignore files and return True if the entry is to be excluded.
+        """
+        assert os.path.isabs(path)
+
+        exclude = False
+        for ignore in ignores:
+            relpath = path[len(ignore.dirname) + 1:]
+
+            for key, pattern in ignore.patterns:
+                if key.directory and not is_dir:
+                    continue
+                test_path = relpath if key.anchored else name
+                if pattern.match(test_path):
+                    exclude = key.include
+
         return exclude

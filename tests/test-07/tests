@@ -5,4 +5,5 @@ baz
 dir
 dir/a
 dir/c
+dir/c/c.txt
 dir/d.txt

@@ -1,0 +1,3 @@
+# A pattern can re-include a file that was excluded from a higher-level
+# pattern.
+!c/c.txt

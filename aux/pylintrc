@@ -3,7 +3,7 @@ output-format=colorized
 reports=no
 
 [MISCELLANEOUS]
-notes=FIXME,XXX,TODO,TBD
+notes=FIXME,TODO,TBD
 
 [BASIC]
 # Good variable names which should always be accepted, separated by a comma
