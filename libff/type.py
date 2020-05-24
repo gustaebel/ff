@@ -215,7 +215,7 @@ class ListOfStrings(Type):
     def check_type(cls, value):
         if not isinstance(value, (list, set)):
             return False
-        return all(isinstance(v, type(cls.sort_none)) for v in value)
+        return all(isinstance(v, type(String.sort_none)) for v in value)
 
 
 class Number(Type):
