@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# Fail if there is nothing to commit. (This does not work in case there are
-# only new files added.)
-if git diff --quiet; then
+# Fail if there is nothing to commit.
+if git diff --quiet && git diff --quiet --staged; then
     echo "nothing to commit." >&2
     exit 0
 fi
