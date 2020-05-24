@@ -113,8 +113,6 @@ def create_parser(formatter_class=HelpFormatter):
                 help="Do a profiling run on the given arguments and suppress the output.")
         group.add_argument("--debug", type=type_list, default=None,
                 help="Show only debug messages of certain categories, default is to show all.")
-        group.add_argument("--ignore-parent-ignorefiles", action="store_true", default=False,
-                help="Do not read ignore files from parent directories.")
     group.add_argument("--cache", default=Defaults.cache,
             help="Location of the metadata cache (default: %(default)s).")
     group.add_argument("--no-cache", action="store_const", dest="cache", const=None,
@@ -144,6 +142,8 @@ def create_parser(formatter_class=HelpFormatter):
             help="Do not show hidden files and directories.")
     group.add_argument("-I", "--ignore", action="store_true", default=False,
             help="Do not show files that are excluded by patterns from .(git|fd|ff)ignore files.")
+    group.add_argument("--no-parent-ignore", action="store_true", default=False,
+            help="Do not read patterns from ignore files from parent directories.")
     group.add_argument("-e", "--exclude", action="append", default=[], metavar="<expression>",
             help="Exclude entries that match the given expression.")
     group.add_argument("-g", "--glob", action="store_const", const="%", dest="default_operator",

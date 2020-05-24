@@ -152,19 +152,17 @@ class GitIgnore:
             for name in cls.IGNORE_NAMES:
                 if os.path.exists(os.path.join(parent, name)):
                     try:
-                        ignores.append(cls(context, parent, name))
+                        ignores.append(cls(parent, name))
                     except OSError as exc:
                         context.logger.warning(exc)
         return ignores
 
-    def __init__(self, context, dirname, name):
+    def __init__(self, dirname, name):
         assert os.path.isabs(dirname)
         self.dirname = dirname
+        self.path = os.path.join(dirname, name)
 
-        if __debug__:
-            context.logger.debug("walk", f"Found ignore file {name!r} in {dirname!r}")
-
-        with open(os.path.join(dirname, name)) as lines:
+        with open(self.path) as lines:
             self.lines = list(lines)
 
         # Collect the glob patterns from the gitignore file and translate them

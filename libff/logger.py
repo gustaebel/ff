@@ -32,7 +32,7 @@ class Logger:
     warnings_emitted = set()
 
     def __init__(self):
-        self.debug_categories = []
+        self.debug_categories = None
 
     def set_debug(self, debug_categories):
         """Set the list of debug categories to display.

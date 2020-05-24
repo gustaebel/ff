@@ -66,6 +66,8 @@ class _Base(BaseClass):
         self.context.setup()
 
         self.context.logger = Logger()
+        if __debug__:
+            self.context.logger.set_debug(args.debug)
 
     def setup_components(self):
         """Set up all remaining components like the registry, the cache and so
@@ -140,30 +142,14 @@ class _Base(BaseClass):
         self.context.walker = walker
 
         if __debug__:
-            self.logger.debug("info", f"Using {self.context.processing.__class__.__name__}.")
-
-            # Show some debug output.
             self.logger.debug("info", "Directories to search:")
-            for directory in self.context.args.directories:
-                self.logger.debug("info",
-                        f"    {directory if directory != '.' else os.path.abspath(directory)}")
-
-            if not self.context.excluder.is_empty():
-                self.logger.debug("info", "Exclude Sequence:")
-                for line in self.context.excluder.parser.format():
-                    self.logger.debug("info", "  " + line)
-
-            if not self.context.matcher.is_empty():
-                self.logger.debug("info", "Test Sequence:")
-                for line in self.context.matcher.parser.format():
-                    self.logger.debug("info", "  " + line)
 
         # Preload the in-queue with the path arguments.
         for path in self.context.args.directories:
             if self.context.args.absolute_path:
                 path = os.path.abspath(path)
 
-            if __debug__ and self.context.args.ignore_parent_ignorefiles:
+            if self.context.args.no_parent_ignore:
                 # Don't use ignore files from parent directories.
                 ignores = []
             else:
@@ -173,7 +159,29 @@ class _Base(BaseClass):
                 else:
                     ignores = []
 
+            if __debug__:
+                self.logger.debug("info",
+                        f"    {path if path != '.' else os.path.abspath(path)}")
+                for ignore in ignores:
+                    self.logger.debug("info",
+                            f"        found ignorefile in parent: {ignore.path}")
+
             walker.put([Directory(StartDirectory(self.context.args, path), "", ignores)])
+
+    def show_tests(self):
+        """Show debug information about the tests to perform.
+        """
+        self.logger.debug("info", f"Using {self.context.processing.__class__.__name__}.")
+
+        if not self.context.excluder.is_empty():
+            self.logger.debug("info", "Exclude Sequence:")
+            for line in self.context.excluder.parser.format():
+                self.logger.debug("info", "  " + line)
+
+        if not self.context.matcher.is_empty():
+            self.logger.debug("info", "Test Sequence:")
+            for line in self.context.matcher.parser.format():
+                self.logger.debug("info", "  " + line)
 
 
 class SearchNamespace(argparse.Namespace):
@@ -197,7 +205,7 @@ class SearchNamespace(argparse.Namespace):
     action = None
     help = None
 
-    ignore_parent_ignorefiles = False
+    no_parent_ignore = False
 
 
 class Search(_Base):
@@ -237,6 +245,8 @@ class Search(_Base):
         self.setup_context(args, [])
         self.setup_components()
         self.setup_processing()
+        if __debug__:
+            self.show_tests()
         self.setup_walker()
 
     def setup_processing(self):
@@ -281,6 +291,8 @@ class Main(_Base):
         try:
             self.setup_components()
             self.setup_processing()
+            if __debug__:
+                self.show_tests()
             self.setup_walker()
 
         except BaseError as exc:

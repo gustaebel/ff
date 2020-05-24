@@ -144,6 +144,9 @@ class FilesystemWalker(BaseClass):
                     entries.append(entry)
 
                     if entry.name in GitIgnore.IGNORE_NAMES:
+                        if __debug__:
+                            self.logger.debug("walk", f"Found ignore file {entry.name!r} "\
+                                    f"in {entry.dirname!r}")
                         ignore_files.append(entry.name)
 
         except FileNotFoundError:
@@ -163,9 +166,8 @@ class FilesystemWalker(BaseClass):
             ignores = parent.ignores.copy()
             for ignore_file in ignore_files:
                 try:
-                    ignores.append(GitIgnore(self.context,
-                        os.path.abspath(os.path.join(parent.start.root, parent.relpath)),
-                        ignore_file))
+                    ignores.append(GitIgnore(os.path.abspath(os.path.join(parent.start.root,
+                        parent.relpath)), ignore_file))
                 except OSError as exc:
                     self.logger.warning(exc)
             return ignores
