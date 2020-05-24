@@ -40,7 +40,7 @@ class Git(Plugin):
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
 
     def can_handle(self, entry):
-        return entry.is_dir() or entry.is_file() or entry.is_symlink()
+        return entry.is_file() or entry.is_symlink()
 
     def process(self, entry):
         try:
