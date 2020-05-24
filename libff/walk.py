@@ -45,6 +45,9 @@ class FilesystemWalker(BaseClass):
     def close(self):
         """Close the FilesystemWalker and clean up.
         """
+        for process in self.processes:
+            process.join()
+
         self.queue.close()
 
     def put(self, chunk):
