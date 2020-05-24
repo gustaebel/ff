@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------
 #
-# ff - a tool to search the filesystem
+# ff - a tool for finding files in the filesystem
 # Copyright (C) 2020 Lars Gustäbel <lars@gustaebel.de>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -18,4 +18,4 @@
 #
 # -----------------------------------------------------------------------
 
-__version__ = 531
+__version__ = 532

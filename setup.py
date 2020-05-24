@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -----------------------------------------------------------------------
 #
-# ff - a tool to search the filesystem
+# ff - a tool for finding files in the filesystem
 # Copyright (C) 2020 Lars Gustäbel <lars@gustaebel.de>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ kwargs = {
     "author":       "Lars Gustäbel",
     "author_email": "lars@gustaebel.de",
     "url":          "https://github.com/gustaebel/ff/",
-    "description":  "A tool for searching the filesystem",
+    "description":  "A tool for finding files in the filesystem",
     "long_description": long_description,
     "long_description_content_type": "text/markdown",
     "license":      "GPLv3+",

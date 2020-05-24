@@ -2,28 +2,28 @@
 
 ### About
 
-`ff` is a tool for searching the filesystem. It was originally inspired by
-[fd](https://github.com/sharkdp/fd).
+`ff` is a tool for finding files in the filesystem.
 
 **NOTE: ff is in the early stages of development, expect things to break and
 syntax to change.**
 
 ### Summary
 
-`ff` is a tool for searching the filesystem. Its scope is similar to `find(1)`
-and `fd(1)` but it tries to be more accessible and easier to use than `find`
-and and more versatile and powerful than `fd`. It is inspired by and borrows
-many ways of doing things from `fd`. It is written in
-[Python >= 3.6](https://www.python.org/).
+`ff` lets you find files in the filesystem by querying file metadata. Its scope
+is similar to `find(1)` and `fd(1)` but it tries to be more accessible and
+easier to use than `find` and and more versatile and powerful than `fd`. It is
+written in [Python >= 3.6](https://www.python.org/).
 
 ### Features
 
-* Search by file attributes and file metadata(!).
+* Search by file attributes.
+* Search in a wide variety of file metadata.
 * Simple yet powerful expression syntax.
 * Flexible output options.
 * Flexible sort options.
 * Extendable by user plugins.
 * Parallel search and processing.
+* Usable in scripts with a Python API.
 
 ### Examples
 
@@ -59,6 +59,17 @@ $ pip install find-ff
 
 This installs the python sources, the `ff` script, the man page and a set of
 plugins.
+
+### Python API
+
+You can use `ff`'s query capabilities in your own scripts:
+
+```python
+from libff.search import Search
+
+for entry in Search("type=f git.tracked=yes", directories=["/home/user/project"], sort=["path"]):
+    print(entry["relpath"])
+```
 
 ### Developing plugins and debug mode
 
