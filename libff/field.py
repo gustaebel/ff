@@ -32,7 +32,8 @@ class Fields(list):
     """A class that stores a list of attributes as fields.
     """
 
-    regex = re.compile(r"^((?:[a-zA-Z][a-zA-Z0-9]+\.)?[a-zA-Z][a-zA-Z0-9]+?)(?::(-?\d+)?(h|o)?)?$")
+    regex = re.compile(r"^((?:[a-zA-Z][a-zA-Z0-9_]+\.)?[a-zA-Z][a-zA-Z0-9_]+?)"\
+            r"(?::(-?\d+)?(h|o)?)?$")
 
     def __init__(self, context, argument):
         super().__init__()
