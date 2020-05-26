@@ -47,7 +47,7 @@ class Pacman(Plugin):
     def can_handle(self, entry):
         return True
 
-    def process(self, entry):
+    def process(self, entry, cached):
         if entry.path in self.filelist:
             yield "installed", True
             for pkgname, filelist in self.pkglist.items():

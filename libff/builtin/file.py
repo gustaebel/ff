@@ -80,5 +80,5 @@ class File(Plugin):
     def can_handle(self, entry):
         return True
 
-    def process(self, entry):
+    def process(self, entry, cached):
         return {}

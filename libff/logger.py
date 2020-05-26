@@ -20,7 +20,6 @@
 
 import sys
 import textwrap
-import traceback
 
 from . import OUTPUT_WIDTH
 
@@ -83,11 +82,11 @@ class Logger:
             """
             self.debug("mp", f"#{index:02d} {message}")
 
-    def exception(self, message, exitcode=None):
+    def exception(self, message, traceback, exitcode=None):
         """Print an error message and a traceback to standard error output and
            exit.
         """
         print(self.wrap("INTERNAL", message + ":"), file=sys.stderr)
-        traceback.print_exc(file=sys.stderr)
+        sys.stderr.write(traceback)
         if exitcode is not None:
             raise SystemExit(exitcode)

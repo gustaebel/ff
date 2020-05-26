@@ -34,7 +34,7 @@ class Grep(Plugin):
     def can_handle(self, entry):
         return entry.text
 
-    def process(self, entry):
+    def process(self, entry, cached):
         with open(entry.path, errors="surrogateescape") as lines:
             lines = list(lines)
             yield "linecount", len(lines)

@@ -38,14 +38,14 @@ class NullCache(BaseClass):
         """Register a Plugin class in the cache.
         """
 
-    def get(self, plugin, path, mtime):
+    def get(self, plugin, path, tag):
         """Get the object for a specific Plugin class, path with a specific
            modification time from the cache. Return NOTSET if nothing is found.
         """
         # pylint:disable=unused-argument
         return NOTSET
 
-    def set(self, plugin, path, mtime, obj):
+    def set(self, plugin, path, tag, obj):
         """Add an object to the cache for a specific Plugin class, path and
            modification time.
         """
@@ -102,7 +102,8 @@ class Cache(NullCache):
         # Create a table if there is none for this plugin.
         tables = set(row[0] for row in curs)
         if plugin_cls.sql_table_name not in tables:
-            self.conn.execute(self.get_sql_create_table(plugin_cls))
+            for statement in self.get_sql_create_table(plugin_cls):
+                self.conn.execute(statement)
         else:
             tables.remove(plugin_cls.sql_table_name)
 
@@ -115,28 +116,32 @@ class Cache(NullCache):
         """Return the statements needed to create a table for a specific Plugin
            class.
         """
-        return f"create table {plugin_cls.sql_table_name} "\
-                "(path text not null primary key, mtime integer not null, data blob not null)"
+        yield f"create table {plugin_cls.sql_table_name} "\
+                "(path text not null primary key, tag blob not null, data blob not null);"
+        # Do we actually need this index?
+        yield f"create index {plugin_cls.sql_table_name}(path, tag);"
 
-    def get(self, plugin, path, mtime):
+    def get(self, plugin, path, tag):
         """Return a row of cached values.
         """
+        tag = pickle.dumps(tag, pickle.HIGHEST_PROTOCOL)
+
         for row in self.conn.execute(
-                f"select data from {plugin.sql_table_name} "\
-                "where path = ? and mtime = ?",
-                (path, mtime)):
+                f"select data from {plugin.sql_table_name} where path = ? and tag = ?",
+                (path, tag)):
             self.hits += 1
             return pickle.loads(row[0])
 
         self.misses += 1
-        return super().get(plugin, path, mtime)
+        return super().get(plugin, path, tag)
 
-    def set(self, plugin, path, mtime, obj):
+    def set(self, plugin, path, tag, obj):
         """Write data to the cache.
         """
+        tag = pickle.dumps(tag, pickle.HIGHEST_PROTOCOL)
         data = pickle.dumps(obj, pickle.HIGHEST_PROTOCOL)
 
-        self.cached_rows.setdefault(plugin, []).append((path, mtime, data))
+        self.cached_rows.setdefault(plugin, []).append((path, tag, data))
         self.num_cached_rows += 1
 
         if time.time() >= self.last_commit + self.commit_every_seconds or \

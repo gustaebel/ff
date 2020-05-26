@@ -42,8 +42,11 @@ class Git(Plugin):
     def can_handle(self, entry):
         return entry.is_file() or entry.is_symlink()
 
-    def process(self, entry):
+    def cache(self, entry):
         try:
-            yield "tracked", self.check_tracked(entry)
+            return self.check_tracked(entry)
         except OSError:
             raise NoData
+
+    def process(self, entry, cached):
+        yield "tracked", cached

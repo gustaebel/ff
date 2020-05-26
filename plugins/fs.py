@@ -99,7 +99,7 @@ class Fs(Plugin):
     def can_handle(self, entry):
         return True
 
-    def process(self, entry):
+    def process(self, entry, cached):
         if entry.is_dir():
             path = os.path.abspath(entry.path)
         else:

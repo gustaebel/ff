@@ -40,7 +40,7 @@ class Ignore(Plugin):
     def can_handle(self, entry):
         return True
 
-    def process(self, entry):
+    def process(self, entry, cached):
         if entry.dirname not in self.dirname_cache:
             self.dirname_cache[entry.dirname] = GitIgnore.find_ignore_files(entry.dirname)
 

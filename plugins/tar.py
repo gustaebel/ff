@@ -42,9 +42,12 @@ class Tar(Plugin):
     def can_handle(self, entry):
         return entry.name.endswith(self.extensions)
 
-    def process(self, entry):
+    def cache(self, entry):
         try:
             with tarfile.open(entry.path) as tar:
-                yield "members", set(name for name in tar.getnames())
+                return set(name for name in tar.getnames())
         except (OSError, EOFError):
             raise NoData
+
+    def process(self, entry, cached):
+        yield "members", cached

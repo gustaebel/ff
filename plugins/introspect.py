@@ -65,11 +65,14 @@ class Elf(Plugin):
                 pass
         return False
 
-    def process(self, entry):
+    def cache(self, entry):
         try:
-            yield "sonames", sorted(self.extract_sonames(entry.path))
+            return sorted(self.extract_sonames(entry.path))
         except (OSError, self.ELFError):
             raise NoData
+
+    def process(self, entry, cached):
+        yield "sonames", cached
 
 
 class Shebang(Plugin):
@@ -98,7 +101,7 @@ class Shebang(Plugin):
     def can_handle(self, entry):
         return entry.text
 
-    def process(self, entry):
+    def process(self, entry, cached):
         shebang = self.extract_shebang(entry.path)
         if shebang is not None:
             yield "shebang", shebang
@@ -139,7 +142,7 @@ class Py(Plugin):
     def can_handle(self, entry):
         return entry.text
 
-    def process(self, entry):
+    def process(self, entry, cached):
         shebang = Shebang.extract_shebang(entry.path)
         if shebang is None or "python" not in shebang:
             raise NoData
@@ -189,7 +192,7 @@ class Fixme(Plugin):
     def can_handle(self, entry):
         return entry.text
 
-    def process(self, entry):
+    def process(self, entry, cached):
         fixme, xxx = self.extract_fixmes(entry.path)
         yield "fixme", fixme
         yield "xxx", xxx

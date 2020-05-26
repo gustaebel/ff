@@ -63,12 +63,30 @@ class Plugin:
         """
         raise NotImplementedError
 
-    def process(self, entry):
+    def cache_tag(self, entry):
+        """Return a value for the Entry object that if it changes causes the
+           cached value to be invalidated. The default uses the modification
+           time of the file. The returned value may have any type.
+        """
+        return entry.time
+
+    def cache(self, entry):
+        """Extract and prepare data from the Entry object and cache it. It is
+           then passed on to the process() method. cache() is only called if
+           use_cache is True. The data returned may have any type. Raise a
+           NoData exception if the required data cannot be extracted. It will
+           be the same as if None was returned.
+        """
+        # pylint:disable=unused-argument
+        return None
+
+    def process(self, entry, cached):
         """Generate key-value pairs or return a dict with the values that were
-           "extracted" from the entry. The set of keys must correspond with the
+           "extracted" from the entry. The set of keys must match the
            ones from the attributes dict, but it is not necessary that all the
            keys actually have values. Raise a NoData exception or return an
            empty sequence if the plugin cannot extract the required attributes
-           properly.
+           properly. The cached argument is only present when use_cache is True
+           and contains the cached data that was prepared in the cache() method.
         """
         raise NotImplementedError

@@ -70,7 +70,9 @@ class Medium(Plugin):
     def can_handle(self, entry):
         return entry.mime.split("/", 1)[0] in set(["image", "audio", "video"])
 
-    def process(self, entry):
+    def cache(self, entry):
+        cached = {}
+
         tracks = self.prepare_tracks(entry)
 
         audio_track = tracks.get("audio")
@@ -83,21 +85,21 @@ class Medium(Plugin):
                     ("genre", "genre"), ("date", "recorded_date")):
                 value = getattr(track, attr, "")
                 if value:
-                    yield key, value
+                    cached[key] = value
 
         # Extract the width and height of a video or an image. If there are
         # both video and image streams give precedence to video.
         if video_track is not None:
             if video_track.height is not None and video_track.width is not None:
-                yield "width", video_track.width
-                yield "height", video_track.height
+                cached["width"] = video_track.width
+                cached["height"] = video_track.height
 
         elif image_track is not None:
             if image_track.format is not None:
-                yield "format", image_track.format.lower()
+                cached["format"] = image_track.format.lower()
             if image_track.height is not None and image_track.width is not None:
-                yield "width", image_track.width
-                yield "height", image_track.height
+                cached["width"] = image_track.width
+                cached["height"] = image_track.height
 
         # Extract the duration of an audio or video stream.
         for track in (video_track, audio_track):
@@ -108,4 +110,9 @@ class Medium(Plugin):
             if duration is not None:
                 if isinstance(duration, str):
                     duration = float(duration)
-                yield "duration", int(duration / 1000)
+                cached["duration"] = int(duration / 1000)
+
+        return cached
+
+    def process(self, entry, cached):
+        return cached

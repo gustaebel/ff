@@ -105,7 +105,8 @@ class Registry(BaseClass):
             return
 
         # Create a checksum of the plugin module file as a tag for the cache
-        # database.
+        # database. This way the plugin cache is automatically invalidated
+        # everytime the module source code changes.
         with open(module_path, "rb") as fobj:
             module_tag = binascii.crc32(fobj.read())
 
@@ -229,20 +230,29 @@ class Registry(BaseClass):
         """
         if plugin.can_handle(entry):
             if plugin.use_cache:
-                data = self.cache.get(plugin, entry.abspath, entry.time)
-                if data is NOTSET:
+                tag = plugin.cache_tag(entry)
+                cached = self.cache.get(plugin, entry.abspath, tag)
+                if cached is NOTSET:
+                    # There is no cached result for this entry, so we ask the
+                    # plugin for the data. Even if the plugin fails to process
+                    # this entry, we cache the return value, so that we know we
+                    # don't have to try again in the future.
                     if __debug__:
                         self.logger.debug("cache",
                                 f"Cache {plugin.name!r} data for {entry.path!r}")
-                    # There is no cached result for this entry, so we ask
-                    # the plugin for the data. If the plugin fails to
-                    # process this entry, we cache an empty data dict, so
-                    # that we know we don't have to try again in the
-                    # future.
-                    data = dict(plugin.process(entry))
-                    self.cache.set(plugin, entry.abspath, entry.time, data)
+
+                    try:
+                        cached = plugin.cache(entry)
+                    except NoData:
+                        cached = None
+
+                    self.cache.set(plugin, entry.abspath, tag, cached)
+
             else:
-                data = dict(plugin.process(entry))
+                cached = None
+
+            data = dict(plugin.process(entry, cached))
+
         else:
             data = {}
 
