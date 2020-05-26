@@ -20,8 +20,6 @@
 
 from libff.plugin import *
 
-pymediainfo = None
-
 
 class Medium(Plugin):
     """Plugin that gives access to media related information like image format,
@@ -47,12 +45,12 @@ class Medium(Plugin):
     def setup(cls):
         # pylint:disable=global-statement,import-outside-toplevel
         global pymediainfo
-        import pymediainfo as module
-        pymediainfo = module
+        import pymediainfo
 
     def prepare_tracks(self, entry):
         """Prepare a more accessible structure of tracks from a media file.
         """
+        # pylint:disable=undefined-variable
         try:
             tracks = {}
             for track in pymediainfo.MediaInfo.parse(entry.path,
