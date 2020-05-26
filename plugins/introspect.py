@@ -35,26 +35,28 @@ class Elf(Plugin):
     ]
 
     def setup(self):
-        # pylint:disable=import-outside-toplevel,invalid-name
+        # pylint:disable=global-statement,import-outside-toplevel,global-variable-not-assigned
+        global ELFFile, DynamicSection, ELFError
         from elftools.elf.elffile import ELFFile
-        self.ELFFile = ELFFile
         from elftools.elf.dynamic import DynamicSection
-        self.DynamicSection = DynamicSection
         from elftools.common.exceptions import ELFError
-        self.ELFError = ELFError
 
     def extract_sonames(self, path):
         """Yield the names of the shared objects required by an ELF executable.
         """
-        with open(path, "rb") as fobj:
-            elffile = self.ELFFile(fobj)
-            for section in elffile.iter_sections():
-                if not isinstance(section, self.DynamicSection):
-                    continue
+        # pylint:disable=undefined-variable
+        try:
+            with open(path, "rb") as fobj:
+                elffile = ELFFile(fobj)
+                for section in elffile.iter_sections():
+                    if not isinstance(section, DynamicSection):
+                        continue
 
-                for tag in section.iter_tags():
-                    if tag.entry.d_tag == "DT_NEEDED":
-                        yield tag.needed
+                    for tag in section.iter_tags():
+                        if tag.entry.d_tag == "DT_NEEDED":
+                            yield tag.needed
+        except (OSError, ELFError):
+            raise NoData
 
     def can_handle(self, entry):
         if entry.is_file():
@@ -66,10 +68,7 @@ class Elf(Plugin):
         return False
 
     def cache(self, entry):
-        try:
-            return sorted(self.extract_sonames(entry.path))
-        except (OSError, self.ELFError):
-            raise NoData
+        return sorted(self.extract_sonames(entry.path))
 
     def process(self, entry, cached):
         yield "sonames", cached
