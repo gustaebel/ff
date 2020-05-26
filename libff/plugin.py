@@ -18,6 +18,8 @@
 #
 # -----------------------------------------------------------------------
 
+import binascii
+
 from . import NoData
 from .type import *
 
@@ -38,16 +40,27 @@ class Plugin:
         cls.name = cls.__name__.lower()
 
     @classmethod
-    def initialize(cls, module_source, module_path, module_tag):
+    def initialize(cls, source, path):
         """Initialize the Plugin class with basic information.
         """
-        cls.module_source = module_source
-        cls.module_path = module_path
-        cls.module_tag = module_tag
-        cls.sql_table_name = f"plugin_{cls.name}_{cls.module_tag}"
+        cls.source = source
+        cls.path = path
+        cls.tag = cls.get_plugin_cache_tag(path)
+        assert isinstance(cls.tag, int) and cls.tag >= 0
+        cls.sql_table_name = f"plugin_{cls.name}_{cls.tag}"
 
     def __init__(self):
         self.setup()
+
+    @classmethod
+    def get_plugin_cache_tag(cls, path):
+        """Create a checksum of the plugin module file as a tag for the cache
+           database. This way the plugin cache is automatically invalidated
+           everytime the module source code changes. Return value must be a
+           positive integer.
+        """
+        with open(path, "rb") as fobj:
+            return binascii.crc32(fobj.read())
 
     def setup(self):
         """Setup the Plugin class. This is called once for every plugin, but
@@ -63,7 +76,7 @@ class Plugin:
         """
         raise NotImplementedError
 
-    def cache_tag(self, entry):
+    def get_entry_cache_tag(self, entry):
         """Return a value for the Entry object that if it changes causes the
            cached value to be invalidated. The default uses the modification
            time of the file. The returned value may have any type.

@@ -39,6 +39,20 @@ class Name(Plugin):
     ]
 
     @classmethod
+    def get_plugin_cache_tag(cls, path):
+        # Optional. Is only used if use_cache = True. Rarely used.
+        #
+        # Return a "tag" that should stay the same as long as the format of the
+        # plugin's cached data stays the same. Otherwise, all cached values for
+        # this plugin are discarded and recached.
+        # The default scheme returns a checksum of the plugins source code, so
+        # the cache is invalidated automatically everytime the plugin code is
+        # changed.
+        # If you need more control over the cache you can implement your own
+        # scheme, e.g. return a number that you increment manually everytime
+        # you change the data format.
+
+    @classmethod
     def setup(cls):
         # Optional.
         #
@@ -65,7 +79,7 @@ class Name(Plugin):
         #   def can_handle(self, entry):
         #       return entry.is_file()
 
-    def cache_tag(self, entry):
+    def get_entry_cache_tag(self, entry):
         # Optional. Is only called if use_cache = True. Rarely used.
         #
         # Return a "tag" that indicates the validity of the cached value for

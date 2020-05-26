@@ -63,7 +63,7 @@ class Cache(NullCache):
     def __init__(self, context):
         super().__init__(context)
 
-        self.conn = sqlite3.connect(self.context.args.cache, timeout=60)
+        self.conn = sqlite3.connect(self.context.args.cache, timeout=30)
 
         self.num_cached_rows = 0
         self.last_commit = time.time()
@@ -75,8 +75,13 @@ class Cache(NullCache):
     def close(self):
         """Commit remaining cached rows and close the database connection.
         """
-        self.commit()
-        self.conn.commit()
+        if self.num_cached_rows > 0:
+            if __debug__:
+                self.logger.debug("cache", f"closing cache with {self.num_cached_rows} "\
+                        "pending entries")
+            self.commit()
+
+        self.conn.close()
 
         with self.context.cache_hits.get_lock():
             self.context.cache_hits.value += self.hits
@@ -104,6 +109,7 @@ class Cache(NullCache):
         if plugin_cls.sql_table_name not in tables:
             for statement in self.get_sql_create_table(plugin_cls):
                 self.conn.execute(statement)
+            self.conn.commit()
         else:
             tables.remove(plugin_cls.sql_table_name)
 
@@ -116,10 +122,10 @@ class Cache(NullCache):
         """Return the statements needed to create a table for a specific Plugin
            class.
         """
-        yield f"create table {plugin_cls.sql_table_name} "\
-                "(path text not null primary key, tag blob not null, data blob not null);"
-        # Do we actually need this index?
-        yield f"create index {plugin_cls.sql_table_name}(path, tag);"
+        table_name = plugin_cls.sql_table_name
+        yield f"create table {table_name} "\
+                "(path text not null primary key, tag blob not null, data blob not null)"
+        yield f"create index {table_name}_idx on {table_name} (path, tag)"
 
     def get(self, plugin, path, tag):
         """Return a row of cached values.
@@ -159,7 +165,8 @@ class Cache(NullCache):
             while True:
                 try:
                     self.conn.executemany(
-                            f"insert or replace into {plugin.sql_table_name} values(?, ?, ?)", rows)
+                            f"insert or replace into {plugin.sql_table_name} values (?, ?, ?)",
+                            rows)
                     self.conn.commit()
                 except sqlite3.OperationalError as exc:
                     if "database is locked" in str(exc):

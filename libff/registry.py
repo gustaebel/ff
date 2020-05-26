@@ -19,7 +19,6 @@
 # -----------------------------------------------------------------------
 
 import os
-import binascii
 import textwrap
 import importlib.util
 
@@ -67,16 +66,16 @@ class Registry(BaseClass):
                     yield "system", directory
         yield "user", self.PLUGIN_DIR_USER
 
-    def load_plugin(self, module_name, module_source, module_path):
+    def load_plugin(self, name, source, path):
         """Load the plugin code from path into a python module. After that
            inpect the module namespace to find the Type and Plugin classes.
         """
-        spec = importlib.util.spec_from_file_location(module_name, module_path)
+        spec = importlib.util.spec_from_file_location(name, path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        self.inspect_namespace(module_source, module_path, module)
+        self.inspect_namespace(source, path, module)
 
-    def inspect_namespace(self, module_source, module_path, module):
+    def inspect_namespace(self, source, path, module):
         """Go through the objects in a module namespace and collect Type and
            Plugin classes.
         """
@@ -89,28 +88,22 @@ class Registry(BaseClass):
                 self.register_type(obj)
 
             elif issubclass(obj, Plugin) and obj is not Plugin:
-                self.register_plugin(module_source, module_path, obj)
+                self.register_plugin(source, path, obj)
 
     def register_type(self, type_cls):
         """Register Type classes.
         """
         self.registered_types.add(type_cls)
 
-    def register_plugin(self, module_source, module_path, plugin_cls):
+    def register_plugin(self, source, path, plugin_cls):
         """Register and initialize Plugin classes.
         """
         if plugin_cls.name in self.registered_plugins:
             self.logger.warning(f"Skipping already loaded plugin {plugin_cls.name!r} "\
-                    f"from {module_path!r}")
+                    f"from {path!r}")
             return
 
-        # Create a checksum of the plugin module file as a tag for the cache
-        # database. This way the plugin cache is automatically invalidated
-        # everytime the module source code changes.
-        with open(module_path, "rb") as fobj:
-            module_tag = binascii.crc32(fobj.read())
-
-        plugin_cls.initialize(module_source, module_path, module_tag)
+        plugin_cls.initialize(source, path)
 
         self.registered_plugins[plugin_cls.name] = plugin_cls
 
@@ -230,7 +223,7 @@ class Registry(BaseClass):
         """
         if plugin.can_handle(entry):
             if plugin.use_cache:
-                tag = plugin.cache_tag(entry)
+                tag = plugin.get_entry_cache_tag(entry)
                 cached = self.cache.get(plugin, entry.abspath, tag)
                 if cached is NOTSET:
                     # There is no cached result for this entry, so we ask the
@@ -355,7 +348,7 @@ class Registry(BaseClass):
         """
         table = Table(("Name", "Source", "Path"))
         for name, plugin in sorted(self.registered_plugins.items()):
-            table.add((name, plugin.module_source, plugin.module_path))
+            table.add((name, plugin.source, plugin.path))
         table.print()
 
     def print_types(self):
