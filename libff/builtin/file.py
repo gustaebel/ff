@@ -72,7 +72,8 @@ class File(Plugin):
         ("broken",  Boolean,  "Whether the target of a symbolic link points to a file that does "\
                               "not exist."),
         ("mime",    String,   Entry.mime.__doc__),
-        ("class",   String,   Entry.class_.__doc__),
+        ("mtype",   String,   Entry.mtype.__doc__),
+        ("msubtype", String,  Entry.msubtype.__doc__),
         ("text",    Boolean,  Entry.text.__doc__),
         ("mount",   Boolean,  Entry.mount.__doc__)
     ]

@@ -314,15 +314,21 @@ class Entry:
 
     @property
     def mime(self):
-        """The mime type of the file based on the file extension.
+        """The full mime type of the file based on the file extension.
         """
         return mimetypes.guess_type(self.name)[0] or ""
 
     @property
-    def class_(self):
-        """The leading component of the file's mime type.
+    def mtype(self):
+        """The mime content type of the file, i.e. the first part of the mime type.
         """
         return self.mime.split("/", 1)[0]
+
+    @property
+    def msubtype(self):
+        """The mime sub type of the file, i.e. the second part of the mime type.
+        """
+        return self.mime.split("/", 1)[1]
 
     @property
     def text(self):
@@ -422,11 +428,6 @@ class Entry:
             # We have to check if the AttributeError that was raised
             # was actually about attribute.name, so we don't hide
             # programming errors inside the Entry object.
-            if exc.name == "class":
-                # 'class' is a reserved keyword, so we cannot use it as a
-                # property name.
-                return getattr(self, "class_")
-
             if exc.name != name:
                 raise AttributeError(exc.name)
 

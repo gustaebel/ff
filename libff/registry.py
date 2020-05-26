@@ -56,7 +56,7 @@ class Registry(BaseClass):
         """
         yield "builtin", self.PLUGIN_DIR_BUILTIN
         if __debug__:
-            yield "contrib", os.path.join(os.path.dirname(__file__), "../plugins")
+            yield "contrib", os.path.realpath(os.path.join(os.path.dirname(__file__), "../plugins"))
         else:
             yield "contrib", self.PLUGIN_DIR_CONTRIB
         plugin_dirs = os.environ.get("FF_PLUGIN_DIRS")
@@ -266,12 +266,7 @@ class Registry(BaseClass):
             # Use a shortcut for attributes from the 'file' plugin. Fetch the
             # value directly from the Entry object instead of going through the
             # plugin.
-            try:
-                return entry.get_attribute(attribute.name)
-            except KeyError:
-                # Not all attributes are provided by the Entry object, e.g.
-                # 'class'.
-                pass
+            return entry.get_attribute(attribute.name)
 
         data = self.get_data(entry, attribute.plugin)
         return data[attribute.name]

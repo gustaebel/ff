@@ -46,7 +46,7 @@ class ShellTest(unittest.TestCase):
             if keep_order:
                 self.assertEqual(stdout, output)
             else:
-                self.assertEqual(set(stdout.splitlines()), set(output.splitlines()))
+                self.assertEqual(set(output.splitlines()), set(stdout.splitlines()))
 
         setattr(cls, f"test_[{test}-{test_number:02d}/{command}]", shell)
 
