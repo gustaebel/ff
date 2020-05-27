@@ -22,7 +22,7 @@ import os
 import textwrap
 import importlib.util
 
-from . import NOTSET, NoData, MissingImport, Attribute, BaseClass
+from . import NOTSET, NoData, Attribute, BaseClass, MissingImport
 from .type import Type
 from .table import Table
 from .plugin import Plugin

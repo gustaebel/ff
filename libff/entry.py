@@ -22,7 +22,6 @@ import os
 import grp
 import pwd
 import stat
-import mimetypes
 
 from .type import Mode
 
@@ -311,24 +310,6 @@ class Entry:
         """The file basename without the extension.
         """
         return os.path.basename(self.pathx)
-
-    @property
-    def mime(self):
-        """The full mime type of the file based on the file extension.
-        """
-        return mimetypes.guess_type(self.name)[0] or ""
-
-    @property
-    def mtype(self):
-        """The mime content type of the file, i.e. the first part of the mime type.
-        """
-        return self.mime.split("/", 1)[0]
-
-    @property
-    def msubtype(self):
-        """The mime sub type of the file, i.e. the second part of the mime type.
-        """
-        return self.mime.split("/", 1)[1]
 
     @property
     def text(self):

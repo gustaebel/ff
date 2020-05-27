@@ -21,7 +21,7 @@
 from libff.plugin import *
 
 
-class Magic(Plugin):
+class Mime(Plugin):
     """Plugin that guesses the mime type and encoding using libmagic. Requires
        the 'file-magic' module.
     """
@@ -29,11 +29,13 @@ class Magic(Plugin):
     use_cache = True
 
     attributes = [
-        ("mime", String, "The mime type of the file."),
-        ("mtype", String, "The mime content type of the file."),
-        ("msubtype", String, "The mime sub type of the file."),
+        ("mime", String, "The full mime type of the file."),
+        ("type", String, "The content type of the file, "\
+                "i.e. the first part of the mime type."),
+        ("subtype", String, "The sub type of the file, "\
+                "i.e. the second part of the mime type."),
         ("encoding", String, "The encoding of the file."),
-        ("name", String, "The name of the type of the file."),
+        ("name", String, "The description of the type of the file."),
     ]
 
     @classmethod
@@ -60,7 +62,7 @@ class Magic(Plugin):
         mime, encoding, name = cached
         mime_parts = mime.split("/", 1)
         yield "mime", mime
-        yield "mtype", mime_parts[0]
-        yield "msubtype", mime_parts[1]
+        yield "type", mime_parts[0]
+        yield "subtype", mime_parts[1]
         yield "encoding", encoding
         yield "name", name

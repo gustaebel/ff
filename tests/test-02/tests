@@ -33,13 +33,13 @@ video.mp4
 
 
 # no_order
-ff mtype=image
+ff mime.type=image
 image.jpg
 image.png
 
 
 
-ff mtype=video
+ff mime.type=video
 video.mp4
 
 
@@ -71,13 +71,13 @@ image/jpeg
 
 # Check references.
 # no_order
-ff mtype={}image.jpg
+ff mime.type={}image.jpg
 image.jpg
 image.png
 
 
 
-ff mtype={mtype}image.jpg
+ff mime.type={mime.type}image.jpg
 image.jpg
 image.png
 

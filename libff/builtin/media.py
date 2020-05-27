@@ -18,6 +18,8 @@
 #
 # -----------------------------------------------------------------------
 
+import mimetypes
+
 from libff.plugin import *
 
 
@@ -69,7 +71,10 @@ class Medium(Plugin):
             raise NoData
 
     def can_handle(self, entry):
-        return entry.mime.split("/", 1)[0] in set(["image", "audio", "video"])
+        mimetype = mimetypes.guess_type(entry.name)[0]
+        if not mimetype:
+            return False
+        return mimetype.split("/", 1)[0] in set(["image", "audio", "video"])
 
     def cache(self, entry):
         cached = {}
