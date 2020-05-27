@@ -37,9 +37,12 @@ class Elf(Plugin):
     def setup(self):
         # pylint:disable=global-statement,import-outside-toplevel,global-variable-not-assigned
         global ELFFile, DynamicSection, ELFError
-        from elftools.elf.elffile import ELFFile
-        from elftools.elf.dynamic import DynamicSection
-        from elftools.common.exceptions import ELFError
+        try:
+            from elftools.elf.elffile import ELFFile
+            from elftools.elf.dynamic import DynamicSection
+            from elftools.common.exceptions import ELFError
+        except ImportError:
+            raise MissingImport("pyelftools")
 
     def extract_sonames(self, path):
         """Yield the names of the shared objects required by an ELF executable.

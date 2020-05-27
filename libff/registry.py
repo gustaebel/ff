@@ -22,7 +22,7 @@ import os
 import textwrap
 import importlib.util
 
-from . import NOTSET, NoData, Attribute, BaseClass
+from . import NOTSET, NoData, MissingImport, Attribute, BaseClass
 from .type import Type
 from .table import Table
 from .plugin import Plugin
@@ -149,8 +149,8 @@ class Registry(BaseClass):
             if plugin_cls.use_cache:
                 self.cache.register_plugin(plugin_cls)
             self.plugins[name] = plugin_cls()
-        except ImportError as exc:
-            raise BadPluginError(f"Unable to setup plugin {name!r}: {exc}")
+        except MissingImport as exc:
+            raise BadPluginError(f"Plugin {name!r} needs the following module: {exc.module!r}")
         except Exception:
             raise BadPluginError.from_exception(f"Unable to setup plugin {name!r}")
 

@@ -45,7 +45,10 @@ class Medium(Plugin):
     def setup(cls):
         # pylint:disable=global-statement,import-outside-toplevel
         global pymediainfo
-        import pymediainfo
+        try:
+            import pymediainfo
+        except ImportError:
+            raise MissingImport("pymediainfo")
 
     def prepare_tracks(self, entry):
         """Prepare a more accessible structure of tracks from a media file.

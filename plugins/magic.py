@@ -40,7 +40,10 @@ class Magic(Plugin):
     def setup(cls):
         # pylint:disable=global-statement,import-outside-toplevel
         global magic
-        import magic
+        try:
+            import magic
+        except ImportError:
+            raise MissingImport("file-magic")
 
     def can_handle(self, entry):
         return entry.is_file()

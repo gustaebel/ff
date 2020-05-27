@@ -44,6 +44,13 @@ class NoData(Exception):
     """Exception for when a plugin cannot process an entry.
     """
 
+class MissingImport(Exception):
+    """Exception for when a plugin cannot import a third party module.
+    """
+    def __init__(self, module):
+        self.module = module
+        super().__init__(module)
+
 
 OUTPUT_WIDTH = shutil.get_terminal_size((100, 100))[0] - 2
 
