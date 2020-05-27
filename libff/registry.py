@@ -41,16 +41,17 @@ class Registry(BaseClass):
     registered_types = set()
     registered_plugins = {}
 
+    plugins = {}
+    attributes = {}
+
     def __init__(self, context):
         super().__init__(context)
-
-        self.plugins = {}
-        self.attributes = {}
 
         self.optimize_for_caching_plugins = False
 
         with self.context.global_lock:
-            self.load_plugins()
+            if not self.registered_plugins:
+                self.load_plugins()
 
     def iter_plugin_dirs(self):
         """Yield possible plugin directories.
