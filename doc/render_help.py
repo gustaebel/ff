@@ -23,7 +23,7 @@ import re
 import sys
 
 from libff import exceptions
-from libff.builtin import file, media
+from libff.builtin import file, mime, media
 from libff.convert import time_formats
 from libff.arguments import HelpFormatter, create_parser
 from libff.exceptions import BaseError
@@ -75,7 +75,7 @@ def include_usage():
 
 
 def include_plugin_help(name):
-    for module in file, media:
+    for module in file, mime, media:
         try:
             plugin = getattr(module, name.capitalize())
         except AttributeError:

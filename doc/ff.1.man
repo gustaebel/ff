@@ -81,11 +81,15 @@ ATTRIBUTES
   always write the full attribute name including the <plugin> portion, e.g. to
   avoid possible runtime errors in shell scripts.
 
-  The builtin attributes are as follows:
+  The builtin file attributes are as follows:
 
 __include_file__
+  The mime plugin provides attributes regarding the mimetype and encoding of
+  files. It depends on the 'file-magic' python module.
+
+__include_mime__
   There are also some attributes available for media files. Their availability
-  depends on the presence of the 'pymediafile' python module.
+  depends on the 'pymediafile' python module.
 
 __include_medium__
 

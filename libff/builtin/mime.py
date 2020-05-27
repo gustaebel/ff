@@ -30,12 +30,10 @@ class Mime(Plugin):
 
     attributes = [
         ("mime", String, "The full mime type of the file."),
-        ("type", String, "The content type of the file, "\
-                "i.e. the first part of the mime type."),
-        ("subtype", String, "The sub type of the file, "\
-                "i.e. the second part of the mime type."),
+        ("type", String, "The content type of the file, i.e. the first part of the mime type."),
+        ("subtype", String, "The sub type of the file, i.e. the second part of the mime type."),
         ("encoding", String, "The encoding of the file."),
-        ("name", String, "The description of the type of the file."),
+        ("name", String, "The full text description of the type of the file."),
     ]
 
     @classmethod
