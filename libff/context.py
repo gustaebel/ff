@@ -45,6 +45,7 @@ class Context:
         self.walker = None
         self.processing = None
 
+        self.global_lock = None
         self.stop_queue = None
         self.barrier = None
         self.exitcode_object = None
@@ -55,6 +56,8 @@ class Context:
     def setup(self):
         """Set up multiprocessing and inter-process communication.
         """
+        self.global_lock = multiprocessing.Lock()
+
         # We use a Queue object to emulate a stop event, because
         # multiprocessing.Event did not work the way I expected it.
         self.stop_queue = multiprocessing.Queue(self.args.jobs)

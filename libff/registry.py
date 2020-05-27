@@ -49,21 +49,25 @@ class Registry(BaseClass):
 
         self.optimize_for_caching_plugins = False
 
-        self.load_plugins()
+        with self.context.global_lock:
+            self.load_plugins()
 
     def iter_plugin_dirs(self):
         """Yield possible plugin directories.
         """
         yield "builtin", self.PLUGIN_DIR_BUILTIN
+
         if __debug__:
             yield "contrib", os.path.realpath(os.path.join(os.path.dirname(__file__), "../plugins"))
         else:
             yield "contrib", self.PLUGIN_DIR_CONTRIB
+
         plugin_dirs = os.environ.get("FF_PLUGIN_DIRS")
         if plugin_dirs is not None:
             for directory in plugin_dirs.split(os.pathsep):
                 if directory:
                     yield "system", directory
+
         yield "user", self.PLUGIN_DIR_USER
 
     def load_plugin(self, name, source, path):
@@ -197,8 +201,9 @@ class Registry(BaseClass):
         if attribute.plugin not in self.registered_plugins:
             raise BadAttributeError(f"No such plugin {attribute.plugin!r}")
 
-        if attribute.plugin not in self.plugins:
-            self.init_plugin(attribute.plugin)
+        with self.context.global_lock:
+            if attribute.plugin not in self.plugins:
+                self.init_plugin(attribute.plugin)
 
         return attribute
 
