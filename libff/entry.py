@@ -43,6 +43,7 @@ class StartDirectory:
 
     def __init__(self, args, root):
         self.root = root
+        self.absroot = os.path.abspath(root)
         self.status = os.stat(self.root, follow_symlinks=args.follow_symlinks)
         self.device = self.status.st_dev
 
@@ -88,10 +89,8 @@ class Entry:
         self.status = status
 
         self.root = self.start_directory.root
-        self.path = os.path.join(self.root, self.relpath)
-        if self.path.startswith("./"):
-            self.path = self.path[2:]
-        self.abspath = os.path.abspath(self.path)
+        self.path = os.path.join(self.root, self.relpath) if self.root != "." else self.relpath
+        self.abspath = os.path.join(self.start_directory.absroot, self.relpath)
 
         self.dir, self.name = os.path.split(self.path)
 
