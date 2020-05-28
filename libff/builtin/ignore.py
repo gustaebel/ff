@@ -18,6 +18,8 @@
 #
 # -----------------------------------------------------------------------
 
+import os
+
 from libff.ignore import GitIgnore
 from libff.plugin import *
 
@@ -34,20 +36,33 @@ class Ignore(Plugin):
     def __init__(self):
         super().__init__()
 
-        self.dirname_cache = {}
         self.ignore_cache = {}
 
     def can_handle(self, entry):
         return True
 
+    def get_ignores(self, dirname):
+        """Return the list of GitIgnore objects that apply to this particular
+           directory.
+        """
+        if dirname not in self.ignore_cache:
+            ignores = None
+            for name in GitIgnore.IGNORE_NAMES:
+                path = os.path.join(dirname, name)
+
+                if ignores is None:
+                    if dirname == os.sep:
+                        ignores = []
+                    else:
+                        ignores = self.get_ignores(os.path.dirname(dirname)).copy()
+
+                if os.path.exists(path):
+                    ignores.append(GitIgnore(dirname, name))
+
+            self.ignore_cache[dirname] = ignores if ignores is not None else []
+
+        return self.ignore_cache[dirname]
+
     def process(self, entry, cached):
-        if entry.dirname not in self.dirname_cache:
-            self.dirname_cache[entry.dirname] = GitIgnore.find_ignore_files(entry.dirname)
-
-        ignores = []
-        for dirname, name in self.dirname_cache[entry.dirname]:
-            if (dirname, name) not in self.ignore_cache:
-                self.ignore_cache[(dirname, name)] = GitIgnore(dirname, name)
-            ignores.append(self.ignore_cache[(dirname, name)])
-
-        yield "ignored", GitIgnore.match_all(ignores, entry.abspath, entry.name, entry.is_dir())
+        ignores = self.get_ignores(entry.dirname)
+        return {"ignored": GitIgnore.match_all(ignores, entry.abspath, entry.name, entry.is_dir())}
