@@ -72,9 +72,9 @@ class Test(collections.namedtuple("Test", "attribute operator type value ignore_
             value = self.value
 
         if with_type:
-            return f"{'.'.join(self.attribute)}[{self.type.name}]{self.operator}{value}"
+            return f"{self.attribute.fullname()}[{self.type.name}]{self.operator}{value}"
         else:
-            return f"{'.'.join(self.attribute)}{self.operator}{value}"
+            return f"{self.attribute.fullname()}{self.operator}{value}"
 
     def __str__(self):
         return self.format(with_type=True)

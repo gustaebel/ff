@@ -66,6 +66,9 @@ class _Attribute(collections.namedtuple("Attribute", "plugin name alias")):
     def __str__(self):
         return self.alias
 
+    def fullname(self):
+        return f"{self.plugin}.{self.name}"
+
     def __eq__(self, other):
         return self[:2] == other[:2]
 
