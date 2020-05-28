@@ -205,7 +205,7 @@ class FilesystemWalker(BaseClass):
                 if self.excluder.test(entry):
                     continue
 
-                elif GitIgnore.match_all(ignores, entry.abspath, entry.name, is_dir):
+                elif ignores and GitIgnore.match_all(ignores, entry.abspath, entry.name, is_dir):
                     continue
 
                 elif self.matcher.test(entry):
