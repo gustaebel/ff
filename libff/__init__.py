@@ -67,6 +67,8 @@ class _Attribute(collections.namedtuple("Attribute", "plugin name alias")):
         return self.alias
 
     def fullname(self):
+        """Return the full canonical name of the attribute.
+        """
         return f"{self.plugin}.{self.name}"
 
     def __eq__(self, other):
