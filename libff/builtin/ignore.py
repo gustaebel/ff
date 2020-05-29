@@ -31,6 +31,7 @@ class Ignore(Plugin):
 
     attributes = [
         ("ignored", Boolean, "Whether the file matches patterns in a .(git|fd|ff)ignore file."),
+        ("path", String, "The path to the ignore file that contained the matching pattern."),
     ]
 
     def __init__(self):
@@ -65,4 +66,5 @@ class Ignore(Plugin):
 
     def process(self, entry, cached):
         ignores = self.get_ignores(entry.dirname)
-        return {"ignored": GitIgnore.match_all(ignores, entry.abspath, entry.name, entry.is_dir())}
+        ignored, path = GitIgnore.match_all(ignores, entry.abspath, entry.name, entry.is_dir())
+        return {"ignored": ignored, "path": path if path is not None else ""}

@@ -226,9 +226,12 @@ class GitIgnore:
     def match_all(ignores, path, name, is_dir):
         """Match the path or basename against the sequence of patterns from all
            the ignore files and return True if the entry is to be excluded.
+           Also return the path to the ignore file that contained the matching
+           pattern.
         """
         assert os.path.isabs(path)
 
+        ignore_path = None
         exclude = False
         for ignore in ignores:
             relpath = path[len(ignore.dirname) + 1:]
@@ -238,6 +241,7 @@ class GitIgnore:
                     continue
                 test_path = relpath if key.anchored else name
                 if pattern.match(test_path):
+                    ignore_path = ignore.path
                     exclude = key.include
 
-        return exclude
+        return exclude, ignore_path if exclude else None
