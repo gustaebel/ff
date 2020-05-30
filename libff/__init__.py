@@ -55,8 +55,8 @@ class MissingImport(Exception):
 OUTPUT_WIDTH = shutil.get_terminal_size((100, 100))[0] - 2
 
 
-Directory = collections.namedtuple("Directory", "start relpath ignores")
-Entries = collections.namedtuple("Entries", "parent entries ignores")
+Directory = collections.namedtuple("Directory", "start relpath ignore_paths")
+Entries = collections.namedtuple("Entries", "parent entries")
 
 class _Attribute(collections.namedtuple("Attribute", "plugin name alias")):
     """An Attribute namedtuple that contains the plugin name and the attribute

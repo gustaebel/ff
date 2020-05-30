@@ -127,7 +127,7 @@ class FilesystemWalker(BaseClass):
            names of .*ignore files that were found.
         """
         entries = []
-        ignore_files = parent.ignores.copy()
+        ignore_paths = parent.ignore_paths.copy()
 
         try:
             with os.scandir(os.path.join(parent.start.root, parent.relpath)) as direntries:
@@ -135,7 +135,7 @@ class FilesystemWalker(BaseClass):
                     try:
                         status = direntry.stat(follow_symlinks=self.args.follow_symlinks)
                         entry = Entry(parent.start, os.path.join(parent.relpath, direntry.name),
-                                status, ignore_files)
+                                status, ignore_paths)
 
                     except FileNotFoundError:
                         # Do not warn about files that have vanished.
@@ -151,9 +151,9 @@ class FilesystemWalker(BaseClass):
                             self.logger.debug("walk", f"Found ignore file {entry.name!r} "\
                                     f"in {entry.dirname!r}")
                         # Please note that we take advantage of the side-effect,
-                        # that we can still update the same ignore_files list we
+                        # that we can still update the same ignore_paths list we
                         # already passed to a number of Entry objects earlier.
-                        ignore_files.append(entry.abspath)
+                        ignore_paths.append(entry.abspath)
 
         except FileNotFoundError:
             # Do not warn about directories that have vanished.
@@ -169,7 +169,6 @@ class FilesystemWalker(BaseClass):
            for processing.
         """
         entries = self.scan_directory(parent)
-
         if entries:
             self.process_entries(parent, entries)
 
@@ -193,7 +192,7 @@ class FilesystemWalker(BaseClass):
                     process.append(entry)
 
                 if is_dir:
-                    search.append(Directory(parent.start, entry.relpath, entry.ignore_files))
+                    search.append(Directory(parent.start, entry.relpath, entry.ignore_paths))
 
                 # If there are plugins in action that use the cache, that means
                 # that processing entries may take more time than usual (except
@@ -203,7 +202,7 @@ class FilesystemWalker(BaseClass):
                         self.context.idle_processes() / self.args.jobs > 0.25 and \
                         len(entries) > 10:
                     split = len(entries) // 2 + 1
-                    self.queue.put(Entries(parent, entries[split:], entry.ignore_files))
+                    self.queue.put(Entries(parent, entries[split:]))
                     entries = entries[:split]
 
         except OSError as exc:
