@@ -53,7 +53,7 @@ class Mime(Plugin):
         try:
             detected = magic.detect_from_filename(entry.path)
             return detected.mime_type, detected.encoding, detected.name
-        except OSError:
+        except (OSError, ValueError):
             raise NoData
 
     def process(self, entry, cached):
