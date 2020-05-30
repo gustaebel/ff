@@ -151,8 +151,13 @@ time_formats = (
 
 def parse_time(string):
     """Convert a date and time or a duration to the corresponding number of
-       seconds.
+       seconds. A simple integer or float is taken as seconds since epoch.
     """
+    try:
+        return int(float(string))
+    except ValueError:
+        pass
+
     if len(string) >= 4:
         for typ, fmt in time_formats:
             try:
