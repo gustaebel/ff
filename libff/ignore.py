@@ -205,25 +205,8 @@ class GitIgnore:
                 (key, re.compile("|".join(pattern.regex_pattern for pattern in patterns)))
                 for key, patterns in self.patterns]
 
-    def match(self, path, name, is_dir):
-        """Match the path or basename against the sequence of regular
-           expressions and return True if the entry is to be excluded.
-           path must be absolute.
-        """
-        assert os.path.isabs(path)
-        relpath = path[len(self.dirname) + 1:]
-
-        exclude = False
-        for key, pattern in self.patterns:
-            if key.directory and not is_dir:
-                continue
-            test_path = relpath if key.anchored else name
-            if pattern.match(test_path):
-                exclude = key.include
-        return exclude
-
     @staticmethod
-    def match_all(ignores, path, name, is_dir):
+    def match(ignores, path, name, is_dir):
         """Match the path or basename against the sequence of patterns from all
            the ignore files and return True if the entry is to be excluded.
            Also return the path to the ignore file that contained the matching

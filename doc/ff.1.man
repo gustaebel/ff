@@ -217,8 +217,9 @@ EXCLUSION
   If a directory matches it will not be descended into, so entries below it
   will not be produced.
 
-  If -H/--hide is given, all hidden files will be excluded using this method
-  (it is the same as '--exclude hide=yes'). The same applies to -I/--ignore.
+  If -H/--hide is given, all hidden files will be excluded using this method,
+  the option translates to '--exclude hide=yes'. The same applies to
+  -I/--ignore which tranlates to '--exclude ignored=yes'.
 
 IGNORE FILES
   By default, ff(1) reads .gitignore, .ignore, .fdignore, and .ffignore files

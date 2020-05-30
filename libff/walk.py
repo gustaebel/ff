@@ -127,7 +127,7 @@ class FilesystemWalker(BaseClass):
            names of .*ignore files that were found.
         """
         entries = []
-        ignore_files = []
+        ignore_files = parent.ignores.copy()
 
         try:
             with os.scandir(os.path.join(parent.start.root, parent.relpath)) as direntries:
@@ -135,7 +135,7 @@ class FilesystemWalker(BaseClass):
                     try:
                         status = direntry.stat(follow_symlinks=self.args.follow_symlinks)
                         entry = Entry(parent.start, os.path.join(parent.relpath, direntry.name),
-                                status)
+                                status, ignore_files)
 
                     except FileNotFoundError:
                         # Do not warn about files that have vanished.
@@ -150,7 +150,10 @@ class FilesystemWalker(BaseClass):
                         if __debug__:
                             self.logger.debug("walk", f"Found ignore file {entry.name!r} "\
                                     f"in {entry.dirname!r}")
-                        ignore_files.append(entry.name)
+                        # Please note that we take advantage of the side-effect,
+                        # that we can still update the same ignore_files list we
+                        # already passed to a number of Entry objects earlier.
+                        ignore_files.append(entry.abspath)
 
         except FileNotFoundError:
             # Do not warn about directories that have vanished.
@@ -158,38 +161,19 @@ class FilesystemWalker(BaseClass):
         except OSError as exc:
             self.logger.warning(exc)
 
-        return entries, ignore_files
-
-    def prepare_ignores(self, parent, ignore_files):
-        """Parse .*ignore files and return a list of rules.
-        """
-        # Add the ignore files we just found to the ones we got from the
-        # parent.
-        if self.args.ignore and ignore_files:
-            ignores = parent.ignores.copy()
-            for ignore_file in ignore_files:
-                try:
-                    ignores.append(GitIgnore(os.path.abspath(os.path.join(parent.start.root,
-                        parent.relpath)), ignore_file))
-                except OSError as exc:
-                    self.logger.warning(exc)
-            return ignores
-
-        else:
-            return parent.ignores
+        return entries
 
     def process_directory(self, parent):
         """Scan the directory `parent` for entries, collect .*ignore files, and
            process the entries or distribute them to other FilesystemWalkers
            for processing.
         """
-        entries, ignore_files = self.scan_directory(parent)
+        entries = self.scan_directory(parent)
 
         if entries:
-            ignores = self.prepare_ignores(parent, ignore_files)
-            self.process_entries(parent, entries, ignores)
+            self.process_entries(parent, entries)
 
-    def process_entries(self, parent, entries, ignores):
+    def process_entries(self, parent, entries):
         """Go through the list of entries and see which ones we have to ignore,
            and exclude, which ones match and will be taken to further
            processing and which directory entries to descend into.
@@ -205,14 +189,11 @@ class FilesystemWalker(BaseClass):
                 if self.excluder.test(entry):
                     continue
 
-                elif ignores and GitIgnore.match_all(ignores, entry.abspath, entry.name, is_dir)[0]:
-                    continue
-
                 elif self.matcher.test(entry):
                     process.append(entry)
 
                 if is_dir:
-                    search.append(Directory(parent.start, entry.relpath, ignores))
+                    search.append(Directory(parent.start, entry.relpath, entry.ignore_files))
 
                 # If there are plugins in action that use the cache, that means
                 # that processing entries may take more time than usual (except
@@ -222,7 +203,7 @@ class FilesystemWalker(BaseClass):
                         self.context.idle_processes() / self.args.jobs > 0.25 and \
                         len(entries) > 10:
                     split = len(entries) // 2 + 1
-                    self.queue.put(Entries(parent, entries[split:], ignores))
+                    self.queue.put(Entries(parent, entries[split:], entry.ignore_files))
                     entries = entries[:split]
 
         except OSError as exc:

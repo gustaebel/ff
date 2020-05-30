@@ -37,34 +37,51 @@ class Ignore(Plugin):
     def __init__(self):
         super().__init__()
 
-        self.ignore_cache = {}
+        self.ignore_file_cache = {}
+        self.ignore_files_cache = {}
 
     def can_handle(self, entry):
         return True
 
-    def get_ignores(self, dirname):
-        """Return the list of GitIgnore objects that apply to this particular
+    def get_ignores(self, paths):
+        """Return a list of GitIgnore objects that apply to this particular
            directory.
         """
-        if dirname not in self.ignore_cache:
-            ignores = None
-            for name in GitIgnore.IGNORE_NAMES:
-                path = os.path.join(dirname, name)
+        paths = tuple(paths)
 
-                if ignores is None:
-                    if dirname == os.sep:
-                        ignores = []
-                    else:
-                        ignores = self.get_ignores(os.path.dirname(dirname)).copy()
+        # Construct a chain of GitIgnore objects one for each ignore file found
+        # from the parent directories on down to the current directory.
+        if paths not in self.ignore_files_cache:
+            ignores = []
+            for path in paths:
+                # Reuse GitIgnore objects that have already been instantiated.
+                try:
+                    ignore = self.ignore_file_cache[path]
+                except KeyError:
+                    try:
+                        ignore = GitIgnore(*os.path.split(path))
+                    except OSError as exc:
+                        self.logger.warning(exc, tag=f"ignore-{path}")
+                        continue
 
-                if os.path.exists(path):
-                    ignores.append(GitIgnore(dirname, name))
+                    self.ignore_file_cache[path] = ignore
 
-            self.ignore_cache[dirname] = ignores if ignores is not None else []
+                ignores.append(ignore)
 
-        return self.ignore_cache[dirname]
+            self.ignore_files_cache[paths] = ignores
+
+        return self.ignore_files_cache[paths]
+
+    def is_ignored(self, entry):
+        """Return True if the Entry object matches a pattern in one of the
+           ignore files that apply.
+        """
+        if entry.ignore_files:
+            ignores = self.get_ignores(entry.ignore_files)
+            return GitIgnore.match(ignores, entry.abspath, entry.name, entry.is_dir())
+        else:
+            return False, None
 
     def process(self, entry, cached):
-        ignores = self.get_ignores(entry.dirname)
-        ignored, path = GitIgnore.match_all(ignores, entry.abspath, entry.name, entry.is_dir())
+        ignored, path = self.is_ignored(entry)
         return {"ignored": ignored, "path": path if path is not None else ""}

@@ -108,7 +108,7 @@ class Registry(BaseClass):
                     f"from {path!r}")
             return
 
-        plugin_cls.initialize(source, path)
+        plugin_cls.initialize(self.logger, source, path)
 
         self.registered_plugins[plugin_cls.name] = plugin_cls
 

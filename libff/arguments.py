@@ -307,11 +307,14 @@ class ArgumentsPostProcessor:
             self.args.color = "never"
             self.args.absolute_path = True
 
-        if self.args.hide:
-            self.args.exclude.append("hide=yes")
+        if self.args.ignore:
+            self.args.exclude.append("ignored=yes")
 
         if self.args.one_file_system:
             self.args.exclude.append("samedev=no")
+
+        if self.args.hide:
+            self.args.exclude.append("hide=yes")
 
 
 def parse_arguments():

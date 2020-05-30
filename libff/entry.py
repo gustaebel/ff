@@ -83,10 +83,11 @@ class Entry:
 
         return cls(start_directory, relpath, status)
 
-    def __init__(self, start_directory, relpath, status):
+    def __init__(self, start_directory, relpath, status, ignore_files=None):
         self.start_directory = start_directory
         self.relpath = relpath
         self.status = status
+        self.ignore_files = ignore_files
 
         self.root = self.start_directory.root
         self.path = os.path.join(self.root, self.relpath) if self.root != "." else self.relpath

@@ -40,9 +40,10 @@ class Plugin:
         cls.name = cls.__name__.lower()
 
     @classmethod
-    def initialize(cls, source, path):
+    def initialize(cls, logger, source, path):
         """Initialize the Plugin class with basic information.
         """
+        cls.logger = logger
         cls.source = source
         cls.path = path
         cls.tag = cls.get_plugin_cache_tag(path)

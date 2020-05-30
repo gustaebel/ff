@@ -155,7 +155,7 @@ class _Base(BaseClass):
             else:
                 # Find ignore files in parent directories.
                 if self.context.args.ignore:
-                    ignores = GitIgnore.from_parent_directories(self.context, path)
+                    ignores = GitIgnore.find_ignore_files(os.path.dirname(path))
                 else:
                     ignores = []
 
