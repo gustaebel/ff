@@ -22,7 +22,7 @@ import os
 import textwrap
 import importlib.util
 
-from . import NOTSET, NoData, Attribute, BaseClass, MissingImport
+from . import NODATA, NOTSET, NoData, Attribute, BaseClass, MissingImport
 from .type import Type
 from .table import Table
 from .plugin import Plugin
@@ -227,6 +227,8 @@ class Registry(BaseClass):
     def get_data_from_plugin(self, entry, plugin):
         """Let the plugin process the entry.
         """
+        data = {}
+
         if plugin.can_handle(entry):
             if plugin.use_cache:
                 tag = plugin.get_entry_cache_tag(entry)
@@ -243,17 +245,17 @@ class Registry(BaseClass):
                     try:
                         cached = plugin.cache(entry)
                     except NoData:
-                        cached = None
+                        # Do not bother to call process() below, we could not
+                        # handle this entry.
+                        cached = NODATA
 
                     self.cache.set(plugin, entry.abspath, tag, cached)
 
             else:
                 cached = None
 
-            data = dict(plugin.process(entry, cached))
-
-        else:
-            data = {}
+            if cached is not NODATA:
+                data = dict(plugin.process(entry, cached))
 
         if __debug__:
             for key, value in data.items():

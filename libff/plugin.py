@@ -88,8 +88,7 @@ class Plugin:
         """Extract and prepare data from the Entry object and cache it. It is
            then passed on to the process() method. cache() is only called if
            use_cache is True. The data returned may have any type. Raise a
-           NoData exception if the required data cannot be extracted. It will
-           be the same as if None was returned.
+           NoData exception if the required data cannot be extracted.
         """
         # pylint:disable=unused-argument
         return None
@@ -102,5 +101,7 @@ class Plugin:
            empty sequence if the plugin cannot extract the required attributes
            properly. The cached argument is only present when use_cache is True
            and contains the cached data that was prepared in the cache() method.
+           If the cache() method raised a NoData exception process() will not
+           be called.
         """
         raise NotImplementedError
