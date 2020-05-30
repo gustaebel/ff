@@ -51,7 +51,7 @@ Find video files that are at least 1080 pixels high and order them
 according to running time:
 
 ```sh
-$ ff mtype=video height+=1080 --sort duration
+$ ff mime.type=video height+=1080 --sort duration
 ```
 
 Find files in the directory `Videos/` that end with `.mkv` or `.mp4` and are
