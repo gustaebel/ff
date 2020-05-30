@@ -34,8 +34,6 @@ License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law."""
 
-NOTSET = object()
-NODATA = object()
 
 TIMEOUT = 0.01
 MAX_CPU = multiprocessing.cpu_count()

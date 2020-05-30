@@ -23,7 +23,16 @@ import pickle
 import string
 import sqlite3
 
-from . import NOTSET, BaseClass
+from . import BaseClass
+
+
+class NOTSET:
+    """Return value of the cache if there is no cached value.
+    """
+
+class NODATA:
+    """Cached value for when there was no value that could have been cached.
+    """
 
 
 class NullCache(BaseClass):

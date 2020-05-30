@@ -22,8 +22,9 @@ import os
 import textwrap
 import importlib.util
 
-from . import NODATA, NOTSET, NoData, Attribute, BaseClass, MissingImport
+from . import NoData, Attribute, BaseClass, MissingImport
 from .type import Type
+from .cache import NODATA, NOTSET
 from .table import Table
 from .plugin import Plugin
 from .exceptions import UsageError, BadPluginError, BadAttributeError
