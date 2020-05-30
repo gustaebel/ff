@@ -9,10 +9,10 @@ syntax to change.**
 
 ### Summary
 
-`ff` lets you find files in the filesystem by querying file metadata. Its scope
-is similar to `find(1)` and `fd(1)` but it tries to be more accessible and
-easier to use than `find` and and more versatile and powerful than `fd`. It is
-written in [Python >= 3.6](https://www.python.org/).
+`ff` is a tool for finding files in the filesystem that all share a set of
+common features. Its scope is similar to `find(1)` and `fd(1)` but it aims at
+being more accessible and easier to use than `find` and more versatile and
+powerful than `fd`. It is written in [Python >= 3.6](https://www.python.org/).
 
 ### Features
 

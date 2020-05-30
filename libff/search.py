@@ -126,10 +126,10 @@ class _Base(BaseClass):
 
         try:
             # Setup the matcher from the command line arguments.
-            matcher = Matcher(self.context, args.expressions)
+            matcher = Matcher(self.context, args.tests)
             self.context.matcher = matcher
         except ParserError as exc:
-            raise UsageError(f"unable to parse expressions: {exc}")
+            raise UsageError(f"unable to parse tests: {exc}")
 
         # Setup the excluder from the command line arguments.
         excluder = Excluder(self.context, args.exclude)
@@ -223,7 +223,7 @@ class Search(_Base):
         super().__init__()
 
         args = SearchNamespace()
-        args.expressions = shlex.split(query)
+        args.tests = shlex.split(query)
         args.directories = directories.copy()
         args.exclude = exclude.copy()
         args.output = output

@@ -104,7 +104,7 @@ def create_parser(formatter_class=HelpFormatter):
     """Create the argparse.ArgumentParser object.
     """
     parser = argparse.ArgumentParser(prog="ff", formatter_class=formatter_class, add_help=False,
-            usage="%(prog)s [<options>] [<expression/directory> ... | [-D] <directory> ...]")
+            usage="%(prog)s [<options>] [<test/directory> ... | [-D] <directory> ...]")
 
     group = parser.add_argument_group("Global options")
 
@@ -120,8 +120,8 @@ def create_parser(formatter_class=HelpFormatter):
     group.add_argument("-j", "--jobs", type=type_jobs, default=Defaults.jobs, metavar="<num>",
             help="Set number of processes to use for searching and executing "\
                  "(default: the number of CPU cores).")
-    group.add_argument("expressions", nargs="*", metavar="<expression/directory>",
-            help="An expression for matching files or a directory to search.")
+    group.add_argument("tests", nargs="*", metavar="<test/directory>",
+            help="A test expression for matching files or a directory to search.")
     group.add_argument("-D", "--directories", nargs="+", default=[], metavar="<path>",
             help="Search entries in these paths (default is current directory).")
 
@@ -144,8 +144,8 @@ def create_parser(formatter_class=HelpFormatter):
             help="Do not show files that are excluded by patterns from .(git|fd|ff)ignore files.")
     group.add_argument("--no-parent-ignore", action="store_true", default=False,
             help="Do not read patterns from ignore files from parent directories.")
-    group.add_argument("-e", "--exclude", action="append", default=[], metavar="<expression>",
-            help="Exclude entries that match the given expression.")
+    group.add_argument("-e", "--exclude", action="append", default=[], metavar="<test>",
+            help="Exclude entries that match the given test.")
     group.add_argument("-g", "--glob", action="store_const", const="%", dest="default_operator",
             default=Defaults.default_operator, help="Treat the pattern as a literal string.")
     group.add_argument("-r", "--regex", action="store_const", const="~", dest="default_operator",
@@ -277,12 +277,12 @@ class ArgumentsPostProcessor:
         if not self.args.directories:
             # Check which arguments are existing directories and append them to
             # self.args.directories. We allow directory arguments only at the start or
-            # the end of the list of expressions.
-            for expressions in (list(self.args.expressions), reversed(self.args.expressions)):
-                for expression in expressions:
-                    if os.sep in expression and os.path.isdir(expression):
-                        self.args.expressions.remove(expression)
-                        directory = os.path.normpath(expression)
+            # the end of the list of tests.
+            for tests in (list(self.args.tests), reversed(self.args.tests)):
+                for test in tests:
+                    if os.sep in test and os.path.isdir(test):
+                        self.args.tests.remove(test)
+                        directory = os.path.normpath(test)
                         self.args.directories.append(directory)
                     else:
                         break

@@ -84,7 +84,7 @@ class Test(collections.namedtuple("Test", "attribute operator type value ignore_
 
 
 class FlatParser(BaseClass):
-    """Parse a list of expressions into a test sequence.
+    """Parse a list of test expressions into a test sequence.
     """
 
     expression_regex = re.compile(r"^\s*((?:\w+\.)?\w+?)\s*"\
@@ -125,10 +125,10 @@ class FlatParser(BaseClass):
             else:
                 yield ("    " * level) + str(test)
 
-    def parse_test(self, expression):
+    def parse_test(self, test):
         """Parse an expression and return a Test object.
         """
-        match = self.expression_regex.match(expression)
+        match = self.expression_regex.match(test)
         if match is not None:
             attribute, operator, reference, value = match.groups()
             attribute = self.registry.setup_attribute(attribute)
@@ -145,10 +145,10 @@ class FlatParser(BaseClass):
 
         else:
             if self.default_attribute is None or self.default_operator is None:
-                raise BadAttributeError(f"Simple patterns like {expression!r} are not allowed!")
+                raise BadAttributeError(f"Simple patterns like {test!r} are not allowed!")
 
             return self.create_test(Attribute("file", self.default_attribute),
-                    self.default_operator, None, expression)
+                    self.default_operator, None, test)
 
     def get_reference_value(self, type_cls, attribute, reference, value):
         """Fetch the value from the reference.
@@ -271,7 +271,8 @@ class FlatParser(BaseClass):
 
 
 class Parser(FlatParser):
-    """Parse a list of expressions and operators into a nested test structure.
+    """Parse a list of test expressions and operators into a nested test
+       structure.
     """
 
     OPENING_BRACKETS = ("(", "{{")

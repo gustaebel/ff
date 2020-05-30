@@ -1,31 +1,26 @@
 NAME
-  ff - Search for files in the filesystem
+  ff - Find files in the filesystem
 
 SYNOPSIS
 __include_usage__
 
 DESCRIPTION
-  ff(1) is a tool for searching the filesystem for entries that all share a set
-  of common features. It was inspired by fd(1) but is more powerful and
-  versatile without being too complex. ff(1) aims to be a more user-friendly
-  alternative to find(1).
-
-  ff(1)'s primary goal is to be an interactive tool that is intuitive,
-  effective and easy to use. It is optimized for narrowing down a list of
-  entries step by step. It lets you match many file attributes in many
-  different ways and is extensible by plugins.
+  ff(1) is a tool for finding files in the filesystem that all share a set of
+  common features. Its scope is similar to find(1) and fd(1) but it aims
+  at being more accessible and easier to use than find(1) and more versatile
+  and powerful than fd(1).
 
   ff(1) takes a set of expressions and directories as arguments and uses them
-  for searching. If no arguments are specified, ff(1) lists all files and
-  directories below the directory you are currently in.
+  for searching the filesystem. If no arguments are specified, ff(1) lists all
+  files and directories below the directory you are currently in.
 
-  Whether an argument is an expression or a directory is detected
-  automatically. Directories may be at the start or the end of the list of
-  arguments. They are identified as directories when they contain at least one
-  '/' and point to an existing name in the filesystem. However, directories can
-  be explicitly specified using the -D/--directories option, in which case
-  auto-detection will not be used. If no directory argument is found the
-  current directory is used as the starting point.
+  Whether an argument is a test or a directory is auto-detected.
+  Directories may be at the start or the end of the list of arguments. They are
+  identified as directories when they contain at least one '/' and point to an
+  existing name in the filesystem. However, directories can be explicitly
+  specified using the -D/--directories option, in which case auto-detection
+  will not be used. If no directory argument is found the current directory is
+  used as the starting point.
 
   ff(1) uses parallel processes to speed up searching by default. The number of
   processes depends on the number of CPU cores and can be controlled with
@@ -35,70 +30,73 @@ OPTIONS
 __include_help__
 
 TESTS
-  All command line arguments that do not point to a directory will be used as
-  test expressions. Each filesystem entry is matched against the list of
-  these tests going from left to right. We start with a set of all entries, and
-  the tests are used to narrow this set down, or remove particular entries from
-  the set.
+  All remaining command line arguments that do not point to directories will be
+  used as tests. Each filesystem entry is checked against this list of tests
+  and is included in the result if it matches.
 
   A test basically has the form:
 
     [<[plugin.]attribute><operator>]<value>
 
-  An test matches a certain <value> or pattern against a certain <attribute> of
-  a filesystem entry. The type of test performed is denoted by the <operator>.
+  So, a test compares a certain <value> (or pattern) with the value of a
+  certain <attribute> of a filesystem entry. The type of comparison performed
+  is indicated by the <operator>.
 
-  The simplest form of a test is to just specify <value>. It is a shorthand for
+  The simplest form of a test is to just specify a <value> which means that
+  each entry's basename will be matched against <value> which is a regular
+  expression. It is short for a test with the following syntax:
 
     file.name~<value>
 
-  which means that each entry's basename is matched against the regular
-  expression <value>. (This default behavior can be changed with the
-  -r/--regex, -F/--fixed-strings, -g/--glob and -p/--full-path options.)
+  (The default behavior for this shorthand can be changed with the -r/--regex,
+  -F/--fixed-strings, -g/--glob and -p/--full-path options.)
 
   It is good practice to use full attribute names and to quote either the value
-  or the whole expression to prevent the shell from interfering with characters
-  like '*', '(', ')', '<', '>', etc.
+  or the whole test to prevent the shell from interfering with characters like
+  '*', '(', ')', '<', '>', '!', etc.
 
   Tests can be grouped with 'AND' and 'OR' operators and parenthesis, whereas
-  the 'AND' can be omitted, because it is redundant. Please note that
-  parenthesis must be escaped or quoted properly to prevent the shell from
-  interpreting them. Alternatively, you can use '{{' and '}}' instead.
+  the 'AND' is always implied and can be omitted. Please note that parenthesis
+  must be escaped or quoted properly to prevent the shell from interpreting
+  them. It is recommended to use the alternative forms '{{' and '}}'.
 
 ATTRIBUTES
-  ff(1) lets you search in a wide variety of file attributes. This list of
-  attributes is provided by plugins. Essential plugins are built in, and you
-  can also add your own plugins written in python(1).
+  ff(1) lets you test for a wide variety of file attributes. Attributes are
+  provided by plugins. Essential plugins like 'file' and 'mime' are built in,
+  but you can also add your own plugins written in python(1).
 
   You can list all available attributes this way: `ff --list-attributes`.
 
   The full name of an attribute consists of the <plugin> name, a dot, and the
   <attribute> name. The plugin part of the attribute is optional unless the
   same attribute name is provided by multiple plugins. It will produce an error
-  if an attribute name in an expression is ambiguous. An exception is the
-  'file' plugin whose attribute names are global, always take precedence and
-  will never produce an error. For all other attributes it is recommended to
-  always write the full attribute name including the <plugin> portion, e.g. to
-  avoid possible runtime errors in shell scripts.
+  if an attribute name in a test is ambiguous. An exception is the 'file'
+  plugin whose attribute names are global, always take precedence and will
+  never produce an error. It is recommended to always use the full attribute
+  name.
 
-  The builtin file attributes are as follows:
+  The 'file' plugin provides all basic attributes for filesystem entries:
 
 __include_file__
-  The mime plugin provides attributes regarding the mimetype and encoding of
+  The 'mime' plugin provides attributes regarding the mimetype and encoding of
   files. It depends on the 'file-magic' python module.
 
 __include_mime__
-  There are also some attributes available for media files. Their availability
-  depends on the 'pymediafile' python module.
+  The 'medium' plugin provides attributes for media files. It depends on the
+  'pymediafile' python module.
 
 __include_medium__
 
 TYPES
-  Each attribute has been assigned a certain type that describes how its value
-  is supposed to be interpreted and which operators it supports. Beside the
-  usual 'string', 'number' and 'boolean' types there are types for file sizes,
-  file permissions, timestamps, durations etc.
+  Each attribute has a certain type that describes how its value is supposed to
+  be interpreted and which operators it supports. Beside the common 'string',
+  'number' and 'boolean' types there are also types for file sizes, file
+  permissions, timestamps, durations etc.
 
+  There are a number of predefined date and time parsing patterns for
+  attributes having a 'time' type.
+
+__include_time_patterns__
   Durations consist of one or more partial time designations that are summed up, e.g.:
 
     1h30m25s
@@ -106,11 +104,6 @@ TYPES
   The valid units are: 's' for seconds, 'm' for minutes, 'h' for hours, 'd' for
   days, 'w' for weeks (7 days), 'M' for months (30 days) and 'y' for years (365
   days). If no unit is given 'm' for minutes is assumed.
-
-  There are a number of predefined date and time parsing patterns for
-  attributes providing a 'time' type.
-
-__include_time_patterns__
 
 OPERATORS
   The third component in a test beside the <attribute> and the <value> is the
@@ -150,9 +143,9 @@ OPERATORS
   ~       any of the bits that are set in <value> are set in the attribute
 
 FILE REFERENCES
-  It is possible to pass a path of a file as reference instead of a value. To
-  use a reference you pass a '{}' followed by the path name as the value. For
-  example, to find all files newer than foo/bar/example.txt you do:
+  It is possible to pass a path of a file as reference instead of a <value>. To
+  use a reference you pass a '{}' followed by the path name. For example, to
+  find all files newer than foo/bar/example.txt you do:
 
     ff mtime+{}foo/bar/example.txt
 
@@ -177,18 +170,18 @@ OUTPUT
   per record per line.
 
   By default, pathnames are printed in color according to dircolors(1) rules,
-  unless NO_COLOR is set, --color=never, or ff(1)'s output is not connected to
-  a terminal. Color output can be forced with --color=always.
+  unless NO_COLOR is set, --color is set to 'never', or ff(1) is not connected
+  to a terminal. Color output can be forced with --color=always.
 
 EXECUTION
-  The -x/--exec and -X/--exec-batch options allow to execute commands with
-  search results as arguments. -x/--exec starts one subprocess for every search
-  result, whereas -X/--exec-batch starts only one subprocess that gets all
-  search results at once.
+  The -x/--exec and -X/--exec-batch options allow executing commands with
+  search results as their arguments. -x/--exec starts one process for every
+  result, whereas -X/--exec-batch starts one process that gets all search
+  results at once.
   The exit status of ff(1) will be set accordingly if one of the commands
   terminates with an error, see EXIT CODES below:
 
-  The following placeholders are substituted in the command:
+  The following placeholders are substituted in the command template:
 
   {}  full path, alias for {path}
 
@@ -204,55 +197,56 @@ EXECUTION
 
   {attribute}  replaced with the value of attribute
 
-PLUGINS
-
-  It is possible to write your own plugins and extend ff(1)'s functionality. A
-  plugin is an ordinary python module. There are many examples included in the
-  source distribution and a plugin_template.py. User plugins are imported from
-  ~/.ff.
-
 EXCLUSION
-  The -e/--exclude option allows to exclude entries that match the
-  <expression>. Excluding takes place before all other tests are evaluated.
-  If a directory matches it will not be descended into, so entries below it
-  will not be produced.
+  The -e/--exclude option allows to exclude entries that match the <test>.
+  Excluding takes place before all other tests are evaluated. If a directory
+  matches it will not be descended into, so entries below it will not be
+  produced.
 
   If -H/--hide is given, all hidden files will be excluded using this method,
-  the option translates to '--exclude hide=yes'. The same applies to
+  i.e. the option translates to '--exclude hide=yes'. The same applies to
   -I/--ignore which tranlates to '--exclude ignored=yes'.
 
 IGNORE FILES
   By default, ff(1) reads .gitignore, .ignore, .fdignore, and .ffignore files
   and excludes all entries that match the set of patterns in one of these
-  files. The ignore syntax is described in gitignore(5).
+  files. The syntax of these files is described in gitignore(5).
 
 SORTING
-  Sorting is controlled with -S/--sort option. It is off by default, this way
-  entries are processed and printed as they are found. This makes better use
-  of ff(1)'s parallel processing capabilities and is much faster.
+  Sorting is controlled with the -S/--sort option. It is off by default, this
+  way entries are processed and printed as soon as they are found instead of
+  being collected and sorted first. This makes better use of ff(1)'s parallel
+  processing capabilities and is much faster.
 
   -S/--sort takes an optional <attribute-list> argument. Without it, sorting is
   done alphabetically on the entry's path. <attribute-list> is a
   comma-separated list of attribute names that will be used as sort criteria.
-  The order can be reversed with -R/--reverse.
+  The sort order can be reversed with -R/--reverse.
 
 COUNTING
-  If the --count option is specified, instead of printing the search result,
-  count the entries and the attributes from <attribute-list> and print these
-  counts to standard output. If --count is given without a list of attributes
-  the total file size and statistics about the different file types is
-  displayed. If <attribute-list> is present a total or a count of these
-  attributes is done. There is always a "_total" field that contains the number
-  of all entries that matched.
+  If the --count option is specified, instead of printing the results of the
+  search, count the entries and the attributes from <attribute-list> and print
+  these counts to standard output. If --count is given without a list of
+  attributes the total size of all files and statistics about the different
+  file types is displayed. If <attribute-list> is present a total or a count of
+  these attributes is done. There is always a "_total" field that contains the
+  number of all entries that matched.
 
-  There are two ways of counting attributes that depend on their type. Types
-  like file size or duration that vary widely are summed up to a total and for
-  all other types each individual value is counted. This way you can get an
-  overview on the variety of values of an attribute. For some attributes
-  --count makes not much sense, e.g. path or time. It is best suited for
-  attributes like type, perm, hidden, depth, uid, gid, etc.
+  There are two possible ways in which attributes are counted that depend on
+  their type. Types like file size or duration that vary widely are summed up
+  to a total and for all other types the number of occurrences of each
+  individual value is counted. This way you can get an overview on the variety
+  of values of an attribute. For some attributes --count makes not much sense,
+  e.g. path or time. It is best suited for attributes like type, perm, hidden,
+  depth, uid, gid, etc.
 
   The way a type is counted can be checked with --list-types.
+
+PLUGINS
+  It is possible to write your own plugins and extend ff(1)'s functionality. A
+  plugin is an ordinary python module. There are many examples included in the
+  source distribution and a file 'plugin_template.py' to start from. User
+  plugins are imported from the ~/.ff directory.
 
 EXAMPLES
 
@@ -262,7 +256,7 @@ EXAMPLES
 
   Find only hidden files in directory /home/user:
 
-      $ ff -H hidden=yes /home/user
+      $ ff hidden=yes /home/user
 
   Find files matching the glob pattern:
 
