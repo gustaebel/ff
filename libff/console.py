@@ -127,16 +127,17 @@ class Console(BaseConsole):
            convert it to an individual form using its Type. If required turn it
            into a human-readable form.
         """
-        if field.attribute.plugin == "file" and field.attribute.name in ("dir", "name", "path"):
-            if field.attribute.name == "dir":
-                return self.render_directory(entry.dir)
-            elif field.attribute.name == "name":
-                return self.render_name(entry)
+        if field.attribute == ("file", "dir"):
+            return self.render_directory(entry.dir)
+
+        elif field.attribute == ("file", "name"):
+            return self.render_name(entry)
+
+        elif field.attribute == ("file", "path"):
+            if field.modifier == "h":
+                return self.render_path(entry, with_link=True)
             else:
-                if field.modifier == "h":
-                    return self.render_path(entry, with_link=True)
-                else:
-                    return self.render_path(entry)
+                return self.render_path(entry)
 
         else:
             try:
