@@ -18,6 +18,7 @@
 #
 # -----------------------------------------------------------------------
 
+import os
 import queue
 import shutil
 import threading
@@ -107,3 +108,13 @@ class BaseClass:
         if name in self.component_names:
             setattr(self, name, attr)
         return attr
+
+
+def join(part1, part2):
+    """A simpler version of os.path.join() with a limited scope that is
+       significantly faster.
+    """
+    if part1:
+        return part1 + os.sep + part2
+    else:
+        return part2

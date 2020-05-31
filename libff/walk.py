@@ -24,7 +24,7 @@ import signal
 import subprocess
 import multiprocessing
 
-from . import TIMEOUT, Entries, BaseClass, Directory
+from . import TIMEOUT, Entries, BaseClass, Directory, join
 from .entry import Entry
 from .ignore import GitIgnore
 from .exceptions import EX_SUBPROCESS
@@ -130,11 +130,11 @@ class FilesystemWalker(BaseClass):
         ignore_paths = parent.ignore_paths.copy()
 
         try:
-            with os.scandir(os.path.join(parent.start.root, parent.relpath)) as direntries:
+            with os.scandir(join(parent.start.root, parent.relpath)) as direntries:
                 for direntry in direntries:
                     try:
                         status = direntry.stat(follow_symlinks=self.args.follow_symlinks)
-                        entry = Entry(parent.start, os.path.join(parent.relpath, direntry.name),
+                        entry = Entry(parent.start, join(parent.relpath, direntry.name),
                                 status, ignore_paths)
 
                     except FileNotFoundError:

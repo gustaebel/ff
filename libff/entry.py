@@ -23,6 +23,7 @@ import grp
 import pwd
 import stat
 
+from . import join
 from .type import Mode
 
 
@@ -84,21 +85,23 @@ class Entry:
         return cls(start_directory, relpath, status)
 
     def __init__(self, start_directory, relpath, status, ignore_paths=None):
+        # pylint:disable=too-many-branches
+
         self.start_directory = start_directory
         self.relpath = relpath
         self.status = status
         self.ignore_paths = ignore_paths
 
         self.root = self.start_directory.root
-        self.path = os.path.join(self.root, self.relpath) if self.root != "." else self.relpath
-        self.abspath = os.path.join(self.start_directory.absroot, self.relpath)
+        self.path = join(self.root, self.relpath) if self.root != "." else self.relpath
+        self.abspath = join(self.start_directory.absroot, self.relpath)
 
         self.dir, self.name = os.path.split(self.path)
 
         # Collect information early to avoid having OSErrors later on.
         if stat.S_ISLNK(self.status.st_mode):
             self.link = os.readlink(self.path)
-            self.target = os.path.realpath(os.path.join(self.dir, self.link))
+            self.target = os.path.realpath(join(self.dir, self.link))
             self.broken = not os.path.exists(self.target)
         else:
             self.link = None
@@ -106,6 +109,31 @@ class Entry:
             self.broken = False
 
         self.hide = self.name[0] == "."
+
+        self.mode = self.status.st_mode
+
+        if stat.S_ISDIR(self.mode):
+            self.type = "directory"
+        elif stat.S_ISREG(self.mode):
+            self.type = "file"
+        elif stat.S_ISLNK(self.mode):
+            self.type = "symlink"
+        elif stat.S_ISSOCK(self.mode):
+            self.type = "socket"
+        elif stat.S_ISFIFO(self.mode):
+            self.type = "fifo"
+        elif stat.S_ISCHR(self.mode):
+            self.type = "char"
+        elif stat.S_ISBLK(self.mode):
+            self.type = "block"
+        elif stat.S_ISDOOR(self.mode):
+            self.type = "door"
+        elif stat.S_ISPORT(self.mode):
+            self.type = "port"
+        elif stat.S_ISWHT(self.mode):
+            self.type = "whiteout"
+        else:
+            self.type = "other"
 
     def __repr__(self):
         return f"<{self.__class__.__name__} {self.path!r}>"
@@ -143,36 +171,6 @@ class Entry:
         """The depth of the file relative to the start directory.
         """
         return self.relpath.count(os.sep)
-
-    @property
-    def type(self):
-        """The file type: one of 'd'/'directory', 'f'/'file', 'l'/'symlink',
-           's'/'socket', 'p'/'pipe'/'fifo', 'char', 'block', 'door', 'port',
-           'whiteout' or 'other'.
-        """
-        if stat.S_ISDIR(self.status.st_mode):
-            type_ = "directory"
-        elif stat.S_ISREG(self.status.st_mode):
-            type_ = "file"
-        elif stat.S_ISLNK(self.status.st_mode):
-            type_ = "symlink"
-        elif stat.S_ISSOCK(self.status.st_mode):
-            type_ = "socket"
-        elif stat.S_ISFIFO(self.status.st_mode):
-            type_ = "fifo"
-        elif stat.S_ISCHR(self.status.st_mode):
-            type_ = "char"
-        elif stat.S_ISBLK(self.status.st_mode):
-            type_ = "block"
-        elif stat.S_ISDOOR(self.status.st_mode):
-            type_ = "door"
-        elif stat.S_ISPORT(self.status.st_mode):
-            type_ = "port"
-        elif stat.S_ISWHT(self.status.st_mode):
-            type_ = "whiteout"
-        else:
-            type_ = "other"
-        return type_
 
     @property
     def exec(self):
@@ -213,12 +211,6 @@ class Entry:
         """The access time of the file in seconds since epoch.
         """
         return int(self.status.st_atime)
-
-    @property
-    def mode(self):
-        """The mode and permission bits of the file.
-        """
-        return self.status.st_mode
 
     @property
     def perm(self):
@@ -336,7 +328,7 @@ class Entry:
         if not self.is_dir():
             return False
 
-        parent = os.path.realpath(os.path.join(self.path, ".."))
+        parent = os.path.realpath(join(self.path, ".."))
 
         if parent == self.path:
             return True

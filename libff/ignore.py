@@ -22,6 +22,8 @@ import os
 import re
 import collections
 
+from . import join
+
 GroupKey = collections.namedtuple("GroupKey", "include anchored directory")
 
 
@@ -152,9 +154,9 @@ class GitIgnore:
         ignores = []
         parent = os.sep
         for part in dirname.split(os.sep):
-            parent = os.path.join(parent, part)
+            parent = join(parent, part)
             for name in cls.IGNORE_NAMES:
-                if os.path.exists(os.path.join(parent, name)):
+                if os.path.exists(join(parent, name)):
                     ignores.append((parent, name))
         return ignores
 
@@ -175,7 +177,7 @@ class GitIgnore:
     def __init__(self, dirname, name):
         assert os.path.isabs(dirname)
         self.dirname = dirname
-        self.path = os.path.join(dirname, name)
+        self.path = join(dirname, name)
 
         with open(self.path) as lines:
             self.lines = list(lines)
