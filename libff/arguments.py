@@ -19,6 +19,7 @@
 # -----------------------------------------------------------------------
 
 import os
+import re
 import sys
 import shlex
 import argparse
@@ -49,6 +50,7 @@ def type_jobs(string):
         num = MAX_CPU
     return max(min(num, MAX_CPU), 1)
 
+
 def type_number(string):
     """Parse a number greater than zero.
     """
@@ -57,10 +59,46 @@ def type_number(string):
         raise ValueError("number must be greater than zero")
     return num
 
+
 def type_list(string):
     """Parse a comma separated string into a list.
     """
     return [s.strip() for s in string.split(",")]
+
+
+regex_range = re.compile(r"^(?:(?P<single>\d+)|(?P<start>\d*)-(?P<stop>\d*))$")
+
+def type_ranges(string):
+    """Parse a comma separated list of ranges.
+    """
+    segments = []
+    for range_ in type_list(string):
+        match = regex_range.match(range_)
+        if match is None:
+            raise ValueError("invalid range")
+
+        if match.group("single") is not None:
+            number = int(match.group("single"))
+            segments.append((number, number))
+
+        else:
+            start = match.group("start")
+            if start:
+                start = int(start)
+            else:
+                start = 0
+
+            stop = match.group("stop")
+            if stop:
+                stop = int(stop)
+                if stop < start:
+                    stop, start = start, stop
+            else:
+                stop = None
+
+            segments.append((start, stop))
+
+    return segments
 
 
 class HelpFormatter(argparse.HelpFormatter):
@@ -142,6 +180,12 @@ def create_parser(formatter_class=HelpFormatter):
             help="Do not show hidden files and directories.")
     group.add_argument("-I", "--ignore", action="store_true", default=False,
             help="Do not show files that are excluded by patterns from .(git|fd|ff)ignore files.")
+    group.add_argument("-d", "--depth", type=type_ranges, default=None, metavar="<range>",
+            help="Show only files that are located at a certain depth level of the directory "\
+                 "tree that is within the given <range>. A <range> is a string of the form "\
+                 "'<start>-<stop>'. <start> and <stop> are optional and may be omitted. "\
+                 "<range> may also be a single number. It is possible to specify multiple "\
+                 "ranges separated by comma.")
     group.add_argument("--no-parent-ignore", action="store_true", default=False,
             help="Do not read patterns from ignore files from parent directories.")
     group.add_argument("-e", "--exclude", action="append", default=[], metavar="<test>",
@@ -315,6 +359,39 @@ class ArgumentsPostProcessor:
 
         if self.args.hide:
             self.args.exclude.append("hide=yes")
+
+        if self.args.depth:
+            # Look for an upper limit in the given ranges and exclude
+            # everything above it, so we go only as deep into the tree as
+            # necessary.
+            if not [stop for start, stop in self.args.depth if stop is None]:
+                stop = max(stop for start, stop in self.args.depth)
+                self.args.exclude.append(f"depth+{stop}")
+
+            # Construct a set of tests for all the given ranges and embed the
+            # existing set of tests in it.
+            tests = []
+            tests.append("{{")
+
+            for i, (start, stop) in enumerate(self.args.depth):
+                if start == stop:
+                    tests.append(f"depth={start}")
+                else:
+                    tests.append(f"depth+={start}")
+                    if stop is not None:
+                        tests.append(f"depth-={stop}")
+
+                if i < len(self.args.depth) - 1:
+                    tests.append("OR")
+
+            tests.append("}}")
+
+            if self.args.tests:
+                tests.append("{{")
+                tests += self.args.tests
+                tests.append("}}")
+
+            self.args.tests = tests
 
 
 def parse_arguments():
