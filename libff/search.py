@@ -197,6 +197,8 @@ class SearchNamespace(argparse.Namespace):
     default_attribute = None
     default_operator = None
 
+    depth = None
+
     # Options that have no relevance for the Python API but will be referenced
     # somewhere in the code. Would be nice to remove these one day.
     count = None
