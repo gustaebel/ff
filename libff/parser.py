@@ -305,11 +305,13 @@ class Parser(FlatParser):
             token = self.tokens.pop(0)
             utoken = token.upper()
 
-            if utoken in self.OPENING_BRACKETS:
+            if token in self.OPENING_BRACKETS:
                 self.parse_bracket_sequence(sequences, OR(AND()))
 
-            elif utoken in self.CLOSING_BRACKETS:
-                self.tokens.insert(0, utoken)
+            elif token in self.CLOSING_BRACKETS:
+                if not sequences[-1]:
+                    raise ParserError("empty expression")
+                self.tokens.insert(0, token)
                 return
 
             elif utoken == "AND":
