@@ -104,8 +104,8 @@ class Entry:
             self.target = os.path.realpath(join(self.dir, self.link))
             self.broken = not os.path.exists(self.target)
         else:
-            self.link = None
-            self.target = None
+            # Don't set link and target so that KeyError is raised in
+            # get_attribute().
             self.broken = False
 
         self.hide = self.name[0] == "."

@@ -36,6 +36,33 @@ BAR
 
 
 
+ff -o link,name
+foo BAR
+
+
+
+ff --all -o link,path
+foo BAR
+ baz
+ dir
+ dir/dir
+ dir/dir/empty
+ dir/empty_dir
+ foo
+ .hidden
+
+
+
+ff -x echo {link}
+foo
+
+
+
+ff -X echo {link}
+foo
+
+
+
 ff name%ba?
 BAR
 baz

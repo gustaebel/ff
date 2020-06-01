@@ -140,12 +140,8 @@ class Console(BaseConsole):
                 return self.render_path(entry)
 
         else:
-            try:
-                value, type_cls = self.registry.get_attribute_and_type(entry, field.attribute)
-            except KeyError:
-                string = ""
-            else:
-                string = type_cls.output(self.args, field.modifier, value)
+            value, type_cls = self.registry.get_attribute_and_type(entry, field.attribute)
+            string = type_cls.output(self.args, field.modifier, value)
 
             return String(string, len(string))
 
@@ -235,7 +231,13 @@ class Console(BaseConsole):
         """
         output = []
         for field in self.fields:
-            output.append(self.format_field(entry, field))
+            try:
+                output.append(self.format_field(entry, field))
+            except KeyError:
+                if self.args.all:
+                    output.append("")
+                else:
+                    return
 
         self.write_line(self.field_separator.join(output))
 

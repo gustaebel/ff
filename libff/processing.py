@@ -192,7 +192,10 @@ class ImmediateExecProcessing(ImmediateBaseProcessing):
 
     def process(self, entries):
         for entry in entries:
-            self.walker.put([self.args.exec.render(entry)])
+            try:
+                self.walker.put([self.args.exec.render(entry)])
+            except KeyError:
+                pass
 
 
 class ImmediateConsoleProcessing(BaseConsoleProcessing):

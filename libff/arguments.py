@@ -242,6 +242,8 @@ def create_parser(formatter_class=HelpFormatter):
                  "The special value 'file' stands for all file attributes.")
     group.add_argument("--sep", default=" ", metavar="<string>", dest="separator",
             help="Separate each attribute of --output with <string>, default is a single space.")
+    group.add_argument("--all", action="store_true", default=False,
+            help="Show all entries including the ones with missing attribute values.")
     group.add_argument("--json", action="store_const", const="json", dest="json", default=None,
             help="Print attributes as one big json object to stdout.")
     group.add_argument("--jsonl", action="store_const", const="jsonl", dest="json",

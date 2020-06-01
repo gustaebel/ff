@@ -161,13 +161,17 @@ OUTPUT
   of attribute names, that will be printed using the separator string from the
   --sep option. -o/--output defaults to 'path'.
 
+  Entries that are missing a value for one of the attributes in the list from
+  -o/--output will not be printed unless the --all option is given.
+
   The -v/--verbose option produces output in the style of 'ls -lh'.
 
   The --json and --jsonl options print each record as a JSON object to standard
-  output. The attributes of the JSON object are the same as in -o/--output. The
-  difference between both options is that --json produces one big JSON list
-  object containing all the records, whereas the --jsonl prints one JSON object
-  per record per line.
+  output. The attributes of the JSON object are the same as in -o/--output, but
+  --all is implied and missing attributes have a null value. The difference
+  between both options is that --json produces one big JSON list object
+  containing all the records, whereas the --jsonl prints one JSON object per
+  record per line.
 
   By default, pathnames are printed in color according to dircolors(1) rules,
   unless NO_COLOR is set, --color is set to 'never', or ff(1) is not connected
@@ -183,19 +187,23 @@ EXECUTION
 
   The following placeholders are substituted in the command template:
 
-  {}  full path, alias for {path}
+  {}  full path, alias for {file.path}
 
-  {/}  basename, alias for {name}
+  {/}  basename, alias for {file.name}
 
-  {//}  parent directory, alias for {dir}
+  {//}  parent directory, alias for {file.dir}
 
-  {.}  path without file extension, alias for {pathx}
+  {.}  path without file extension, alias for {file.pathx}
 
-  {/.}  basename without file extension, alias for {namex}
+  {/.}  basename without file extension, alias for {file.namex}
 
-  {..}  file extension, alias for {ext}
+  {..}  file extension, alias for {file.ext}
 
   {attribute}  replaced with the value of attribute
+
+  If no placeholder is found in the command template the full path is used as
+  the argument. The -o/--output option has no effect on -x/--exec and
+  -X/--exec-batch.
 
 EXCLUSION
   The -e/--exclude option allows to exclude entries that match the <test>.

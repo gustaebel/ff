@@ -154,9 +154,9 @@ class ExecFields(Fields):
         """Create a list of arguments from an Entry object for calling a
            subprocess.
         """
-        return self.render_fields(self, [entry])
+        return self.render_fields(self, [entry], ignore_missing=False)
 
-    def render_fields(self, fields, entries):
+    def render_fields(self, fields, entries, ignore_missing=True):
         """Return a list of arguments with all placeholders replaced.
         """
         output = []
@@ -166,9 +166,10 @@ class ExecFields(Fields):
                     try:
                         value = self.registry.get_attribute(entry, field.attribute)
                     except KeyError:
-                        # What is the right to do here? Emit an empty argument
-                        # or just ignore it?
-                        output.append("")
+                        if self.args.all:
+                            output.append("")
+                        elif not ignore_missing:
+                            raise
                     else:
                         output.append(field.type.output(self.args, field.modifier, value))
             else:
@@ -188,4 +189,4 @@ class ExecBatchFields(ExecFields):
         """Create a list of arguments from multiple Entry objects for calling a
            subprocess.
         """
-        return [self[0]] + self.render_fields(self[1:], entries)
+        return [self[0]] + self.render_fields(self[1:], entries, ignore_missing=True)
