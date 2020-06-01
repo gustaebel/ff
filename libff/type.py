@@ -18,6 +18,7 @@
 #
 # -----------------------------------------------------------------------
 
+import os
 import re
 import stat
 from enum import Enum
@@ -91,8 +92,8 @@ class Type:
         """
         return value
 
-    @staticmethod
-    def test(entry, test, value):
+    @classmethod
+    def test(cls, entry, test, value):
         """Return True or False depending on whether the `test` matches `value`.
            `test` is a namedtuple with the following attributes:
 
@@ -129,9 +130,15 @@ class Type:
         """
         return isinstance(value, type(cls.sort_none))
 
+    @classmethod
+    def sort_key(cls, value):
+        """Extract a comparison key from `value` that will be used for sorting.
+        """
+        return value
+
 
 class String(Type):
-    """Simple string. Examples: 'file.ext=txt' 'file.name%*.txt'
+    """Simple string. Examples: 'file.ext=txt' 'mime.mime~py'
     """
 
     operators = ("=", ":", "~", "%")
@@ -139,22 +146,15 @@ class String(Type):
     count = Count.COUNT
     string_type = True
 
-    @staticmethod
-    def test(entry, test, value):
+    @classmethod
+    def test(cls, entry, test, value):
         # If the test is case insensitive, the test.value argument has
         # already been converted to lower case.
         if test.ignore_case:
             value = value.lower()
 
         if test.operator == "%":
-            if test.attribute in (("file", "path"), ("file", "name")):
-                basename = entry.name
-                is_dir = entry.is_dir()
-            else:
-                basename = value
-                is_dir = False
-
-            if test.value.match(value, basename, is_dir):
+            if test.value.match(value, value, False):
                 return test.value.include
             else:
                 return not test.value.include
@@ -162,6 +162,37 @@ class String(Type):
         return test.operator == "=" and value == test.value or \
                 test.operator == ":" and test.value in value or \
                 test.operator == "~" and test.value.search(value) is not None
+
+    @classmethod
+    def sort_key(cls, value):
+        return value.lower()
+
+
+class Path(String):
+    """String containing a filesystem path or a portion thereof. Examples:
+       'file.name%*.txt' 'file.dir=foo/bar'
+    """
+
+    @classmethod
+    def test(cls, entry, test, value):
+        if test.ignore_case:
+            value = value.lower()
+
+        if test.operator == "%":
+            basename = entry.name.lower() if test.ignore_case else entry.name
+            is_dir = entry.is_dir()
+
+            if test.value.match(value, basename, is_dir):
+                return test.value.include
+            else:
+                return not test.value.include
+
+        return super().test(entry, test, value)
+
+    @classmethod
+    def sort_key(cls, value):
+        value = value.lower()
+        return os.sep.join(v.lstrip(".") for v in value.split(os.sep))
 
 
 class FileType(Type):
@@ -177,8 +208,8 @@ class FileType(Type):
         "socket", "p", "pipe", "fifo", "char", "block", "door", "port",
         "whiteout", "other"])
 
-    @staticmethod
-    def test(entry, test, value):
+    @classmethod
+    def test(cls, entry, test, value):
         test_value = test.value.lower()
         if test_value == "d":
             test_value = "directory"
@@ -203,8 +234,8 @@ class ListOfStrings(Type):
     string_type = True
     name = String.name + "[]"
 
-    @staticmethod
-    def test(entry, test, value):
+    @classmethod
+    def test(cls, entry, test, value):
         return any(String.test(entry, test, v) for v in value)
 
     @classmethod
@@ -242,8 +273,8 @@ class Number(Type):
         else:
             return super().output(args, modifier, value)
 
-    @staticmethod
-    def test(entry, test, value):
+    @classmethod
+    def test(cls, entry, test, value):
         return test.operator == "=" and value == test.value or \
                 test.operator == "+=" and value >= test.value or \
                 test.operator == "-=" and value <= test.value or \
@@ -424,6 +455,6 @@ class Boolean(Type):
     def output(cls, args, modifier, value):
         return str(value).lower()
 
-    @staticmethod
-    def test(entry, test, value):
+    @classmethod
+    def test(cls, entry, test, value):
         return test.operator == "=" and value is test.value

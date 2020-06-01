@@ -23,7 +23,7 @@ import binascii
 from . import NoData, MissingImport
 from .type import *
 
-__all__ = ["NoData", "MissingImport", "Type", "String", "Number", "FileType", "Mode",
+__all__ = ["NoData", "MissingImport", "Type", "String", "Path", "Number", "FileType", "Mode",
         "Size", "Time", "Duration", "Boolean", "ListOfStrings", "Plugin"]
 
 

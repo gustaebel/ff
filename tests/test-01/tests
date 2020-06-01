@@ -1,6 +1,6 @@
 ff -H
 foo
-bar
+BAR
 baz
 dir
 dir/dir
@@ -32,12 +32,12 @@ dir/dir/empty
 
 
 ff type=l
-bar
+BAR
 
 
 
 ff name%ba?
-bar
+BAR
 baz
 
 
@@ -51,13 +51,13 @@ dir/dir/empty
 ff -H empty=yes OR type=l
 dir/empty_dir
 dir/dir/empty
-bar
+BAR
 
 
 
 ff empty=no
 foo
-bar
+BAR
 baz
 dir
 dir/dir
@@ -66,7 +66,7 @@ dir/dir
 
 ff -H depth=0
 foo
-bar
+BAR
 baz
 dir
 
@@ -79,8 +79,42 @@ dir/empty_dir
 
 
 
+ff -H -d0
+foo
+BAR
+baz
+dir
+
+
+
+ff -d1-
+dir/dir
+dir/dir/empty
+dir/empty_dir
+
+
+
+ff -H -d0-1
+foo
+BAR
+baz
+dir
+dir/dir
+dir/empty_dir
+
+
+
+ff -H -d0,2
+foo
+BAR
+baz
+dir
+dir/dir/empty
+
+
+
 ff -H size=0
-bar
+BAR
 dir/dir/empty
 dir
 dir/dir
@@ -100,7 +134,7 @@ baz
 
 
 ff -H -o perm:o,size:o,name not type=d depth=0
-777 0 bar
+777 0 BAR
 644 4 foo
 644 12 baz
 
@@ -108,13 +142,25 @@ ff -H -o perm:o,size:o,name not type=d depth=0
 
 # keep_order
 ff -H -S
-bar
+BAR
 baz
 dir
 dir/dir
 dir/dir/empty
 dir/empty_dir
 foo
+
+
+
+ff -S
+BAR
+baz
+dir
+dir/dir
+dir/dir/empty
+dir/empty_dir
+foo
+.hidden
 
 
 
@@ -125,7 +171,7 @@ dir/dir/empty
 dir/dir
 dir
 baz
-bar
+BAR
 
 
 
@@ -137,11 +183,11 @@ baz
 
 
 ff -H -S -1
-bar
+BAR
 
 
 
-ff -S -R -l 5
+ff -H -S -R -l 5
 foo
 dir/empty_dir
 dir/dir/empty
@@ -152,7 +198,7 @@ dir
 
 # no_order
 ff -H -o mode:h,links,size:5h,path:h
-lrwxrwxrwx 1     0 bar -> foo
+lrwxrwxrwx 1     0 BAR -> foo
 -rw-r--r-- 1     4 foo
 -rw-r--r-- 1    10 baz
 drwxr-xr-x 4     0 dir
@@ -163,7 +209,7 @@ drwxr-xr-x 2     0 dir/dir
 
 
 ff -H -o size,links,path --sep :
-0:1:bar
+0:1:BAR
 4:1:foo
 10:1:baz
 0:4:dir
@@ -179,14 +225,14 @@ foo
 baz
 
 
-ff \( name=bar or name=foo \) \( type=l or type=f \)
+ff \( name=BAR or name=foo \) \( type=l or type=f \)
 foo
-bar
+BAR
 
 
 ff \( name=baz or name=foo \) type=f or type=l
 foo
-bar
+BAR
 baz
 
 
@@ -223,7 +269,7 @@ workdir/foo
 
 # --glob, --fixed-strings, --regex
 ff -g 'ba?'
-bar
+BAR
 baz
 
 ff -F 'ba?'
@@ -233,7 +279,7 @@ dir/dir/empty
 dir/empty_dir
 
 ff --regex 'ba.'
-bar
+BAR
 baz
 
 
@@ -275,7 +321,7 @@ ff -H --count file.size,type --json
 # Check if sort using a missing field works.
 ff -H -S duration
 foo
-bar
+BAR
 baz
 dir
 dir/dir

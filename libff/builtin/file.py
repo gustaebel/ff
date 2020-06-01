@@ -33,17 +33,17 @@ class File(Plugin):
     # pylint:disable=no-member
 
     attributes = [
-        ("path",    String,   "The full pathname of the file. It will be relative to the current "\
+        ("path",    Path,     "The full pathname of the file. It will be relative to the current "\
                               "working directory depending on the <directory> arguments that were "\
                               "given on the command line. This can be changed with the "\
                               "-a/--absolute path option."),
-        ("root",    String,   "The start directory the file was found in."),
-        ("relpath", String,   "The pathname of the file relative to the start directory."),
-        ("dir",     String,   "The dirname portion of the file."),
-        ("name",    String,   "The basename portion of the file"),
+        ("root",    Path,     "The start directory the file was found in."),
+        ("relpath", Path,     "The pathname of the file relative to the start directory."),
+        ("dir",     Path,     "The dirname portion of the file."),
+        ("name",    Path,     "The basename portion of the file"),
         ("ext",     String,   Entry.ext.__doc__),
-        ("pathx",   String,   Entry.pathx.__doc__),
-        ("namex",   String,   Entry.namex.__doc__),
+        ("pathx",   Path,     Entry.pathx.__doc__),
+        ("namex",   Path,     Entry.namex.__doc__),
         ("mode",    Mode,     "The mode and permission bits of the file."),
         ("type",    FileType, "The file type: one of 'd'/'directory', 'f'/'file', 'l'/'symlink', "\
                               "'s'/'socket', 'p'/'pipe'/'fifo', 'char', 'block', 'door', 'port', "\
@@ -67,9 +67,9 @@ class File(Plugin):
         ("hide",    Boolean,  "Whether the the name of the file starts with a dot."),
         ("hidden",  Boolean,  Entry.hidden.__doc__),
         ("empty",   Boolean,  Entry.empty.__doc__),
-        ("link",    String,   "The target path of a symbolic link relative to its parent "\
+        ("link",    Path,     "The target path of a symbolic link relative to its parent "\
                               "directory. Empty if the file is not a symbolic link."),
-        ("target",  String,   "The full target path of a symbolic link. Empty if the file is not "\
+        ("target",  Path,     "The full target path of a symbolic link. Empty if the file is not "\
                               "a symbolic link."),
         ("broken",  Boolean,  "Whether the target of a symbolic link points to a file that does "\
                               "not exist."),

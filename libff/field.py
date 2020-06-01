@@ -114,6 +114,7 @@ class SortFields(OutputFields):
             except KeyError:
                 output.append(field.type.sort_none)
             else:
+                value = field.type.sort_key(value)
                 output.append(value)
         return tuple(output)
 
