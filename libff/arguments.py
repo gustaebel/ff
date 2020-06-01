@@ -190,24 +190,24 @@ def create_parser(formatter_class=HelpFormatter):
             help="Do not read patterns from ignore files from parent directories.")
     group.add_argument("-e", "--exclude", action="append", default=[], metavar="<test>",
             help="Exclude entries that match the given test.")
+    group.add_argument("-c", "--case", choices=["smart", "ignore", "sensitive"], dest="case",
+            default=Defaults.case, metavar="<mode>",
+            help="How to treat the case of text attributes (smart, ignore or sensitive).")
+    group.add_argument("-L", "--follow", action="store_true", dest="follow_symlinks",
+            default=Defaults.follow_symlinks, help="Follow symbolic links.")
+    group.add_argument("--one-file-system", "--mount", "--xdev", action="store_true", default=False,
+            help="Do not descend into different file systems.")
+
+    group = parser.add_argument_group("Simple pattern options")
     group.add_argument("-g", "--glob", action="store_const", const="%", dest="default_operator",
             default=Defaults.default_operator, help="Treat the pattern as a literal string.")
     group.add_argument("-r", "--regex", action="store_const", const="~", dest="default_operator",
             help="Perform a regular-expression based search (default).")
     group.add_argument("-F", "--fixed-strings", action="store_const", const=":",
             dest="default_operator", help="Treat the pattern as a literal string.")
-    group.add_argument("-c", "--case", choices=["smart", "ignore", "sensitive"], dest="case",
-            default=Defaults.case, metavar="<mode>",
-            help="How to treat the case of text attributes (smart, ignore or sensitive).")
-    group.add_argument("-a", "--absolute-path", action="store_true", default=False,
-            help="Show absolute instead of relative paths.")
-    group.add_argument("-L", "--follow", action="store_true", dest="follow_symlinks",
-            default=Defaults.follow_symlinks, help="Follow symbolic links.")
     group.add_argument("-p", "--full-path", action="store_const", const="path",
             dest="default_attribute", default=Defaults.default_attribute,
-            help="Search full path (default: file-/dirname only).")
-    group.add_argument("--one-file-system", "--mount", "--xdev", action="store_true", default=False,
-            help="Do not descend into different file systems.")
+            help="Search full path (default: basename only).")
 
     group = parser.add_argument_group("Output options")
     group.add_argument("-x", "--exec", nargs=argparse.REMAINDER, metavar="<cmd>",
@@ -217,6 +217,8 @@ def create_parser(formatter_class=HelpFormatter):
     group.add_argument("-C", "--color", choices=["auto", "never", "always"],
             default="never" if "NO_COLOR" in os.environ else "auto",
             metavar="<when>", help="When to use colors: never, *auto*, always.")
+    group.add_argument("-a", "--absolute-path", action="store_true", default=False,
+            help="Show absolute instead of relative paths.")
     group.add_argument("-0", "--print0", action="store_const", const="\0", dest="newline",
             default="\n", help="Separate results by the null character.")
     group.add_argument("-v", "--verbose", action="store_const", dest="output", default=["path"],
