@@ -185,8 +185,8 @@ class _Base(BaseClass):
 
 
 class SearchNamespace(argparse.Namespace):
-    """An argparser.Namespace that contains all necessary arguments for setting
-       up the Python API.
+    """An argparser.Namespace that contains the minimum number of arguments for
+       setting up the Python API.
     """
     # pylint:disable=too-many-instance-attributes
 
@@ -215,7 +215,7 @@ class Search(_Base):
     """
     # pylint:disable=too-many-arguments,too-many-locals,dangerous-default-value,invalid-name
 
-    def __init__(self, query, directories=["."], exclude=[], output=["file"],
+    def __init__(self, query=None, directories=["."], exclude=[], output=["file"],
             sort=[], reverse=False,
             hide=False, ignore=False, one_file_system=False,
             case=Defaults.case,
@@ -224,8 +224,18 @@ class Search(_Base):
             absolute_path=False, jobs=Defaults.jobs, cache=Defaults.cache):
         super().__init__()
 
+        if case not in Defaults.case_choices:
+            raise ValueError(f"case argument must be one of {', '.join(Defaults.case_choices)}")
+
+        if query is None:
+            tests = []
+        elif isinstance(query, str):
+            tests = shlex.split(query)
+        else:
+            tests = query
+
         args = SearchNamespace()
-        args.tests = shlex.split(query)
+        args.tests = tests
         args.directories = directories.copy()
         args.exclude = exclude.copy()
         args.output = output

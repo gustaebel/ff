@@ -34,6 +34,7 @@ class Defaults:
     """
 
     case = "smart"
+    case_choices = ["smart", "ignore", "sensitive"]
     default_attribute = "name"
     default_operator = "~"
     follow_symlinks = False
@@ -190,7 +191,7 @@ def create_parser(formatter_class=HelpFormatter):
             help="Do not read patterns from ignore files from parent directories.")
     group.add_argument("-e", "--exclude", action="append", default=[], metavar="<test>",
             help="Exclude entries that match the given test.")
-    group.add_argument("-c", "--case", choices=["smart", "ignore", "sensitive"], dest="case",
+    group.add_argument("-c", "--case", choices=Defaults.case_choices, dest="case",
             default=Defaults.case, metavar="<mode>",
             help="How to treat the case of text attributes (smart, ignore or sensitive).")
     group.add_argument("-L", "--follow", action="store_true", dest="follow_symlinks",

@@ -25,6 +25,9 @@ import unittest
 import subprocess
 
 from libff.ignore import Glob
+from libff.search import Search
+from libff.exceptions import BadAttributeError
+
 
 tests_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
 
@@ -125,6 +128,164 @@ class GlobTest(unittest.TestCase):
         self._test("a/**/b", "a/b")
         self._test("a/**/b", "a/x/b")
         self._test("a/**/b", "a/x/y/b")
+
+
+class APITest(unittest.TestCase):
+
+    tests_dir = os.path.dirname(sys.argv[0])
+
+    def setUp(self):
+        self.startdir = os.getcwd()
+        os.chdir(os.path.join(self.tests_dir, "test-01/workdir"))
+
+    def tearDown(self):
+        os.chdir(self.startdir)
+
+    def _test(self, values, output=["path"], keep_order=False, **kwargs):
+        expected_rows = []
+        for i in range(0, len(values), len(output)):
+            expected_rows.append({k: v for k, v in zip(output, values[i:i+len(output)])})
+
+        rows = []
+        for row in Search(output=output, **kwargs):
+            rows.append({k: v for k, v in row.items() if k in output})
+
+        expected_rows = [tuple(row.items()) for row in expected_rows]
+        rows = [tuple(row.items()) for row in rows]
+
+        if not keep_order:
+            expected_rows = set(expected_rows)
+            rows = set(rows)
+
+        self.assertEqual(expected_rows, rows)
+
+    def test_basic_01(self):
+        self._test(["foo", "BAR", "baz", "dir", "dir/dir", "dir/dir/empty", "dir/empty_dir"],
+                   hide=True)
+
+    def test_basic_02(self):
+        self._test(["foo", "BAR", "baz", "dir", "dir/dir", "dir/dir/empty", "dir/empty_dir",
+                       ".hidden"])
+
+    def test_basic_03(self):
+        self._test(["dir", "dir/dir", "dir/empty_dir"],
+                   query="type=d",
+                   hide=True)
+
+    def test_basic_04(self):
+        self._test(["foo", "baz", "dir/dir/empty"],
+                   query="type=f",
+                   hide=True)
+
+    def test_basic_05(self):
+        self._test(["foo", "baz", "dir/dir/empty", ".hidden"],
+                   query="type=f")
+
+    def test_basic_06(self):
+        self._test(["BAR"],
+                   query="type=l")
+
+    def test_basic_07(self):
+        self._test(["foo", "BAR"],
+                   query="type=l",
+                   output=["link", "name"])
+
+    def test_basic_08(self):
+        self._test(["foo", "BAR", None, "baz", None, "dir", None, "dir/dir", None, "dir/dir/empty",
+                    None, "dir/empty_dir", None, "foo", None, ".hidden"],
+                   output=["link", "path"])
+
+    def test_basic_09(self):
+        self._test(["BAR", "baz"],
+                   query="name%ba?")
+
+    def test_basic_10(self):
+        self._test(["dir/empty_dir", "dir/dir/empty"],
+                   query="empty=yes",
+                   hide=True)
+
+    def test_basic_11(self):
+        self._test(["dir/empty_dir", "dir/dir/empty", "BAR"],
+                   query="empty=yes OR type=l",
+                   hide=True)
+
+    def test_basic_12(self):
+        self._test(["foo", "BAR", "baz", "dir", "dir/dir"],
+                   query="empty=no")
+
+    def test_basic_13(self):
+        self._test(["foo", "BAR", "baz", "dir"],
+                   query="depth=0",
+                   hide=True)
+
+    def test_basic_14(self):
+        self._test(["BAR", "dir", "dir/dir", "dir/empty_dir", "dir/dir/empty"],
+                   query="size=0",
+                   hide=True)
+
+    def test_basic_15(self):
+        self._test(["foo", "baz"],
+                   query="size+0",
+                   hide=True)
+
+    def test_basic_16(self):
+        self._test(["baz"],
+                   query="size+=10",
+                   hide=True)
+
+    def test_basic_17(self):
+        self._test([0o777, 0, "BAR", 0o644, 4, "foo", 0o644, 10, "baz"],
+                   query="not type=d depth=0",
+                   hide=True,
+                   output=["perm", "size", "name"])
+
+    def test_basic_18(self):
+        self._test(["BAR", "baz", "dir", "dir/dir", "dir/dir/empty", "dir/empty_dir", "foo"],
+                   hide=True, sort=["path"], keep_order=True)
+
+    def test_basic_19(self):
+        self._test(["BAR", "baz", "dir", "dir/dir", "dir/dir/empty", "dir/empty_dir", "foo",
+                       ".hidden"],
+                   hide=False, sort=["path"], keep_order=True)
+
+    def test_basic_20(self):
+        self._test(["dir/dir/empty", "foo", "baz"],
+                   query="type=f",
+                   hide=True, sort=["size"], keep_order=True)
+
+    def test_basic_21(self):
+        self._test(["foo", "baz"],
+                   query="type=f {{ name=baz or name=foo }}",
+                   hide=True)
+
+    def test_basic_22(self):
+        self._test(["foo", "baz"],
+                   query=["type=f", "{{", "name=baz", "or", "name=foo", "}}"],
+                   hide=True)
+
+    def test_case_01(self):
+        self._test(["BAR", "baz"], query=["name%ba?"])
+
+    def test_case_02(self):
+        self._test(["BAR"], query=["name%BA?"])
+
+    def test_case_03(self):
+        self._test(["BAR", "baz"], query=["name%BA?"], case="ignore")
+
+    def test_case_04(self):
+        self._test(["BAR"], query=["name%BA?"], case="sensitive")
+
+    def test_case_05(self):
+        self._test(["BAR"], query=["name%BA?"], case="sensitive")
+
+    def test_case_06(self):
+        self._test([], query=["name%bA?"], case="sensitive")
+
+    def test_case_error(self):
+        self.assertRaises(ValueError, Search, case="foo")
+
+    def test_strict(self):
+        self.assertRaises(BadAttributeError, Search, query="ba?")
 
 
 if __name__ == "__main__":
