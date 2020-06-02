@@ -33,7 +33,7 @@ class Fields(list):
     """
 
     regex = re.compile(r"^((?:[a-zA-Z][a-zA-Z0-9_]+\.)?[a-zA-Z][a-zA-Z0-9_]+?)"\
-            r"(?::(-?\d+)?(h|o)?)?$")
+            r"(?::(-?\d+)?(h|o|x|n)?)?$")
 
     def __init__(self, context, argument):
         super().__init__()
@@ -166,7 +166,7 @@ class ExecFields(Fields):
                     try:
                         value = self.registry.get_attribute(entry, field.attribute)
                     except KeyError:
-                        if self.args.all:
+                        if self.args.all or field.modifier == "n":
                             output.append("")
                         elif not ignore_missing:
                             raise

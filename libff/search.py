@@ -94,7 +94,7 @@ class _Base(BaseClass):
         if "file" in args.output:
             pos = args.output.index("file")
             args.output.pop(pos)
-            args.output = args.output[:pos] + list(registry.get_file_attributes()) + \
+            args.output = args.output[:pos] + [a + ":n" for a in registry.get_file_attributes()] + \
                     args.output[pos:]
 
         # Turn all options that take fields as arguments in to Fields objects.

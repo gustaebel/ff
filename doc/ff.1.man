@@ -159,7 +159,8 @@ OUTPUT
   The contents of what is printed to standard output can be controlled using
   the -o/--output and the --sep options. -o/--output is a comma-separated list
   of attribute names, that will be printed using the separator string from the
-  --sep option. -o/--output defaults to 'path'.
+  --sep option. -o/--output defaults to 'path'. Use --output=file as a
+  shorthand for all attributes from the 'file' plugin.
 
   Entries that are missing a value for one of the attributes in the list from
   -o/--output will not be printed unless the --all option is given.
@@ -176,6 +177,23 @@ OUTPUT
   By default, pathnames are printed in color according to dircolors(1) rules,
   unless NO_COLOR is set, --color is set to 'never', or ff(1) is not connected
   to a terminal. Color output can be forced with --color=always.
+
+  Furthermore, the formatting of individual attribute values can be controlled
+  with modifiers. The syntax is: <attribute-name>:<modifier>. <modifier> can be
+  one of:
+
+  h  human-readable formatting for size types
+
+  x  hexadecimal representation for number types
+
+  o  octal representation for number types, e.g. 'file.mode' and 'file.perm'.
+
+  n  ignore null values (otherwise the whole record would not be printed)
+
+  Example:
+
+    ff --output size:h,perm:o,path --sort size
+
 
 EXECUTION
   The -x/--exec and -X/--exec-batch options allow executing commands with

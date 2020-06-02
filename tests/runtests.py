@@ -28,7 +28,6 @@ from libff.ignore import Glob
 from libff.search import Search
 from libff.exceptions import BadAttributeError
 
-
 tests_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
 
 

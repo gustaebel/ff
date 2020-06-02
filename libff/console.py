@@ -234,7 +234,7 @@ class Console(BaseConsole):
             try:
                 output.append(self.format_field(entry, field))
             except KeyError:
-                if self.args.all:
+                if self.args.all or field.modifier == "n":
                     output.append("")
                 else:
                     return

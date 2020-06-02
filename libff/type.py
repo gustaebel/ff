@@ -116,7 +116,7 @@ class Type:
         """Create a representation of the value for output on the screen.
            `args` is the global ArgumentParser object. At the moment it is only
            used to detect whether --si was specified or not. Modifier is either
-           "h" for human readable, "o" for octal or None.
+           "h" for human readable, "x" for hexadecimal, "o" for octal or None.
         """
         return str(value)
 
@@ -268,7 +268,9 @@ class Number(Type):
 
     @classmethod
     def output(cls, args, modifier, value):
-        if modifier == "o":
+        if modifier == "x":
+            return f"{value:x}"
+        elif modifier == "o":
             return f"{value:o}"
         else:
             return super().output(args, modifier, value)
@@ -367,6 +369,8 @@ class Mode(Type):
     def output(cls, args, modifier, value):
         if modifier == "h":
             return stat.filemode(value)
+        elif modifier == "x":
+            return f"{value:x}"
         elif modifier == "o":
             return f"{value:o}"
         else:
