@@ -286,6 +286,14 @@ class APITest(unittest.TestCase):
     def test_strict(self):
         self.assertRaises(BadAttributeError, Search, query="ba?")
 
+    def test_keys(self):
+        search = Search()
+        count = 0
+        for row in search:
+            self.assertEqual(set(row.keys()), set(search.registry.get_file_attributes()))
+            count += 1
+        self.assertEqual(count, 8)
+
 
 if __name__ == "__main__":
     for path in glob.glob(os.path.join(tests_directory, "test-??/tests")):
