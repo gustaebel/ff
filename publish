@@ -1,0 +1,25 @@
+#!/bin/bash
+
+die() {
+    echo "$@" >&2
+    exit 1
+}
+
+set -e
+
+if git diff --quiet libff/__version__.py; then
+    die "ERROR: please use ./prepare first!"
+fi
+
+version=$(grep ^__version__ libff/__version__.py | cut -d = -f 2 | tr -d '[:space:]')
+
+make -C doc
+
+git commit -avn -m "Create release ${version}."
+
+git tag -sa -m "Create a tag for version ${version}." ${version}
+
+git push
+
+make publish
+make clean
