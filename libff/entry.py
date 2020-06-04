@@ -340,6 +340,19 @@ class Entry:
 
         return self.status.st_dev != status.st_dev
 
+    @property
+    def xattrs(self):
+        """A list of key=value pairs from the file's extended attributes.
+        """
+        xattrs = []
+        try:
+            for key in os.listxattr(self.path):
+                value = os.getxattr(self.path, key)
+                xattrs.append(f"{key}={os.fsdecode(value)}")
+        except OSError:
+            pass
+        return xattrs
+
     #
     # Private properties.
     #

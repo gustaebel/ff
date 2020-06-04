@@ -74,7 +74,8 @@ class File(Plugin):
         ("broken",  Boolean,  "Whether the target of a symbolic link points to a file that does "\
                               "not exist."),
         ("text",    Boolean,  Entry.text.__doc__),
-        ("mount",   Boolean,  Entry.mount.__doc__)
+        ("mount",   Boolean,  Entry.mount.__doc__),
+        ("xattrs",  ListOfStrings, Entry.xattrs.__doc__)
     ]
 
     def can_handle(self, entry):
