@@ -22,8 +22,7 @@ create-pypi-pkg:
 	twine upload -r find-ff dist/*
 
 create-arch-pkg:
-	cd ~/box/packages/ff
-	arch-pkg publish
+	cd ~/box/packages/ff && arch-pkg publish
 
 publish: create-pypi-pkg create-arch-pkg
 
