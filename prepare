@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import re
+import datetime
 
 import git
 
@@ -53,7 +54,7 @@ if repo.is_dirty():
 current_version = __version__
 
 lines = []
-lines.append(f"### Version {current_version + 1}")
+lines.append(f"### Version {current_version + 1} - ({datetime.date.today()})")
 lines.append("")
 
 for commit in reversed(find_commits(repo, current_version)):
