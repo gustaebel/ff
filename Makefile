@@ -1,4 +1,7 @@
-check: lint test
+check: isort lint test
+
+isort:
+	ff -HI name=ff or ext=py -X isort --length-sort --multi-line 2 --diff --check-only
 
 lint:
 	pylint --rcfile aux/pylintrc -j0 ff libff plugins
