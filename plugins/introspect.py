@@ -142,13 +142,14 @@ class Py(Plugin):
                 yield node.names[0].name
 
     def can_handle(self, entry):
-        return entry.text
+        if entry.ext.lower() == "py":
+            return True
+        elif not entry.text:
+            return False
+        shebang = Shebang.extract_shebang(entry.path)
+        return shebang is not None and "python" in shebang
 
     def process(self, entry, cached):
-        shebang = Shebang.extract_shebang(entry.path)
-        if shebang is None or "python" not in shebang:
-            raise NoData
-
         try:
             yield "imports", sorted(self.parse_imports(entry))
         except (OSError, SyntaxError, UnicodeDecodeError):
