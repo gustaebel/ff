@@ -4,7 +4,7 @@ isort:
 	ff -HI name=ff or ext=py -X isort --length-sort --multi-line 2 --diff --check-only
 
 lint:
-	pylint --rcfile aux/pylintrc -j0 ff libff plugins
+	pylint --rcfile config/pylintrc -j0 ff libff plugins
 
 test:
 	python tests/runtests.py
