@@ -20,6 +20,7 @@ git commit -avn -m "Create release ${version}."
 git tag -sa -m "Create a tag for version ${version}." ${version}
 
 git push
+git push ${version}
 
 make publish
 make clean
