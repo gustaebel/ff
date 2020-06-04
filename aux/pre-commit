@@ -1,8 +1,3 @@
 #!/bin/sh
 
-branch="$(git branch --show-current)"
-
-if [[ $branch = master && $COMMIT_ACTIVE != yes ]]; then
-    echo "Please use ./commit to commit changes!" >&2
-    exit 1
-fi
+make check
