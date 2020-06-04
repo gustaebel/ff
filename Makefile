@@ -17,5 +17,15 @@ clean:
 	rm -rf build dist
 	rm -rf *.egg-info
 
+create-pypi-pkg:
+	python setup.py sdist bdist_wheel
+	twine upload -r find-ff dist/*
+
+create-arch-pkg:
+	cd ~/box/packages/ff
+	arch-pkg publish
+
+publish: create-pypi-pkg create-arch-pkg
+
 man:
 	$(MAKE) -C doc
