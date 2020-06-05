@@ -97,6 +97,7 @@ TYPES
   attributes having a 'time' type.
 
 __include_time_patterns__
+
   Durations consist of one or more partial time designations that are summed up, e.g.:
 
     1h30m25s
