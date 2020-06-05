@@ -68,13 +68,14 @@ fs_types = {
 
 
 class Fs(Plugin):
-    """Provide information on the filesystem that a file is located in.
+    """The "fs" plugin provides information on the filesystem that a file is
+       located in.
     """
 
     use_cache = False
 
     attributes = [
-        ("fstype", String, "The name of the file system."),
+        ("type", String, "The name of the type of file system."),
         ("remote", Boolean, "Whether the file system is a remote file system.")
     ]
 
@@ -107,5 +108,5 @@ class Fs(Plugin):
 
         name, remote = self.get_fs_type(path)
 
-        yield "fstype", name
+        yield "type", name
         yield "remote", remote
