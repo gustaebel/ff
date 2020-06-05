@@ -22,7 +22,7 @@ from libff.plugin import *
 
 
 class Mime(Plugin):
-    """The "mime" plugin provides information about the type of content of
+    """The "mime" plugin provides information about the content type of
        files. It uses 'libmagic' to guess the mime type and encoding. It
        requires the 'file-magic' module.
     """
