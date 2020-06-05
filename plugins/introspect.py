@@ -25,7 +25,8 @@ from libff.plugin import *
 
 
 class Elf(Plugin):
-    """Extract information from ELF executable files.
+    """The "elf" plugin provides information extracted from ELF executable
+       files.
     """
 
     use_cache = True
@@ -78,8 +79,8 @@ class Elf(Plugin):
 
 
 class Shebang(Plugin):
-    """Extract the shebang line from a script, i.e. the first line of the file
-       if it starts with '#!'.
+    """The "shebang" plugin extracts the shebang line from a script, i.e. the
+       first line of the file if it starts with '#!'.
     """
 
     attributes = [
@@ -110,7 +111,7 @@ class Shebang(Plugin):
 
 
 class Py(Plugin):
-    """Extract information from Python scripts.
+    """The "py" plugin provides information about Python scripts.
     """
 
     attributes = [
@@ -154,48 +155,3 @@ class Py(Plugin):
             yield "imports", sorted(self.parse_imports(entry))
         except (OSError, SyntaxError, UnicodeDecodeError):
             raise NoData
-
-
-class Fixme(Plugin):
-    """List all files that contain FIXME and XXX tags.
-    """
-
-    attributes = [
-        ("fixme", Boolean, "Whether or not the file contains one or more FIXME tags."),
-        ("xxx", Boolean, "Whether or not the file contains one or more XXX tags.")
-    ]
-
-    fixme_module_path = os.path.realpath(__file__)
-
-    @classmethod
-    def extract_fixmes(cls, path):
-        """Extract FIXME and XXX tags.
-        """
-        if os.path.realpath(path) == cls.fixme_module_path:
-            return False, False
-
-        try:
-            fixme = False
-            xxx = False
-            with open(path) as lines:
-                for line in lines:
-                    if "FIXME" in line:
-                        fixme = True
-                        if xxx:
-                            break
-                    elif "XXX" in line:
-                        xxx = True
-                        if fixme:
-                            break
-        except (OSError, UnicodeDecodeError):
-            return False, False
-
-        return fixme, xxx
-
-    def can_handle(self, entry):
-        return entry.text
-
-    def process(self, entry, cached):
-        fixme, xxx = self.extract_fixmes(entry.path)
-        yield "fixme", fixme
-        yield "xxx", xxx
