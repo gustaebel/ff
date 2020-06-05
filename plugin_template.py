@@ -6,8 +6,13 @@ from libff.plugin import *
 # be installed on the system, do this in Plugin.setup().
 
 
-class Name(Plugin):
+class Foo(Plugin):
     # Give the Plugin a descriptive name that does not yet exist.
+
+    """The "foo" plugin provides access to ...
+
+       (This docstring will appear as the plugin's description in help texts.)
+    """
 
     # If use_cache is True it is possible to cache data for each entry that is
     # time-consuming to prepare. The cache() method will be called, its return
