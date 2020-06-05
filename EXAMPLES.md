@@ -114,7 +114,7 @@ $ ff / --exclude remote=yes
 Find all mountpoints and print which filesystem they contain.
 
 ```sh
-$ ff / type=d mount=yes --output fstype,path
+$ ff / type=d mount=yes --output fs.type,path
 ```
 
 ### Tar archives
