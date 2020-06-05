@@ -24,7 +24,8 @@ from libff.plugin import *
 
 
 class Git(Plugin):
-    """Extract information from files that are inside a git(1) repository.
+    """The "git" plugin provides information about files that are inside a
+       git(1) repository.
     """
 
     use_cache = True

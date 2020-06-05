@@ -24,8 +24,9 @@ from libff.plugin import *
 
 
 class Medium(Plugin):
-    """Plugin that gives access to media related information like image format,
-       running time, mp3 tags, etc. Requires the 'pymediainfo' module.
+    """The "medium" plugin provides access to information from media files like
+       image, audio and video files, e.g. image format, running time, mp3 tags,
+       etc. It requires the 'pymediainfo' module.
     """
 
     use_cache = True

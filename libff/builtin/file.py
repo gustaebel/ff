@@ -23,9 +23,12 @@ from libff.plugin import *
 
 
 class File(Plugin):
-    """\
-        All essential file attributes.
+    """The "file" plugin provides all essential file attributes. Among these
+       attributes are variations of the file's path name (e.g. dirname,
+       basename, extension) and inode information from stat(2) (e.g. file size,
+       file type, modification time).
     """
+
     # This is basically a dummy plugin for the file namespace. Most attributes
     # are redirected directly to the Entry object in Registry.get_attribute().
 

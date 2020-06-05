@@ -25,7 +25,9 @@ from libff.plugin import *
 
 
 class Pacman(Plugin):
-    """Extract information from Archlinux package files.
+    """The "pacman" plugin provides information about which files were installed
+       using the package manager pacman on an Arch Linux. It requires the
+       'pacman' executable.
     """
 
     attributes = [

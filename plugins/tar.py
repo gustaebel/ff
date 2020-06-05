@@ -24,7 +24,11 @@ from libff.plugin import *
 
 
 class Tar(Plugin):
-    """Extract information from tar archives.
+    """The "tar" plugin provides information about tar archives. It is useful
+       for finding file names inside tar archives. It currently uses the
+       tarfile module from the Python Standard Library which limits the
+       supported compression methods to gzip(1), bzip2(1), xz(1) and
+       uncompressed.
     """
 
     use_cache = True

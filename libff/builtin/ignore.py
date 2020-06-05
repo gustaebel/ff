@@ -25,8 +25,9 @@ from libff.plugin import *
 
 
 class Ignore(Plugin):
-    """Plugin that shows whether files match patterns from .(git|fd|ff)ignore
-       files.
+    """The "ignore" plugin shows whether files match patterns from
+       .(git|fd|ff)ignore files. It is useful e.g. inside working copies of git
+       repositories.
     """
 
     attributes = [
