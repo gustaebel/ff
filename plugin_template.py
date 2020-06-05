@@ -14,6 +14,11 @@ class Foo(Plugin):
        (This docstring will appear as the plugin's description in help texts.)
     """
 
+    # Add some information about yourself and how to contact you.
+    author = "Jane Doe"
+    email = "jane@example.com"
+    url = "https://example.com/foo-plugin/"
+
     # If use_cache is True it is possible to cache data for each entry that is
     # time-consuming to prepare. The cache() method will be called, its return
     # value will be cached and then passed to process(). Cached values are

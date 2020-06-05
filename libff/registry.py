@@ -19,10 +19,10 @@
 # -----------------------------------------------------------------------
 
 import os
-import textwrap
 import importlib.util
 
 from . import NoData, Attribute, BaseClass, MissingImport
+from .help import FullManPage, PluginManPage, AttributesManPage
 from .type import Type
 from .cache import NODATA, NOTSET
 from .table import Table
@@ -34,6 +34,7 @@ class Registry(BaseClass):
     """Registry class that keeps track of all installed plugins and the
        attributes they provide.
     """
+    # pylint:disable=too-many-public-methods
 
     PLUGIN_DIR_BUILTIN = os.path.join(os.path.dirname(__file__), "builtin")
     PLUGIN_DIR_CONTRIB = "/usr/lib/ff"
@@ -306,46 +307,25 @@ class Registry(BaseClass):
         """
         return set(attribute.plugin for attribute in self.attributes if attribute.name == name)
 
-    def print_help(self, name):
-        """Print the help for a specific plugin.
+    def get_full_help(self):
+        """Return the full help a.k.a. the manpage.
+        """
+        return FullManPage(self)
+
+    def get_plugin_help(self, name):
+        """Return the help for a specific plugin.
         """
         try:
             plugin = self.registered_plugins[name]
         except KeyError:
             raise UsageError(f"Plugin {name!r} not found")
 
-        print(f"Plugin: {name}")
-        print()
-        if plugin.__doc__:
-            print(textwrap.dedent(plugin.__doc__))
-        self.print_attributes(name, with_help=True)
+        return PluginManPage(self, plugin)
 
-    def print_attributes(self, name=None, with_operators=False, with_help=False):
+    def get_attributes_help(self):
         """Print a table of all available attributes.
         """
-        if name is None:
-            plugins = list(self.registered_plugins.values())
-        else:
-            plugins = [self.registered_plugins[name]]
-
-        plugins.sort(key=lambda p: "" if p.name == "file" else p.name)
-
-        header = ["Name", "Type"]
-        if with_operators:
-            header.append("Operators")
-        if with_help:
-            header.append("Help")
-
-        table = Table(header, wrap_last_column=with_help)
-        for plugin in plugins:
-            for attr, type_cls, _help in plugin.attributes:
-                row = [f"{plugin.name}.{attr}", type_cls.name]
-                if with_operators:
-                    row.append("  ".join(type_cls.operators))
-                if with_help:
-                    row.append(_help)
-                table.add(row)
-        table.print()
+        return AttributesManPage(self)
 
     def print_plugins(self):
         """Print a table of available plugins.

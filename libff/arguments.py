@@ -147,6 +147,8 @@ def create_parser(formatter_class=HelpFormatter):
 
     group = parser.add_argument_group("Global options")
 
+    group.add_argument("tests", nargs="*", metavar="<test/directory>",
+            help="A test expression for matching files or a directory to search.")
     if __debug__:
         group.add_argument("--profile", action="store_true", default=False,
                 help="Do a profiling run on the given arguments and suppress the output.")
@@ -159,8 +161,6 @@ def create_parser(formatter_class=HelpFormatter):
     group.add_argument("-j", "--jobs", type=type_jobs, default=Defaults.jobs, metavar="<num>",
             help="Set number of processes to use for searching and executing "\
                  "(default: the number of CPU cores).")
-    group.add_argument("tests", nargs="*", metavar="<test/directory>",
-            help="A test expression for matching files or a directory to search.")
     group.add_argument("-D", "--directories", nargs="+", default=[], metavar="<path>",
             help="Search entries in these paths (default is current directory).")
 
@@ -169,6 +169,8 @@ def create_parser(formatter_class=HelpFormatter):
             help="Show this help message or the help message for a particular plugin.")
     group.add_argument("--version", action="store_const", const="version", dest="action",
             default=None, help="Show program's version number and exit.")
+    group.add_argument("--help-full", action="store_const", const="full", dest="action",
+            help="Show a full help in man page format.")
     group.add_argument("--list-attributes", action="store_const", const="attributes", dest="action",
             help="Show a list of available attributes to use for searching, sorting and output.")
     group.add_argument("--list-plugins", action="store_const", const="plugins", dest="action",

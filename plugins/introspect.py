@@ -26,7 +26,7 @@ from libff.plugin import *
 
 class Elf(Plugin):
     """The "elf" plugin provides information extracted from ELF executable
-       files.
+       files. It requires the 'pyelftools' module.
     """
 
     use_cache = True

@@ -16,6 +16,7 @@ clean:
 	ff -I ext=egg-info -X rm -rf
 	rm -rf build dist
 	rm -rf *.egg-info
+	rm -rf man
 
 create-pypi-pkg:
 	python setup.py sdist bdist_wheel
@@ -26,5 +27,12 @@ create-arch-pkg:
 
 publish: create-pypi-pkg create-arch-pkg
 
-man:
-	$(MAKE) -C doc
+man/ff.1: libff/*.py libff/builtin/*.py
+	mkdir -p man
+	python -c "from libff.search import Search; Search().registry.get_full_help().print()" > man/ff.1
+
+man/ff-attributes.7: libff/*.py libff/builtin/*.py
+	mkdir -p man
+	python -c "from libff.search import Search; Search().registry.get_attributes_help().print()" > man/ff-attributes.7
+
+manpages: man/ff.1 man/ff-attributes.7

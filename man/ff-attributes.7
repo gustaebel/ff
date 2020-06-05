@@ -1,0 +1,398 @@
+.TH ff-attributes 7 "2020-06-05" "Version 564" "ff Plugin Attributes Reference"
+.SH DESCRIPTION
+This is a list of all attributes that are available. Attributes are provided by plugins. For more details use '\fBff \fB\-\-help\fR <plugin>\fR'.
+
+.SH FILE PLUGIN
+
+.SS Description
+The "file" plugin provides all essential file attributes. Among these attributes are variations of the file'\fIs path name (e.g. dirname, basename, extension) and inode information from \fBstat\fR(2) (e.g. file size, file type, modification time). The leading \fR'file.' part is optional and can be omitted.
+
+.SS Attributes
+.IP "\fB[file.]path\fR" 4
+Type: path ( = : ~ % )
+.br
+The full pathname of the file. It will be relative to the current working directory depending on the <directory> arguments that were given on the command line. This can be changed with the \fB\-a\fR/\fB\-\-absolute\fR path option.
+
+.IP "\fB[file.]root\fR" 4
+Type: path ( = : ~ % )
+.br
+The start directory the file was found in.
+
+.IP "\fB[file.]relpath\fR" 4
+Type: path ( = : ~ % )
+.br
+The pathname of the file relative to the start directory.
+
+.IP "\fB[file.]dir\fR" 4
+Type: path ( = : ~ % )
+.br
+The dirname portion of the file.
+
+.IP "\fB[file.]name\fR" 4
+Type: path ( = : ~ % )
+.br
+The basename portion of the file
+
+.IP "\fB[file.]ext\fR" 4
+Type: string ( = : ~ % )
+.br
+The file extension without the leading dot or the empty string if the file has no extension.
+
+.IP "\fB[file.]pathx\fR" 4
+Type: path ( = : ~ % )
+.br
+The file path without the extension.
+
+.IP "\fB[file.]namex\fR" 4
+Type: path ( = : ~ % )
+.br
+The file basename without the extension.
+
+.IP "\fB[file.]mode\fR" 4
+Type: mode ( = : ~ )
+.br
+The mode and permission bits of the file.
+
+.IP "\fB[file.]type\fR" 4
+Type: filetype ( = )
+.br
+The file type: one of '\fId\fR'/'\fIdirectory\fR', '\fIf\fR'/'\fIfile\fR', '\fIl\fR'/'\fIsymlink\fR', '\fIs\fR'/'\fIsocket\fR', '\fIp\fR'/'\fIpipe\fR'/'\fIfifo\fR', '\fIchar\fR', '\fIblock\fR', '\fIdoor\fR', '\fIport\fR', '\fIwhiteout\fR' or '\fIother\fR'.
+
+.IP "\fB[file.]device\fR" 4
+Type: number ( += \-= + \- = )
+.br
+The number of the device the file is located.
+
+.IP "\fB[file.]inode\fR" 4
+Type: number ( += \-= + \- = )
+.br
+The number of the inode of the file.
+
+.IP "\fB[file.]samedev\fR" 4
+Type: boolean ( = )
+.br
+Whether the file is on the same device as the start directory.
+
+.IP "\fB[file.]depth\fR" 4
+Type: number ( += \-= + \- = )
+.br
+The depth of the file relative to the start directory.
+
+.IP "\fB[file.]exec\fR" 4
+Type: boolean ( = )
+.br
+Whether the file is executable or not.
+
+.IP "\fB[file.]size\fR" 4
+Type: size ( += \-= + \- = )
+.br
+The size of the file in bytes. All types except '\fIfile\fR' have a size of 0.
+
+.IP "\fB[file.]mtime\fR" 4
+Type: time ( += \-= + \- = )
+.br
+The modification time of the file in seconds since epoch.
+
+.IP "\fB[file.]ctime\fR" 4
+Type: time ( += \-= + \- = )
+.br
+The inode change time of the file in seconds since epoch.
+
+.IP "\fB[file.]atime\fR" 4
+Type: time ( += \-= + \- = )
+.br
+The access time of the file in seconds since epoch.
+
+.IP "\fB[file.]time\fR" 4
+Type: time ( += \-= + \- = )
+.br
+An alias for '\fImtime\fR'.
+
+.IP "\fB[file.]perm\fR" 4
+Type: mode ( = : ~ )
+.br
+The permission bits of the file without the file type bits.
+
+.IP "\fB[file.]links\fR" 4
+Type: number ( += \-= + \- = )
+.br
+The number of links to the inode.
+
+.IP "\fB[file.]uid\fR" 4
+Type: number ( += \-= + \- = )
+.br
+The user id of the owner of the file.
+
+.IP "\fB[file.]gid\fR" 4
+Type: number ( += \-= + \- = )
+.br
+The group id of the owner of the file.
+
+.IP "\fB[file.]user\fR" 4
+Type: string ( = : ~ % )
+.br
+The user name of the owner of the file.
+
+.IP "\fB[file.]group\fR" 4
+Type: string ( = : ~ % )
+.br
+The group name of the owner of the file.
+
+.IP "\fB[file.]hide\fR" 4
+Type: boolean ( = )
+.br
+Whether the the name of the file starts with a dot.
+
+.IP "\fB[file.]hidden\fR" 4
+Type: boolean ( = )
+.br
+Whether the file is "hidden" or not, i.e. if one of the path components contains a leading dot.
+
+.IP "\fB[file.]empty\fR" 4
+Type: boolean ( = )
+.br
+Whether the file or directory is empty or not.
+
+.IP "\fB[file.]link\fR" 4
+Type: path ( = : ~ % )
+.br
+The target path of a symbolic link relative to its parent directory. Empty if the file is not a symbolic link.
+
+.IP "\fB[file.]target\fR" 4
+Type: path ( = : ~ % )
+.br
+The full target path of a symbolic link. Empty if the file is not a symbolic link.
+
+.IP "\fB[file.]broken\fR" 4
+Type: boolean ( = )
+.br
+Whether the target of a symbolic link points to a file that does not exist.
+
+.IP "\fB[file.]text\fR" 4
+Type: boolean ( = )
+.br
+Whether the file contains text or binary data.
+
+.IP "\fB[file.]mount\fR" 4
+Type: boolean ( = )
+.br
+Whether the entry is a mountpoint.
+
+.IP "\fB[file.]xattrs\fR" 4
+Type: listofstrings ( = : ~ % )
+.br
+A list of key=value pairs from the file's extended attributes.
+
+
+.SH ELF PLUGIN
+
+.SS Description
+The "elf" plugin provides information extracted from ELF executable files. It requires the '\fIpyelftools\fR' module.
+
+.SS Attributes
+.IP "\fBelf.sonames\fR" 4
+Type: listofstrings ( = : ~ % )
+.br
+The names of all shared objects that are linked in this executable file.
+
+
+.SH FS PLUGIN
+
+.SS Description
+The "fs" plugin provides information on the filesystem that a file is located in.
+
+.SS Attributes
+.IP "\fBfs.type\fR" 4
+Type: string ( = : ~ % )
+.br
+The name of the type of file system.
+
+.IP "\fBfs.remote\fR" 4
+Type: boolean ( = )
+.br
+Whether the file system is a remote file system.
+
+
+.SH GIT PLUGIN
+
+.SS Description
+The "git" plugin provides information about files that are inside a \fBgit\fR(1) repository.
+
+.SS Attributes
+.IP "\fBgit.tracked\fR" 4
+Type: boolean ( = )
+.br
+Whether the file is tracked by a git repository.
+
+
+.SH GREP PLUGIN
+
+.SS Description
+The "grep" plugin provides access to the lines and the line count of a text file. It is useful for finding files that contain certain lines or certain substrings.
+
+.SS Attributes
+.IP "\fBgrep.linecount\fR" 4
+Type: number ( += \-= + \- = )
+.br
+The number of lines in the file.
+
+.IP "\fBgrep.lines\fR" 4
+Type: listofstrings ( = : ~ % )
+.br
+The lines of the file.
+
+
+.SH IGNORE PLUGIN
+
+.SS Description
+The "ignore" plugin shows whether files match patterns from .(git|fd|ff)ignore files. It is useful e.g. inside working copies of git repositories.
+
+.SS Attributes
+.IP "\fBignore.ignored\fR" 4
+Type: boolean ( = )
+.br
+Whether the file matches patterns in a .(git|fd|ff)ignore file.
+
+.IP "\fBignore.path\fR" 4
+Type: string ( = : ~ % )
+.br
+The path to the ignore file that contained the matching pattern.
+
+
+.SH MEDIUM PLUGIN
+
+.SS Description
+The "medium" plugin provides access to information from media files like image, audio and video files, e.g. image format, running time, mp3 tags, etc. It requires the '\fIpymediainfo\fR' module.
+
+.SS Attributes
+.IP "\fBmedium.duration\fR" 4
+Type: duration ( += \-= + \- = )
+.br
+The duration of a medium (audio, video) in seconds.
+
+.IP "\fBmedium.artist\fR" 4
+Type: string ( = : ~ % )
+.br
+The artist audio tag of the file.
+
+.IP "\fBmedium.album\fR" 4
+Type: string ( = : ~ % )
+.br
+The album audio tag of the file.
+
+.IP "\fBmedium.title\fR" 4
+Type: string ( = : ~ % )
+.br
+The title audio tag of the file.
+
+.IP "\fBmedium.genre\fR" 4
+Type: string ( = : ~ % )
+.br
+The genre audio tag of the file.
+
+.IP "\fBmedium.date\fR" 4
+Type: string ( = : ~ % )
+.br
+The date audio tag of the file.
+
+.IP "\fBmedium.format\fR" 4
+Type: string ( = : ~ % )
+.br
+The format of an image ('\fIpng\fR', '\fIjpeg\fR', etc.) in case the file is an image.
+
+.IP "\fBmedium.width\fR" 4
+Type: number ( += \-= + \- = )
+.br
+The width of a visual medium (image, video) in pixel.
+
+.IP "\fBmedium.height\fR" 4
+Type: number ( += \-= + \- = )
+.br
+The height of a visual medium (image, video) in pixel.
+
+
+.SH MIME PLUGIN
+
+.SS Description
+The "mime" plugin provides information about the content type of files. It uses '\fIlibmagic\fR' to guess the mime type and encoding. It requires the '\fIfile\-magic\fR' module.
+
+.SS Attributes
+.IP "\fBmime.mime\fR" 4
+Type: string ( = : ~ % )
+.br
+The full mime type of the file.
+
+.IP "\fBmime.type\fR" 4
+Type: string ( = : ~ % )
+.br
+The content type of the file, i.e. the first part of the mime type.
+
+.IP "\fBmime.subtype\fR" 4
+Type: string ( = : ~ % )
+.br
+The sub type of the file, i.e. the second part of the mime type.
+
+.IP "\fBmime.encoding\fR" 4
+Type: string ( = : ~ % )
+.br
+The encoding of the file.
+
+.IP "\fBmime.name\fR" 4
+Type: string ( = : ~ % )
+.br
+The full text description of the type of the file.
+
+
+.SH PACMAN PLUGIN
+
+.SS Description
+The "pacman" plugin provides information about which files were installed using the package manager pacman on an Arch Linux. It requires the '\fIpacman\fR' executable.
+
+.SS Attributes
+.IP "\fBpacman.installed\fR" 4
+Type: boolean ( = )
+.br
+Whether the file belongs to an Arch Linux system package installed by the package manager pacman.
+
+.IP "\fBpacman.pkgname\fR" 4
+Type: string ( = : ~ % )
+.br
+Name of package the file belongs to.
+
+
+.SH PY PLUGIN
+
+.SS Description
+The "py" plugin provides information about Python scripts.
+
+.SS Attributes
+.IP "\fBpy.imports\fR" 4
+Type: listofstrings ( = : ~ % )
+.br
+A list of module and package names that are imported in a Python file.
+
+
+.SH SHEBANG PLUGIN
+
+.SS Description
+The "shebang" plugin extracts the shebang line from a script, i.e. the first line of the file if it starts with '\fI#!\fR'.
+
+.SS Attributes
+.IP "\fBshebang.shebang\fR" 4
+Type: string ( = : ~ % )
+.br
+The contents of the shebang line (#!).
+
+
+.SH TAR PLUGIN
+
+.SS Description
+The "tar" plugin provides information about tar archives. It is useful for finding file names inside tar archives. It currently uses the tarfile module from the Python Standard Library which limits the supported compression methods to \fBgzip\fR(1), bzip2(1), \fBxz\fR(1) and uncompressed.
+
+.SS Attributes
+.IP "\fBtar.members\fR" 4
+Type: listofstrings ( = : ~ % )
+.br
+The list of file names that are stored in a .tar archive.
+
+

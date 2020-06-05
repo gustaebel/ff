@@ -73,6 +73,8 @@ class _Base(BaseClass):
         """Set up all remaining components like the registry, the cache and so
            on.
         """
+        # pylint:disable=too-many-branches
+
         args = self.context.args
 
         # Setup the sqlite3 metadata cache.
@@ -108,8 +110,17 @@ class _Base(BaseClass):
         if args.exec_batch is not None:
             args.exec_batch = ExecBatchFields(self.context, args.exec_batch)
 
-        if args.action == "attributes":
-            registry.print_attributes(with_operators=True)
+        # XXX Clean this up.
+        if args.action == "full":
+            registry.get_full_help().show()
+            raise SystemExit(EX_OK)
+
+        elif args.action == "attributes":
+            registry.get_attributes_help().show()
+            raise SystemExit(EX_OK)
+
+        elif args.help is not None:
+            registry.get_plugin_help(args.help).show()
             raise SystemExit(EX_OK)
 
         elif args.action == "plugins":
@@ -118,10 +129,6 @@ class _Base(BaseClass):
 
         elif args.action == "types":
             registry.print_types()
-            raise SystemExit(EX_OK)
-
-        elif args.help is not None:
-            registry.print_help(args.help)
             raise SystemExit(EX_OK)
 
         try:

@@ -13,7 +13,7 @@ fi
 
 version=$(grep ^__version__ libff/__version__.py | cut -d = -f 2 | tr -d '[:space:]')
 
-make -C doc
+make manpages
 
 git commit -avn -m "Create release ${version}."
 

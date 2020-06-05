@@ -31,6 +31,10 @@ class Plugin:
     """Base class for all plugins.
     """
 
+    author = "Lars Gustäbel"
+    email = "lars@gustaebel.de"
+    url = "https://github.com/gustaebel/ff/"
+
     use_cache = False
     attributes = {}
 

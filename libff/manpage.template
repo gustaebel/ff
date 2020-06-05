@@ -2,7 +2,7 @@ NAME
   ff - Find files in the filesystem
 
 SYNOPSIS
-__include_usage__
+  __include_usage
 
 DESCRIPTION
   ff(1) is a tool for finding files in the filesystem that all share a set of
@@ -27,7 +27,7 @@ DESCRIPTION
   -j/--jobs.
 
 OPTIONS
-__include_help__
+  __include_help
 
 TESTS
   All remaining command line arguments that do not point to directories will be
@@ -65,8 +65,6 @@ ATTRIBUTES
   provided by plugins. Essential plugins like 'file' and 'mime' are built in,
   but you can also add your own plugins written in python(1).
 
-  You can list all available attributes this way: `ff --list-attributes`.
-
   The full name of an attribute consists of the <plugin> name, a dot, and the
   <attribute> name. The plugin part of the attribute is optional unless the
   same attribute name is provided by multiple plugins. It will produce an error
@@ -75,17 +73,8 @@ ATTRIBUTES
   never produce an error. It is recommended to always use the full attribute
   name.
 
-  The 'file' plugin provides all basic attributes for filesystem entries:
-
-__include_file__
-  The 'mime' plugin provides attributes regarding the mimetype and encoding of
-  files. It depends on the 'file-magic' python module.
-
-__include_mime__
-  The 'medium' plugin provides attributes for media files. It depends on the
-  'pymediafile' python module.
-
-__include_medium__
+  For more information about which attributes there are available use
+  `ff --list-attributes`.
 
 TYPES
   Each attribute has a certain type that describes how its value is supposed to
@@ -96,7 +85,7 @@ TYPES
   There are a number of predefined date and time parsing patterns for
   attributes having a 'time' type.
 
-__include_time_patterns__
+  __include_time_patterns
 
   Durations consist of one or more partial time designations that are summed up, e.g.:
 
@@ -135,8 +124,7 @@ OPERATORS
   %       one string matches glob pattern <value>
 
   Operators for booleans:
-  =       attribute is equal to <value>, which may be one of (true, t, 1, yes,
-          y, on) or (false, f, 0, no, n, off). The case is ignored.
+  =       attribute is equal to <value>, which may be one of (true, t, 1, yes, y, on) or (false, f, 0, no, n, off). The case is ignored.
 
   Operators for mode:
   =       all bits from the attribute are exactly equal to <value>
@@ -148,13 +136,13 @@ FILE REFERENCES
   use a reference you pass a '{}' followed by the path name. For example, to
   find all files newer than foo/bar/example.txt you do:
 
-    ff mtime+{}foo/bar/example.txt
+    $ ff mtime+{}foo/bar/example.txt
 
   The default behavior is to use the same attribute of the referenced file as
   the one it is supposed to be compared to, but it is also possible to use a
   different one:
 
-    ff mtime+{atime}foo/bar/example.txt
+    $ ff mtime+{atime}foo/bar/example.txt
 
 OUTPUT
   The contents of what is printed to standard output can be controlled using
@@ -166,7 +154,7 @@ OUTPUT
   Entries that are missing a value for one of the attributes in the list from
   -o/--output will not be printed unless the --all option is given.
 
-  The -v/--verbose option produces output in the style of 'ls -lh'.
+  The -v/--verbose option produces output in the style of `ls -lh`.
 
   The --json and --jsonl options print each record as a JSON object to standard
   output. The attributes of the JSON object are the same as in -o/--output, but
@@ -193,7 +181,7 @@ OUTPUT
 
   Example:
 
-    ff --output size:h,perm:o,path --sort size
+    $ ff --output size:h,perm:o,path --sort size
 
 
 EXECUTION
@@ -256,7 +244,7 @@ COUNTING
   these counts to standard output. If --count is given without a list of
   attributes the total size of all files and statistics about the different
   file types is displayed. If <attribute-list> is present a total or a count of
-  these attributes is done. There is always a "_total" field that contains the
+  these attributes is done. There is always a '_total' field that contains the
   number of all entries that matched.
 
   There are two possible ways in which attributes are counted that depend on
@@ -273,7 +261,7 @@ PLUGINS
   It is possible to write your own plugins and extend ff(1)'s functionality. A
   plugin is an ordinary python module. There are many examples included in the
   source distribution and a file 'plugin_template.py' to start from. User
-  plugins are imported from the ~/.ff directory.
+  plugins are imported from the '~/.ff' directory.
 
 EXAMPLES
 
@@ -316,7 +304,7 @@ GET HELP
     $ ff --list-types
 
 EXIT CODES
-__include_exit_codes__
+  __include_exit_codes
 
 ENVIRONMENT
   FF_OPTIONS  Default options to use for every invocation of ff(1).
@@ -328,9 +316,9 @@ ENVIRONMENT
   NO_COLOR  Do not produce colorful terminal output regardless of ff(1)'s options.
 
 SEE ALSO
-  find(1) fd(1)
+  ff-attributes(7), find(1), fd(1)
 
 AUTHOR
-  Lars Gustaebel <lars@gustaebel.de>
+  Lars Gustäbel <lars@gustaebel.de>
 
   https://github.com/gustaebel/ff/
