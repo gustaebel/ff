@@ -26,7 +26,8 @@ class File(Plugin):
     """The "file" plugin provides all essential file attributes. Among these
        attributes are variations of the file's path name (e.g. dirname,
        basename, extension) and inode information from stat(2) (e.g. file size,
-       file type, modification time).
+       file type, modification time). The leading 'file.' part is optional and
+       can be omitted.
     """
 
     # This is basically a dummy plugin for the file namespace. Most attributes
