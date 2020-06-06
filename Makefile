@@ -16,7 +16,6 @@ clean:
 	ff -I ext=egg-info -X rm -rf
 	rm -rf build dist
 	rm -rf *.egg-info
-	rm -rf man
 
 create-pypi-pkg:
 	python setup.py sdist bdist_wheel
