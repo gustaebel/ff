@@ -119,37 +119,6 @@ class ManPage:
         if text:
             yield text
 
-    def parse_lines(self, lines):
-        """Parse a set of lines from a manpage template.
-        """
-        lines = self.wrap(lines)
-
-        for line in lines:
-            line = line.rstrip()
-
-            if line.lstrip().startswith("::"):
-                # Evaluate an include marker.
-                name = line.lstrip()[2:]
-                self.include(name)
-
-            elif re.match(r"^[A-Z ]+$", line):
-                # Identify section headers (all caps starting at column 0).
-                self.add_section(line)
-
-            elif line.lstrip().startswith("$"):
-                # Highlight an example shell command.
-                self.lines.append(bd + line + rs)
-
-            elif "  " in line.strip():
-                # Format a definition, i.e. a word described with a text.
-                key, value = line.strip().split("  ", 1)
-                self.add_definition(key)
-                self.add(value)
-                self.lines.append(".PP")
-
-            else:
-                self.add(line)
-
     def include(self, name):
         """Replace an include statement.
         """
@@ -183,6 +152,37 @@ class ManPage:
 
         else:
             raise ValueError(f"invalid include statement {name!r}")
+
+    def parse_lines(self, lines):
+        """Parse a set of lines from a manpage template.
+        """
+        lines = self.wrap(lines)
+
+        for line in lines:
+            line = line.rstrip()
+
+            if line.lstrip().startswith("::"):
+                # Evaluate an include marker.
+                name = line.lstrip()[2:]
+                self.include(name)
+
+            elif re.match(r"^[A-Z ]+$", line):
+                # Identify section headers (all caps starting at column 0).
+                self.add_section(line)
+
+            elif line.lstrip().startswith("$"):
+                # Highlight an example shell command.
+                self.lines.append(bd + line + rs)
+
+            elif "  " in line.strip():
+                # Format a definition, i.e. a word described with a text.
+                key, value = line.strip().split("  ", 1)
+                self.add_definition(key)
+                self.add(value)
+                self.lines.append(".PP")
+
+            else:
+                self.add(line)
 
     def process(self, string):
         """Process a string containing one of more lines and produce roff(7)
