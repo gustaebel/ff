@@ -171,12 +171,12 @@ def create_parser(formatter_class=HelpFormatter):
             default=None, help="Show program's version number and exit.")
     group.add_argument("--help-full", action="store_const", const="full", dest="action",
             help="Show a full help in man page format.")
-    group.add_argument("--list-attributes", action="store_const", const="attributes", dest="action",
+    group.add_argument("--help-attributes", action="store_const", const="attributes", dest="action",
             help="Show a list of available attributes to use for searching, sorting and output.")
-    group.add_argument("--list-plugins", action="store_const", const="plugins", dest="action",
-            help="Show the list of available plugins.")
-    group.add_argument("--list-types", action="store_const", const="types", dest="action",
-            help="Show the list of available types.")
+    group.add_argument("--help-plugins", action="store_const", const="plugins", dest="action",
+            help="Show a list of available plugins.")
+    group.add_argument("--help-types", action="store_const", const="types", dest="action",
+            help="Show a list of available types.")
 
     group = parser.add_argument_group("Search options")
     group.add_argument("-H", "--hide", action="store_true",  default=False,

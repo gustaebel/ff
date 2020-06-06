@@ -258,12 +258,24 @@ class ManPage:
                 attribute = f"{plugin.name}.{attr}"
 
             self.add_definition(attribute)
-            self.add(f"Type: {type_cls.name}  ( {'  '.join(type_cls.operators)} )")
+            self.add(f"Type: {type_cls.name}  ( {' '.join(type_cls.operators)} )")
             self.add(br)
             self.add(help_text)
             self.add()
 
         self.add()
+
+    def render_plugin_detail(self, plugin, full=False):
+        """Render the details of a specific plugin with or without author
+           information.
+        """
+        names = ("name", "source", "path")
+        if full:
+            names += ("author", "email", "url")
+
+        for name in names:
+            self.add(f"{name.capitalize()}: {getattr(plugin, name)}")
+            self.add(br)
 
     def print(self):
         """Print the manpage to stdout.
@@ -297,14 +309,11 @@ class AttributesManPage(ManPage):
     title = "ff Plugin Attributes Reference"
     section = 7
     description = """
-        ff(1) is a tool for finding files in the filesystem that all share a set of
-        common features.
-
         This is a list of all the attributes that are available. Attributes are
         provided by plugins. For more details on a specific plugin use 'ff
         --help <plugin>'. Please note that if you got this help text by using
         'man 7 ff', the information you get is limited to the builtin plugins.
-        Use 'ff --list-attributes' to get the full attribute list from all
+        Use 'ff --help-attributes' to get the full attribute list from all
         plugins that are available right now.
     """
 
@@ -353,9 +362,74 @@ class PluginManPage(ManPage):
         super().render()
 
         self.render_plugin(self.plugin)
+        self.add_section("Details")
+        self.render_plugin_detail(self.plugin, full=True)
+
         self.add_section("See Also")
         self.add("ff(1), ff(7)")
-        self.add_section("Details")
-        for name in ("name", "source", "path", "author", "email", "url"):
-            self.add(f"{name.capitalize()}: {getattr(self.plugin, name)}")
-            self.add(br)
+
+
+class TypesManPage(ManPage):
+    """Create manpage/helptext about types.
+    """
+
+    name = "ff-types"
+    title = "ff Types Reference"
+    section = 7
+    description = """
+        This is a list of all the types that are available. Furthermore, there
+        is information about which test operators are supported by each type and
+        if and how attributes of certain types will be counted ('ff --count').
+    """
+
+    def render_type(self, type_cls):
+        """Render a type section.
+        """
+        self.add_section(type_cls.name)
+        self.add(f"Name:  {type_cls.name}")
+        self.add(br)
+        self.add(f"Operators:  {' '.join(type_cls.operators)}")
+        self.add(br)
+        self.add(f"Count: {type_cls.count.name.lower()}")
+        self.add()
+        self.add(type_cls.__doc__)
+        self.add()
+
+    def render(self):
+        super().render()
+
+        for type_cls in sorted(self.registry.registered_types, key=lambda t: t.name):
+            self.render_type(type_cls)
+
+        self.add_section("See Also")
+        self.add("ff(1), ff(7)")
+
+
+class PluginsManPage(ManPage):
+    """Create manpage/helptext about all available plugins.
+    """
+
+    name = "ff-plugins"
+    title = "ff Plugins Reference"
+    section = 7
+    description = """
+        This is a list of all the plugins that are currently available.
+        For more details on a specific plugin use 'ff --help <plugin>'.
+    """
+
+    def render_plugin(self, plugin):
+        """Render a plugin section.
+        """
+        self.add_section(plugin.name)
+        self.render_plugin_detail(plugin)
+        self.add()
+        self.add(plugin.__doc__)
+
+    def render(self):
+        super().render()
+
+        for _, plugin in sorted(self.registry.registered_plugins.items()):
+            self.render_plugin(plugin)
+
+        self.add_section("See Also")
+        self.add("ff(1), ff(7)")

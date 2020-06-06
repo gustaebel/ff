@@ -74,7 +74,7 @@ ATTRIBUTES
     name.
 
     For more information about which attributes there are available use
-    `ff --list-attributes`.
+    `ff --help-attributes`.
 
 TYPES
     Each attribute has a certain type that describes how its value is supposed to
@@ -252,7 +252,7 @@ COUNTING
     e.g. path or time. It is best suited for attributes like type, perm, hidden,
     depth, uid, gid, etc.
 
-    The way a type is counted can be checked with --list-types.
+    The way a type is counted can be checked with --help-types.
 
 PLUGINS
     It is possible to write your own plugins and extend ff(1)'s functionality. A
@@ -286,7 +286,7 @@ GET HELP
 
     View a list of available plugins:
 
-    $ ff --list-plugins
+    $ ff --help-plugins
 
     Get help on a specific plugin, including the attributes it provides:
 
@@ -294,11 +294,11 @@ GET HELP
 
     View a list of all available attributes:
 
-    $ ff --list-attributes
+    $ ff --help-attributes
 
     View a list of all available types and their supported operators:
 
-    $ ff --list-types
+    $ ff --help-types
 
 EXIT CODES
     ::exit_codes

@@ -198,7 +198,7 @@ class Path(String):
 class FileType(Type):
     """String representing the type of a file. The value is one of d,
        directory, f, file, l, symlink, s, socket, p, pipe, fifo, char, block,
-       door, port, whiteout or other. Example: type=f
+       door, port, whiteout or other. Example: 'type=f'
     """
 
     operators = ("=",)
@@ -225,7 +225,9 @@ class FileType(Type):
 
 
 class ListOfStrings(Type):
-    """List of strings.
+    """List of strings, e.g. the lines of a file or filenames inside a tar
+       archive. A given test will be applied to each string in the list.
+       Example: 'grep.lines~foobar', 'tar.members=./foobar.txt'
     """
 
     operators = String.operators

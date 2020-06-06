@@ -124,11 +124,11 @@ class _Base(BaseClass):
             raise SystemExit(EX_OK)
 
         elif args.action == "plugins":
-            registry.print_plugins()
+            registry.get_plugins().show()
             raise SystemExit(EX_OK)
 
         elif args.action == "types":
-            registry.print_types()
+            registry.get_types().show()
             raise SystemExit(EX_OK)
 
         try:

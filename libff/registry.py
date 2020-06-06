@@ -22,10 +22,10 @@ import os
 import importlib.util
 
 from . import NoData, Attribute, BaseClass, MissingImport
-from .help import FullManPage, PluginManPage, AttributesManPage
+from .help import FullManPage, TypesManPage, PluginManPage, PluginsManPage, \
+    AttributesManPage
 from .type import Type
 from .cache import NODATA, NOTSET
-from .table import Table
 from .plugin import Plugin
 from .exceptions import UsageError, BadPluginError, BadAttributeError
 
@@ -327,19 +327,12 @@ class Registry(BaseClass):
         """
         return AttributesManPage(self)
 
-    def print_plugins(self):
-        """Print a table of available plugins.
+    def get_plugins(self):
+        """Reutrn the help for all available plugins.
         """
-        table = Table(("Name", "Source", "Path"))
-        for name, plugin in sorted(self.registered_plugins.items()):
-            table.add((name, plugin.source, plugin.path))
-        table.print()
+        return PluginsManPage(self)
 
-    def print_types(self):
-        """Print a table of available types.
+    def get_types(self):
+        """Return the help for available types.
         """
-        table = Table(("Name", "Operators", "Count", "Help"), wrap_last_column=True)
-        for type_cls in sorted(self.registered_types, key=lambda t: t.name):
-            table.add([type_cls.name, "  ".join(type_cls.operators), type_cls.count.name.lower(),
-                type_cls.__doc__])
-        table.print()
+        return TypesManPage(self)
