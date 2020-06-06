@@ -310,7 +310,7 @@ ENVIRONMENT
     NO_COLOR  Do not produce colorful terminal output regardless of ff(1)'s options.
 
 SEE ALSO
-    ff-attributes(7), find(1), fd(1)
+    ff(7), find(1), fd(1)
 
 AUTHOR
     Lars Gustäbel <lars@gustaebel.de>

@@ -28,10 +28,10 @@ publish: create-pypi-pkg create-arch-pkg
 
 man/ff.1: libff/*.py libff/builtin/*.py
 	mkdir -p man
-	python -c "from libff.search import Search; Search().registry.get_full_help().print()" > man/ff.1
+	python -c "from libff.search import Search; Search().registry.get_full_help().print()" > $@
 
-man/ff-attributes.7: libff/*.py libff/builtin/*.py
+man/ff.7: libff/*.py libff/builtin/*.py plugins/*.py
 	mkdir -p man
-	python -c "from libff.search import Search; Search().registry.get_attributes_help().print()" > man/ff-attributes.7
+	python -c "from libff.search import Search; Search().registry.get_attributes_help().print()" > $@
 
-manpages: man/ff.1 man/ff-attributes.7
+manpages: man/ff.1 man/ff.7

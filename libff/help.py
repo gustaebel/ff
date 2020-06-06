@@ -69,8 +69,8 @@ class ManPage:
        similar to that of txt2man(1).
     """
 
-    name = None
-    title = None
+    name = "ff"
+    title = "ff - Find files in the filesystem"
     section = 1
     description = None
 
@@ -283,9 +283,6 @@ class FullManPage(ManPage):
     """Create the ff(1) manpage.
     """
 
-    name = "ff"
-    title = "ff - Find files in the filesystem"
-
     def render(self):
         super().render()
 
@@ -294,10 +291,9 @@ class FullManPage(ManPage):
 
 
 class AttributesManPage(ManPage):
-    """Create the ff-attributes(7) manpage.
+    """Create the ff(7) manpage.
     """
 
-    name = "ff-attributes"
     title = "ff Plugin Attributes Reference"
     section = 7
     description = """
@@ -331,8 +327,6 @@ class PluginManPage(ManPage):
     """Create a plugin manpage/helptext.
     """
 
-    section = 5
-
     def __init__(self, registry, plugin):
         self.plugin = plugin
 
@@ -354,7 +348,7 @@ class PluginManPage(ManPage):
 
         self.render_plugin(self.plugin)
         self.add_section("See Also")
-        self.add("ff(1), ff-attributes(7)")
+        self.add("ff(1), ff(7)")
         self.add_section("Details")
         for name in ("name", "source", "path", "author", "email", "url"):
             self.add(f"{name.capitalize()}: {getattr(self.plugin, name)}")

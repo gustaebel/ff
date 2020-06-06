@@ -55,7 +55,7 @@ kwargs = {
     "packages":     ["libff", "libff.builtin"],
     "scripts":      ["ff"],
     "data_files":   [("/usr/share/man/man1", ["man/ff.1"]),
-                     ("/usr/share/man/man7", ["man/ff-attributes.7"]),
+                     ("/usr/share/man/man7", ["man/ff.7"]),
                      ("/usr/lib/ff", glob.glob("plugins/*.py")),
                      ("/usr/share/ff", ["plugin_template.py"]),
                      (os.path.join(get_python_lib(), "libff"), ["libff/manpage.template"])]
