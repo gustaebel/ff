@@ -297,9 +297,15 @@ class AttributesManPage(ManPage):
     title = "ff Plugin Attributes Reference"
     section = 7
     description = """
-        This is a list of all attributes that are available.
-        Attributes are provided by plugins.
-        For more details use `ff --help <plugin>`.
+        ff(1) is a tool for finding files in the filesystem that all share a set of
+        common features.
+
+        This is a list of all the attributes that are available. Attributes are
+        provided by plugins. For more details on a specific plugin use 'ff
+        --help <plugin>'. Please note that if you got this help text by using
+        'man 7 ff', the information you get is limited to the builtin plugins.
+        Use 'ff --list-attributes' to get the full attribute list from all
+        plugins that are available right now.
     """
 
     def render_plugin(self, plugin):
