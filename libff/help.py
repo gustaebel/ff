@@ -322,10 +322,8 @@ class AttributesManPage(ManPage):
         """
         self.add_section(f"{plugin.name} Plugin")
         self.add()
-        self.add_subsection("Description")
         self.add(plugin.__doc__)
         self.add()
-        self.add_subsection("Attributes")
         self.render_attributes(plugin)
 
     def render(self):
@@ -385,7 +383,7 @@ class TypesManPage(ManPage):
     def render_type(self, type_cls):
         """Render a type section.
         """
-        self.add_section(type_cls.name)
+        self.add_section(f"{type_cls.name} Type")
         self.add(f"Name:  {type_cls.name}")
         self.add(br)
         self.add(f"Operators:  {' '.join(type_cls.operators)}")
@@ -420,7 +418,7 @@ class PluginsManPage(ManPage):
     def render_plugin(self, plugin):
         """Render a plugin section.
         """
-        self.add_section(plugin.name)
+        self.add_section(f"{plugin.name} Plugin")
         self.render_plugin_detail(plugin)
         self.add()
         self.add(plugin.__doc__)
