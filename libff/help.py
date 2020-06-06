@@ -74,8 +74,7 @@ class ManPage:
     section = 1
     description = None
 
-    def __init__(self, registry):
-        self.registry = registry
+    def __init__(self):
         self.lines = []
         self.render()
 
@@ -317,6 +316,10 @@ class AttributesManPage(ManPage):
         plugins that are available right now.
     """
 
+    def __init__(self, plugins):
+        self.plugins = plugins
+        super().__init__()
+
     def render_plugin(self, plugin):
         """Render a plugin section.
         """
@@ -329,10 +332,7 @@ class AttributesManPage(ManPage):
     def render(self):
         super().render()
 
-        plugins = list(self.registry.registered_plugins.values())
-        plugins.sort(key=lambda p: "" if p.name == "file" else p.name)
-
-        for plugin in plugins:
+        for plugin in self.plugins:
             self.render_plugin(plugin)
 
 
@@ -340,14 +340,14 @@ class PluginManPage(ManPage):
     """Create a plugin manpage/helptext.
     """
 
-    def __init__(self, registry, plugin):
+    def __init__(self, plugin):
         self.plugin = plugin
 
         self.name = f"ff-{plugin.name}"
         self.title = f"{plugin.name} Plugin Reference"
         self.description = plugin.__doc__
 
-        super().__init__(registry)
+        super().__init__()
 
     def render_plugin(self, plugin):
         """Render a plugin section.
@@ -380,6 +380,10 @@ class TypesManPage(ManPage):
         if and how attributes of certain types will be counted ('ff --count').
     """
 
+    def __init__(self, types):
+        self.types = types
+        super().__init__()
+
     def render_type(self, type_cls):
         """Render a type section.
         """
@@ -396,7 +400,7 @@ class TypesManPage(ManPage):
     def render(self):
         super().render()
 
-        for type_cls in sorted(self.registry.registered_types, key=lambda t: t.name):
+        for type_cls in self.types:
             self.render_type(type_cls)
 
         self.add_section("See Also")
@@ -415,6 +419,10 @@ class PluginsManPage(ManPage):
         For more details on a specific plugin use 'ff --help <plugin>'.
     """
 
+    def __init__(self, plugins):
+        self.plugins = plugins
+        super().__init__()
+
     def render_plugin(self, plugin):
         """Render a plugin section.
         """
@@ -426,7 +434,7 @@ class PluginsManPage(ManPage):
     def render(self):
         super().render()
 
-        for _, plugin in sorted(self.registry.registered_plugins.items()):
+        for plugin in self.plugins:
             self.render_plugin(plugin)
 
         self.add_section("See Also")

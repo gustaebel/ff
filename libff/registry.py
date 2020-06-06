@@ -307,12 +307,12 @@ class Registry(BaseClass):
         """
         return set(attribute.plugin for attribute in self.attributes if attribute.name == name)
 
-    def get_full_help(self):
+    def get_full_manpage(self):
         """Return the full help a.k.a. the manpage.
         """
-        return FullManPage(self)
+        return FullManPage()
 
-    def get_plugin_help(self, name):
+    def get_plugin_manpage(self, name):
         """Return the help for a specific plugin.
         """
         try:
@@ -320,19 +320,21 @@ class Registry(BaseClass):
         except KeyError:
             raise UsageError(f"Plugin {name!r} not found")
 
-        return PluginManPage(self, plugin)
+        return PluginManPage(plugin)
 
-    def get_attributes_help(self):
+    def get_attributes_manpage(self):
         """Print a table of all available attributes.
         """
-        return AttributesManPage(self)
+        plugins = list(self.registered_plugins.values())
+        plugins.sort(key=lambda p: "" if p.name == "file" else p.name)
+        return AttributesManPage(plugins)
 
-    def get_plugins(self):
+    def get_plugins_manpage(self):
         """Reutrn the help for all available plugins.
         """
-        return PluginsManPage(self)
+        return PluginsManPage(sorted(self.registered_plugins.values(), key=lambda p: p.name))
 
-    def get_types(self):
+    def get_types_manpage(self):
         """Return the help for available types.
         """
-        return TypesManPage(self)
+        return TypesManPage(sorted(self.registered_types, key=lambda t: t.name))

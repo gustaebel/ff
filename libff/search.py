@@ -110,25 +110,13 @@ class _Base(BaseClass):
         if args.exec_batch is not None:
             args.exec_batch = ExecBatchFields(self.context, args.exec_batch)
 
-        # XXX Clean this up.
-        if args.action == "full":
-            registry.get_full_help().show()
-            raise SystemExit(EX_OK)
-
-        elif args.action == "attributes":
-            registry.get_attributes_help().show()
+        if args.action is not None:
+            manpage = getattr(registry, f"get_{args.action}_manpage")()
+            manpage.show()
             raise SystemExit(EX_OK)
 
         elif args.help is not None:
-            registry.get_plugin_help(args.help).show()
-            raise SystemExit(EX_OK)
-
-        elif args.action == "plugins":
-            registry.get_plugins().show()
-            raise SystemExit(EX_OK)
-
-        elif args.action == "types":
-            registry.get_types().show()
+            registry.get_plugin_manpage(args.help).show()
             raise SystemExit(EX_OK)
 
         try:
