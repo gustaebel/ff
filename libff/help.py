@@ -335,6 +335,9 @@ class AttributesManPage(ManPage):
         for plugin in self.plugins:
             self.render_plugin(plugin)
 
+        self.add_section("See Also")
+        self.add("ff(1)")
+
 
 class PluginManPage(ManPage):
     """Create a plugin manpage/helptext.
