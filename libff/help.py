@@ -36,7 +36,8 @@ br = ".br"
 
 
 class ManPageHelpFormatter(HelpFormatter):
-    """Produce help output suitable for the manpage.
+    """Produce help output from an argparse.ArgumentParser suitable for the
+       manpage.
     """
 
     def add_usage(self, usage, actions, groups, prefix=None):
@@ -46,16 +47,17 @@ class ManPageHelpFormatter(HelpFormatter):
         pass
 
     def start_section(self, heading):
-        super().start_section("  " + heading)
+        super().start_section("    " + heading)
 
     def _format_action(self, action):
         action_header = self._format_action_invocation(action)
         help_text = self._expand_help(action)
-        return f"\n  {action_header}  {help_text}\n\n"
+        return f"\n    {action_header}  {help_text}\n\n"
 
 
 class ManPageUsageFormatter(HelpFormatter):
-    """Produce usage output suitable for the manpage.
+    """Produce usage output from an argparse.ArgumentParser suitable for the
+       manpage.
     """
 
     def _format_usage(self, usage, actions, groups, prefix):
@@ -63,7 +65,8 @@ class ManPageUsageFormatter(HelpFormatter):
 
 
 class ManPage:
-    """Programmatically create a manpage.
+    """Programmatically create a manpage from text-format parts. The format is
+       similar to that of txt2man(1).
     """
 
     name = None
@@ -81,38 +84,68 @@ class ManPage:
         """
         self.start()
 
-    def parse_lines(self, lines):
-        """Parse a set of lines from a manpage template.
+    def wrap(self, lines):
+        """Process a list of lines and wrap paragraphs into single lines.
         """
-        in_definitions = False
+        current_level = 0
+        text = ""
         for line in lines:
             line = line.rstrip()
 
-            if re.match(r"^[A-Z ]+$", line):
-                # Identify section headers.
+            level = len(line) - len(line.lstrip())
+
+            if level < current_level or (current_level == 0 and level > 0) or "  " in line.lstrip():
+                # Start a new paragraph if the line is empty, its indentation
+                # level is smaller than before, if the previous line was a
+                # section header line, or the line contains the start of a
+                # definition (identified by two consecutive spaces like
+                # txt2man(1)'s tag list).
+                if text:
+                    yield text
+                yield ""
+                text = line
+
+            else:
+                # The line is a continuation line, append it to the current
+                # paragraph.
+                if not text:
+                    text = line
+                else:
+                    text += " " + line.lstrip()
+
+            if line:
+                current_level = level
+
+        if text:
+            yield text
+
+    def parse_lines(self, lines):
+        """Parse a set of lines from a manpage template.
+        """
+        lines = self.wrap(lines)
+
+        for line in lines:
+            line = line.rstrip()
+
+            if line.lstrip().startswith("::"):
+                # Evaluate an include marker.
+                name = line.lstrip()[2:]
+                self.include(name)
+
+            elif re.match(r"^[A-Z ]+$", line):
+                # Identify section headers (all caps starting at column 0).
                 self.add_section(line)
 
             elif line.lstrip().startswith("$"):
-                # Highlight a example shell command.
+                # Highlight an example shell command.
                 self.lines.append(bd + line + rs)
 
-            elif line.lstrip().startswith("__include_"):
-                # Evaluate an include marker.
-                name = line.lstrip()[10:]
-                self.include(name)
-
             elif "  " in line.strip():
-                # Start or continue a definition list.
+                # Format a definition, i.e. a word described with a text.
                 key, value = line.strip().split("  ", 1)
                 self.add_definition(key)
                 self.add(value)
-                in_definitions = True
-
-            elif in_definitions:
-                # Close the definition list with a paragraph.
                 self.lines.append(".PP")
-                in_definitions = False
-                self.add(line)
 
             else:
                 self.add(line)
@@ -135,7 +168,7 @@ class ManPage:
         elif name == "time_patterns":
             lines = []
             for _, fmt in time_formats:
-                lines.append("  " + bd + re.sub(r"%([YmdHMS])", lambda m: m.group(1) * 2, fmt) + rs)
+                lines.append("    ``" + re.sub(r"%([YmdHMS])", lambda m: m.group(1)*2, fmt) + "``")
                 lines.append("")
             self.parse_lines(lines)
 
@@ -145,7 +178,7 @@ class ManPage:
                 # pylint:disable=unidiomatic-typecheck
                 if type(obj) is type and issubclass(obj, exceptions.BaseError) and \
                         obj is not exceptions.BaseError:
-                    lines.append(f"  {obj.exitcode}  {obj.__doc__}")
+                    lines.append(f"    {obj.exitcode}  {obj.__doc__}")
             self.parse_lines(lines)
 
         else:
@@ -159,17 +192,22 @@ class ManPage:
         string = "\n\n".join(" ".join(s.split()) for s in string.split("\n\n"))
 
         # Highlight references to other manpages.
-        string = re.sub(r"([a-z-]+)(\(\d\))", lambda m: f"{bd}{m.group(1)}{rs}{m.group(2)}", string)
+        string = re.sub(r"([a-z_-]+)(\(\d\))",
+                lambda m: f"{bd}{m.group(1)}{rs}{m.group(2)}", string)
 
-        # Make single-quoted strings italic.
-        string = re.sub(r"'([^']*)'", lambda m: f"'{it}{m.group(1)}{rs}'", string)
+        # Make single-quoted strings italic. It should match "'s'" but not
+        # "file's".
+        string = re.sub(r"'(?!s\s)([^']+)'", lambda m: f"'{it}{m.group(1)}{rs}'", string)
+
+        # Make double backtick-quoted strings italic.
+        string = re.sub(r"``([^`]+)``", lambda m: f"{it}{m.group(1)}{rs}", string)
 
         # Make backtick-quoted strings bold.
-        string = re.sub(r"`([^`]*)`", lambda m: f"'{bd}{m.group(1)}{rs}'", string)
+        string = re.sub(r"`([^`]+)`", lambda m: f"{bd}{m.group(1)}{rs}", string)
 
         # Highlight short and long options.
-        string = re.sub(r"(?<![a-zA-Z])(\-{1,2}[a-zA-Z-]+)", lambda m: f"{bd}{m.group(1)}{rs}",
-                string)
+        string = re.sub(r"(?<![a-zA-Z])(\-[a-zA-Z]|\-\-[a-zA-Z-]+)",
+                lambda m: f"{bd}{m.group(1)}{rs}", string)
 
         # Escape dashes.
         return string.replace("-", "\\-")
@@ -184,6 +222,7 @@ class ManPage:
         """
         self.lines.append(f".TH {name} {str(section)} \"{datetime.date.today()}\" "\
                     f"\"Version {__version__}\" \"{title}\"")
+        self.lines.append(".nh") # turn off hyphenation
 
     def add_section(self, name):
         """Add a section.

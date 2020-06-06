@@ -1,578 +1,618 @@
-.TH ff 1 "2020-06-05" "Version 566" "ff - Find files in the filesystem"
+.TH ff 1 "2020-06-06" "Version 566" "ff - Find files in the filesystem"
+.nh
 .SH NAME
+
 ff \- Find files in the filesystem
 
+
 .SH SYNOPSIS
-ff [<options>] [<test/directory> ... | [\fB\-D\fR] <directory> ...]
+
+ff [<options>] [<test/directory> ... | [\fB\-D\fP] <directory> ...]
+
 
 .SH DESCRIPTION
-\fBff\fR(1) is a tool for finding files in the filesystem that all share a set of
-common features. Its scope is similar to \fBfind\fR(1) and \fBfd\fR(1) but it aims
-at being more accessible and easier to use than \fBfind\fR(1) and more versatile
-and powerful than \fBfd\fR(1).
 
-\fBff\fR(1) takes a set of expressions and directories as arguments and uses them
-for searching the filesystem. If no arguments are specified, \fBff\fR(1) lists all
-files and directories below the directory you are currently in.
+\fBff\fP(1) is a tool for finding files in the filesystem that all share a set of common features. Its scope is similar to \fBfind\fP(1) and \fBfd\fP(1) but it aims at being more accessible and easier to use than \fBfind\fP(1) and more versatile and powerful than \fBfd\fP(1).
 
-Whether an argument is a test or a directory is auto\-detected.
-Directories may be at the start or the end of the list of arguments. They are
-identified as directories when they contain at least one '\fI/\fR' and point to an
-existing name in the filesystem. However, directories can be explicitly
-specified using the \fB\-D\fR/\fB\-\-directories\fR option, in which case auto\-detection
-will not be used. If no directory argument is found the current directory is
-used as the starting point.
+\fBff\fP(1) takes a set of expressions and directories as arguments and uses them for searching the filesystem. If no arguments are specified, \fBff\fP(1) lists all files and directories below the directory you are currently in.
 
-\fBff\fR(1) uses parallel processes to speed up searching by default. The number of
-processes depends on the number of CPU cores and can be controlled with
-\fB\-j\fR/\fB\-\-jobs\fR.
+Whether an argument is a test or a directory is auto\-detected. Directories may be at the start or the end of the list of arguments. They are identified as directories when they contain at least one '\fI/\fP' and point to an existing name in the filesystem. However, directories can be explicitly specified using the \fB\-D\fP/\fB\-\-directories\fP option, in which case auto\-detection will not be used. If no directory argument is found the current directory is used as the starting point.
+
+\fBff\fP(1) uses parallel processes to speed up searching by default. The number of processes depends on the number of CPU cores and can be controlled with \fB\-j\fP/\fB\-\-jobs\fP.
+
 
 .SH OPTIONS
+
+
 Global options:
 
-.IP "\fB<test/directory>\fR" 4
+
+.IP "\fB<test/directory>\fP" 4
 A test expression for matching files or a directory to search.
 .PP
 
-.IP "\fB--profile\fR" 4
+
+.IP "\fB--profile\fP" 4
 Do a profiling run on the given arguments and suppress the output.
 .PP
 
-.IP "\fB--debug\fR" 4
+
+.IP "\fB--debug\fP" 4
 Show only debug messages of certain categories, default is to show all.
 .PP
 
-.IP "\fB--cache\fR" 4
+
+.IP "\fB--cache\fP" 4
 Location of the metadata cache (default: /home/lars/.cache/ff.db).
 .PP
 
-.IP "\fB--no-cache\fR" 4
+
+.IP "\fB--no-cache\fP" 4
 Do not use the metadata cache.
 .PP
 
-.IP "\fB-j, --jobs <num>\fR" 4
+
+.IP "\fB-j, --jobs <num>\fP" 4
 Set number of processes to use for searching and executing (default: the number of CPU cores).
 .PP
 
-.IP "\fB-D, --directories <path> [<path> ...]\fR" 4
+
+.IP "\fB-D, --directories <path> [<path> ...]\fP" 4
 Search entries in these paths (default is current directory).
 .PP
 
 Commands:
 
-.IP "\fB-h, --help [<plugin>]\fR" 4
+
+.IP "\fB-h, --help [<plugin>]\fP" 4
 Show this help message or the help message for a particular plugin.
 .PP
 
-.IP "\fB--version\fR" 4
+
+.IP "\fB--version\fP" 4
 Show program's version number and exit.
 .PP
 
-.IP "\fB--help-full\fR" 4
+
+.IP "\fB--help-full\fP" 4
 Show a full help in man page format.
 .PP
 
-.IP "\fB--list-attributes\fR" 4
+
+.IP "\fB--list-attributes\fP" 4
 Show a list of available attributes to use for searching, sorting and output.
 .PP
 
-.IP "\fB--list-plugins\fR" 4
+
+.IP "\fB--list-plugins\fP" 4
 Show the list of available plugins.
 .PP
 
-.IP "\fB--list-types\fR" 4
+
+.IP "\fB--list-types\fP" 4
 Show the list of available types.
 .PP
 
 Search options:
 
-.IP "\fB-H, --hide\fR" 4
+
+.IP "\fB-H, --hide\fP" 4
 Do not show hidden files and directories.
 .PP
 
-.IP "\fB-I, --ignore\fR" 4
+
+.IP "\fB-I, --ignore\fP" 4
 Do not show files that are excluded by patterns from .(git|fd|ff)ignore files.
 .PP
 
-.IP "\fB-d, --depth <range>\fR" 4
-Show only files that are located at a certain depth level of the directory tree that is within the given <range>. A <range> is a string of the form '\fI<start>\-<stop>\fR'. <start> and <stop> are optional and may be omitted. <range> may also be a single number. It is possible to specify multiple ranges separated by comma.
+
+.IP "\fB-d, --depth <range>\fP" 4
+Show only files that are located at a certain depth level of the directory tree that is within the given <range>. A <range> is a string of the form '\fI<start>\-<stop>\fP'. <start> and <stop> are optional and may be omitted. <range> may also be a single number. It is possible to specify multiple ranges separated by comma.
 .PP
 
-.IP "\fB--no-parent-ignore\fR" 4
+
+.IP "\fB--no-parent-ignore\fP" 4
 Do not read patterns from ignore files from parent directories.
 .PP
 
-.IP "\fB-e, --exclude <test>\fR" 4
+
+.IP "\fB-e, --exclude <test>\fP" 4
 Exclude entries that match the given test.
 .PP
 
-.IP "\fB-c, --case <mode>\fR" 4
+
+.IP "\fB-c, --case <mode>\fP" 4
 How to treat the case of text attributes (smart, ignore or sensitive).
 .PP
 
-.IP "\fB-L, --follow\fR" 4
+
+.IP "\fB-L, --follow\fP" 4
 Follow symbolic links.
 .PP
 
-.IP "\fB--one-file-system, --mount, --xdev\fR" 4
+
+.IP "\fB--one-file-system, --mount, --xdev\fP" 4
 Do not descend into different file systems.
 .PP
 
 Simple pattern options:
 
-.IP "\fB-g, --glob\fR" 4
+
+.IP "\fB-g, --glob\fP" 4
 Treat the pattern as a literal string.
 .PP
 
-.IP "\fB-r, --regex\fR" 4
+
+.IP "\fB-r, --regex\fP" 4
 Perform a regular\-expression based search (default).
 .PP
 
-.IP "\fB-F, --fixed-strings\fR" 4
+
+.IP "\fB-F, --fixed-strings\fP" 4
 Treat the pattern as a literal string.
 .PP
 
-.IP "\fB-p, --full-path\fR" 4
+
+.IP "\fB-p, --full-path\fP" 4
 Search full path (default: basename only).
 .PP
 
 Output options:
 
-.IP "\fB-x, --exec <cmd>\fR" 4
+
+.IP "\fB-x, --exec <cmd>\fP" 4
 Execute a command for each search result.
 .PP
 
-.IP "\fB-X, --exec-batch <cmd>\fR" 4
+
+.IP "\fB-X, --exec-batch <cmd>\fP" 4
 Execute a command with all search results at once.
 .PP
 
-.IP "\fB-C, --color <when>\fR" 4
+
+.IP "\fB-C, --color <when>\fP" 4
 When to use colors: never, *auto*, always.
 .PP
 
-.IP "\fB-a, --absolute-path\fR" 4
+
+.IP "\fB-a, --absolute-path\fP" 4
 Show absolute instead of relative paths.
 .PP
 
-.IP "\fB-0, --print0\fR" 4
+
+.IP "\fB-0, --print0\fP" 4
 Separate results by the null character.
 .PP
 
-.IP "\fB-v, --verbose\fR" 4
-Produce output similar to '\fBls \fB\-l\fR\fR'.
+
+.IP "\fB-v, --verbose\fP" 4
+Produce output similar to \fBls \fB\-l\fP\fP.
 .PP
 
-.IP "\fB-S, --sort [<attribute-list>]\fR" 4
+
+.IP "\fB-S, --sort [<attribute-list>]\fP" 4
 Sort entries by path or any other attribute.
 .PP
 
-.IP "\fB-R, --reverse\fR" 4
+
+.IP "\fB-R, --reverse\fP" 4
 Reverse the sort order.
 .PP
 
-.IP "\fB--count\fR" 4
-Count the attributes from <attribute\-list> and print statistics, instead of the result, the default is to count the total size and the file types of the entries found. Add \fB\-\-json\fR for JSON output.
+
+.IP "\fB--count\fP" 4
+Count the attributes from <attribute\-list> and print statistics, instead of the result, the default is to count the total size and the file types of the entries found. Add \fB\-\-json\fP for JSON output.
 .PP
 
-.IP "\fB-l, --limit N\fR" 4
+
+.IP "\fB-l, --limit N\fP" 4
 Limit output to at most N entries.
 .PP
 
-.IP "\fB-1\fR" 4
+
+.IP "\fB-1\fP" 4
 Print only the first entry and exit immediately.
 .PP
 
-.IP "\fB-o, --output <attribute-list>\fR" 4
-Print each entry by using a template of comma\-separated attributes. The special value '\fIfile\fR' stands for all file attributes.
+
+.IP "\fB-o, --output <attribute-list>\fP" 4
+Print each entry by using a template of comma\-separated attributes. The special value '\fIfile\fP' stands for all file attributes.
 .PP
 
-.IP "\fB--sep\fR" 4
-Separate each attribute of \fB\-\-output\fR with <string>, default is a single space.
+
+.IP "\fB--sep\fP" 4
+Separate each attribute of \fB\-\-output\fP with <string>, default is a single space.
 .PP
 
-.IP "\fB--all\fR" 4
+
+.IP "\fB--all\fP" 4
 Show all entries including the ones with missing attribute values.
 .PP
 
-.IP "\fB--json\fR" 4
+
+.IP "\fB--json\fP" 4
 Print attributes as one big json object to stdout.
 .PP
 
-.IP "\fB--jsonl\fR" 4
+
+.IP "\fB--jsonl\fP" 4
 Print attributes as jsonl (one json object per line) to stdout.
 .PP
 
-.IP "\fB--si\fR" 4
+
+.IP "\fB--si\fP" 4
 Parse and print file sizes in units of 1K=1000 bytes instead of 1K=1024 bytes.
+.PP
+
 
 .SH TESTS
-All remaining command line arguments that do not point to directories will be
-used as tests. Each filesystem entry is checked against this list of tests
-and is included in the result if it matches.
+
+All remaining command line arguments that do not point to directories will be used as tests. Each filesystem entry is checked against this list of tests and is included in the result if it matches.
 
 A test basically has the form:
 
-[<[plugin.]attribute><operator>]<value>
+\fI[<[plugin.]attribute><operator>]<value>\fP
 
-So, a test compares a certain <value> (or pattern) with the value of a
-certain <attribute> of a filesystem entry. The type of comparison performed
-is indicated by the <operator>.
+So, a test compares a certain <value> (or pattern) with the value of a certain <attribute> of a filesystem entry. The type of comparison performed is indicated by the <operator>.
 
-The simplest form of a test is to just specify a <value> which means that
-each entry's basename will be matched against <value> which is a regular
-expression. It is short for a test with the following syntax:
+The simplest form of a test is to just specify a <value> which means that each entry's basename will be matched against <value> which is a regular expression. It is short for a test with the following syntax:
 
-file.name~<value>
+\fIfile.name~<value>\fP
 
-(The default behavior for this shorthand can be changed with the \fB\-r\fR/\fB\-\-regex\fR,
-\fB\-F\fR/\fB\-\-fixed\-strings\fR, \fB\-g\fR/\fB\-\-glob\fR and \fB\-p\fR/\fB\-\-full\-path\fR options.)
+(The default behavior for this shorthand can be changed with the \fB\-r\fP/\fB\-\-regex\fP, \fB\-F\fP/\fB\-\-fixed\-strings\fP, \fB\-g\fP/\fB\-\-glob\fP and \fB\-p\fP/\fB\-\-full\-path\fP options.)
 
-It is good practice to use full attribute names and to quote either the value
-or the whole test to prevent the shell from interfering with characters like
-'\fI*\fR', '\fI(\fR', '\fI)\fR', '\fI<\fR', '\fI>\fR', '\fI!\fR', etc.
+It is good practice to use full attribute names and to quote either the value or the whole test to prevent the shell from interfering with characters like '\fI*\fP', '\fI(\fP', '\fI)\fP', '\fI<\fP', '\fI>\fP', '\fI!\fP', etc.
 
-Tests can be grouped with '\fIAND\fR' and '\fIOR\fR' operators and parenthesis, whereas
-the '\fIAND\fR' is always implied and can be omitted. Please note that parenthesis
-must be escaped or quoted properly to prevent the shell from interpreting
-them. It is recommended to use the alternative forms '\fI{{\fR' and '\fI}}\fR'.
+Tests can be grouped with '\fIAND\fP' and '\fIOR\fP' operators and parenthesis, whereas the '\fIAND\fP' is always implied and can be omitted. Please note that parenthesis must be escaped or quoted properly to prevent the shell from interpreting them. It is recommended to use the alternative forms '\fI{{\fP' and '\fI}}\fP'.
+
 
 .SH ATTRIBUTES
-\fBff\fR(1) lets you test for a wide variety of file attributes. Attributes are
-provided by plugins. Essential plugins like '\fIfile\fR' and '\fImime\fR' are built in,
-but you can also add your own plugins written in \fBpython\fR(1).
 
-The full name of an attribute consists of the <plugin> name, a dot, and the
-<attribute> name. The plugin part of the attribute is optional unless the
-same attribute name is provided by multiple plugins. It will produce an error
-if an attribute name in a test is ambiguous. An exception is the '\fIfile\fR'
-plugin whose attribute names are global, always take precedence and will
-never produce an error. It is recommended to always use the full attribute
-name.
+\fBff\fP(1) lets you test for a wide variety of file attributes. Attributes are provided by plugins. Essential plugins like '\fIfile\fP' and '\fImime\fP' are built in, but you can also add your own plugins written in \fBpython\fP(1).
 
-For more information about which attributes there are available use
-'\fBff \fB\-\-list\-attributes\fR\fR'.
+The full name of an attribute consists of the <plugin> name, a dot, and the <attribute> name. The plugin part of the attribute is optional unless the same attribute name is provided by multiple plugins. It will produce an error if an attribute name in a test is ambiguous. An exception is the '\fIfile\fP' plugin whose attribute names are global, always take precedence and will never produce an error. It is recommended to always use the full attribute name.
+
+For more information about which attributes there are available use \fBff \fB\-\-list\-attributes\fP\fP.
+
 
 .SH TYPES
-Each attribute has a certain type that describes how its value is supposed to
-be interpreted and which operators it supports. Beside the common '\fIstring\fR',
-'\fInumber\fR' and '\fIboolean\fR' types there are also types for file sizes, file
-permissions, timestamps, durations etc.
 
-There are a number of predefined date and time parsing patterns for
-attributes having a '\fItime\fR' type.
+Each attribute has a certain type that describes how its value is supposed to be interpreted and which operators it supports. Beside the common '\fIstring\fP', '\fInumber\fP' and '\fIboolean\fP' types there are also types for file sizes, file permissions, timestamps, durations etc.
 
-\fBYY\-mm\-dd HH:MM:SS\fR
+There are a number of predefined date and time parsing patterns for attributes having a '\fItime\fP' type.
 
-\fBYY\-mm\-dd HH:MM\fR
 
-\fBYYmmddHHMM\fR
+\fIYY\-mm\-dd HH:MM:SS\fP
 
-\fBYY\-mm\-dd\fR
+\fIYY\-mm\-dd HH:MM\fP
 
-\fBYYmmdd\fR
+\fIYYmmddHHMM\fP
 
-\fBHH:MM:SS\fR
+\fIYY\-mm\-dd\fP
 
-\fBHH:MM\fR
+\fIYYmmdd\fP
 
-\fBHHMM\fR
+\fIHH:MM:SS\fP
+
+\fIHH:MM\fP
+
+\fIHHMM\fP
 
 
 Durations consist of one or more partial time designations that are summed up, e.g.:
 
-1h30m25s
+\fI1h30m25s\fP
 
-The valid units are: '\fIs\fR' for seconds, '\fIm\fR' for minutes, '\fIh\fR' for hours, '\fId\fR' for
-days, '\fIw\fR' for weeks (7 days), '\fIM\fR' for months (30 days) and '\fIy\fR' for years (365
-days). If no unit is given '\fIm\fR' for minutes is assumed.
+
+The valid units are: '\fIs\fP' for seconds, '\fIm\fP' for minutes, '\fIh\fP' for hours, '\fId\fP' for days, '\fIw\fP' for weeks (7 days), '\fIM\fP' for months (30 days) and '\fIy\fP' for years (365 days). If no unit is given '\fIm\fP' for minutes is assumed.
+
 
 .SH OPERATORS
-The third component in a test beside the <attribute> and the <value> is the
-<operator>.
+
+The third component in a test beside the <attribute> and the <value> is the <operator>.
 
 There are operators for numbers:
 
-.IP "\fB=\fR" 4
+
+.IP "\fB=\fP" 4
 attribute is equal to <value>
-.IP "\fB+= >=\fR" 4
+.PP
+
+.IP "\fB+= >=\fP" 4
 attribute is greater than or equal to <value>
-.IP "\fB-= <=\fR" 4
+.PP
+
+.IP "\fB-= <=\fP" 4
 attribute is less than or equal to <value>
-.IP "\fB+ >\fR" 4
+.PP
+
+.IP "\fB+ >\fP" 4
 attribute is greater than <value>
-.IP "\fB- <\fR" 4
+.PP
+
+.IP "\fB- <\fP" 4
 attribute is less than <value>
 .PP
 
-Please note that the > and < characters must be properly quoted to avoid
-being interpreted as redirections by the shell, which is why the + and \-
-forms are preferred.
+Please note that the \fB>\fP and \fB<\fP characters must be properly quoted to avoid being interpreted as redirections by the shell, which is why the \fB+\fP and \fB\-\fP forms are preferred.
 
 Operators for strings:
-.IP "\fB=\fR" 4
+
+
+.IP "\fB=\fP" 4
 attribute is equal to <value>
-.IP "\fB:\fR" 4
+.PP
+
+.IP "\fB:\fP" 4
 contains substring <value>
-.IP "\fB~\fR" 4
+.PP
+
+.IP "\fB~\fP" 4
 matches regular expression <value>
-.IP "\fB%\fR" 4
+.PP
+
+.IP "\fB%\fP" 4
 matches glob pattern <value>
 .PP
 
 Operators for lists of strings:
-.IP "\fB=\fR" 4
+
+
+.IP "\fB=\fP" 4
 one string in the list is equal to <value>
-.IP "\fB:\fR" 4
+.PP
+
+.IP "\fB:\fP" 4
 one string contains substring <value>
-.IP "\fB~\fR" 4
+.PP
+
+.IP "\fB~\fP" 4
 one string matches regular expression <value>
-.IP "\fB%\fR" 4
+.PP
+
+.IP "\fB%\fP" 4
 one string matches glob pattern <value>
 .PP
 
 Operators for booleans:
-.IP "\fB=\fR" 4
+
+
+.IP "\fB=\fP" 4
 attribute is equal to <value>, which may be one of (true, t, 1, yes, y, on) or (false, f, 0, no, n, off). The case is ignored.
 .PP
 
+
 Operators for mode:
-.IP "\fB=\fR" 4
+
+
+.IP "\fB=\fP" 4
 all bits from the attribute are exactly equal to <value>
-.IP "\fB:\fR" 4
+.PP
+
+.IP "\fB:\fP" 4
 all bits that are set in <value> are also set in the attribute
-.IP "\fB~\fR" 4
+.PP
+
+.IP "\fB~\fP" 4
 any of the bits that are set in <value> are set in the attribute
 .PP
 
+
 .SH FILE REFERENCES
-It is possible to pass a path of a file as reference instead of a <value>. To
-use a reference you pass a '\fI{}\fR' followed by the path name. For example, to
-find all files newer than foo/bar/example.txt you do:
 
-\fB    $ ff mtime+{}foo/bar/example.txt\fR
+It is possible to pass a path of a file as reference instead of a <value>. To use a reference you pass a '\fI{}\fP' followed by the path name. For example, to find all files newer than foo/bar/example.txt you do:
 
-The default behavior is to use the same attribute of the referenced file as
-the one it is supposed to be compared to, but it is also possible to use a
-different one:
+\fB    $ ff mtime+{}foo/bar/example.txt\fP
 
-\fB    $ ff mtime+{atime}foo/bar/example.txt\fR
+The default behavior is to use the same attribute of the referenced file as the one it is supposed to be compared to, but it is also possible to use a different one:
+
+\fB    $ ff mtime+{atime}foo/bar/example.txt\fP
+
 
 .SH OUTPUT
-The contents of what is printed to standard output can be controlled using
-the \fB\-o\fR/\fB\-\-output\fR and the \fB\-\-sep\fR options. \fB\-o\fR/\fB\-\-output\fR is a comma\-separated list
-of attribute names, that will be printed using the separator string from the
-\fB\-\-sep\fR option. \fB\-o\fR/\fB\-\-output\fR defaults to '\fIpath\fR'. Use \fB\-\-output\fR=file as a
-shorthand for all attributes from the '\fIfile\fR' plugin.
 
-Entries that are missing a value for one of the attributes in the list from
-\fB\-o\fR/\fB\-\-output\fR will not be printed unless the \fB\-\-all\fR option is given.
+The contents of what is printed to standard output can be controlled using the \fB\-o\fP/\fB\-\-output\fP and the \fB\-\-sep\fP options. \fB\-o\fP/\fB\-\-output\fP is a comma\-separated list of attribute names, that will be printed using the separator string from the \fB\-\-sep\fP option. \fB\-o\fP/\fB\-\-output\fP defaults to '\fIpath\fP'. Use \fB\-\-output\fP=file as a shorthand for all attributes from the '\fIfile\fP' plugin.
 
-The \fB\-v\fR/\fB\-\-verbose\fR option produces output in the style of '\fBls \fB\-lh\fR\fR'.
+Entries that are missing a value for one of the attributes in the list from \fB\-o\fP/\fB\-\-output\fP will not be printed unless the \fB\-\-all\fP option is given.
 
-The \fB\-\-json\fR and \fB\-\-jsonl\fR options print each record as a JSON object to standard
-output. The attributes of the JSON object are the same as in \fB\-o\fR/\fB\-\-output\fR, but
-\fB\-\-all\fR is implied and missing attributes have a null value. The difference
-between both options is that \fB\-\-json\fR produces one big JSON list object
-containing all the records, whereas the \fB\-\-jsonl\fR prints one JSON object per
-record per line.
+The \fB\-v\fP/\fB\-\-verbose\fP option produces output in the style of '\fIls \fB\-l\fPh\fP'.
 
-By default, pathnames are printed in color according to \fBdircolors\fR(1) rules,
-unless NO_COLOR is set, \fB\-\-color\fR is set to '\fInever\fR', or \fBff\fR(1) is not connected
-to a terminal. Color output can be forced with \fB\-\-color\fR=always.
+The \fB\-\-json\fP and \fB\-\-jsonl\fP options print each record as a JSON object to standard output. The attributes of the JSON object are the same as in \fB\-o\fP/\fB\-\-output\fP, but \fB\-\-all\fP is implied and missing attributes have a null value. The difference between both options is that \fB\-\-json\fP produces one big JSON list object containing all the records, whereas the \fB\-\-jsonl\fP prints one JSON object per record per line.
 
-Furthermore, the formatting of individual attribute values can be controlled
-with modifiers. The syntax is: <attribute\-name>:<modifier>. <modifier> can be
-one of:
+By default, pathnames are printed in color according to \fBdircolors\fP(1) rules, unless NO_COLOR is set, \fB\-\-color\fP is set to '\fInever\fP', or \fBff\fP(1) is not connected to a terminal. Color output can be forced with \fB\-\-color\fP=always.
 
-.IP "\fBh\fR" 4
+Furthermore, the formatting of individual attribute values can be controlled with modifiers. The syntax is: <attribute\-name>:<modifier>. <modifier> can be one of:
+
+
+.IP "\fBh\fP" 4
 human\-readable formatting for size types
 .PP
 
-.IP "\fBx\fR" 4
+.IP "\fBx\fP" 4
 hexadecimal representation for number types
 .PP
 
-.IP "\fBo\fR" 4
-octal representation for number types, e.g. '\fIfile.mode\fR' and '\fIfile.perm\fR'.
+.IP "\fBo\fP" 4
+octal representation for number types, e.g. '\fIfile.mode\fP' and '\fIfile.perm\fP'.
 .PP
 
-.IP "\fBn\fR" 4
+.IP "\fBn\fP" 4
 ignore null values (otherwise the whole record would not be printed)
 .PP
 
 Example:
 
-\fB    $ ff --output size:h,perm:o,path --sort size\fR
+\fB    $ ff --output size:h,perm:o,path --sort size\fP
+
 
 
 .SH EXECUTION
-The \fB\-x\fR/\fB\-\-exec\fR and \fB\-X\fR/\fB\-\-exec\-batch\fR options allow executing commands with
-search results as their arguments. \fB\-x\fR/\fB\-\-exec\fR starts one process for every
-result, whereas \fB\-X\fR/\fB\-\-exec\-batch\fR starts one process that gets all search
-results at once.
-The exit status of \fBff\fR(1) will be set accordingly if one of the commands
-terminates with an error, see EXIT CODES below:
+
+The \fB\-x\fP/\fB\-\-exec\fP and \fB\-X\fP/\fB\-\-exec\-batch\fP options allow executing commands with search results as their arguments. \fB\-x\fP/\fB\-\-exec\fP starts one process for every result, whereas \fB\-X\fP/\fB\-\-exec\-batch\fP starts one process that gets all search results at once. The exit status of \fBff\fP(1) will be set accordingly if one of the commands terminates with an error, see EXIT CODES below:
 
 The following placeholders are substituted in the command template:
 
-.IP "\fB{}\fR" 4
+
+.IP "\fB{}\fP" 4
 full path, alias for {file.path}
 .PP
 
-.IP "\fB{/}\fR" 4
+.IP "\fB{/}\fP" 4
 basename, alias for {file.name}
 .PP
 
-.IP "\fB{//}\fR" 4
+.IP "\fB{//}\fP" 4
 parent directory, alias for {file.dir}
 .PP
 
-.IP "\fB{.}\fR" 4
+.IP "\fB{.}\fP" 4
 path without file extension, alias for {file.pathx}
 .PP
 
-.IP "\fB{/.}\fR" 4
+.IP "\fB{/.}\fP" 4
 basename without file extension, alias for {file.namex}
 .PP
 
-.IP "\fB{..}\fR" 4
+.IP "\fB{..}\fP" 4
 file extension, alias for {file.ext}
 .PP
 
-.IP "\fB{attribute}\fR" 4
+.IP "\fB{attribute}\fP" 4
 replaced with the value of attribute
 .PP
 
-If no placeholder is found in the command template the full path is used as
-the argument. The \fB\-o\fR/\fB\-\-output\fR option has no effect on \fB\-x\fR/\fB\-\-exec\fR and
-\fB\-X\fR/\fB\-\-exec\-batch\fR.
+If no placeholder is found in the command template the full path is used as the argument. The \fB\-o\fP/\fB\-\-output\fP option has no effect on \fB\-x\fP/\fB\-\-exec\fP and \fB\-X\fP/\fB\-\-exec\-batch\fP.
+
 
 .SH EXCLUSION
-The \fB\-e\fR/\fB\-\-exclude\fR option allows to exclude entries that match the <test>.
-Excluding takes place before all other tests are evaluated. If a directory
-matches it will not be descended into, so entries below it will not be
-produced.
 
-If \fB\-H\fR/\fB\-\-hide\fR is given, all hidden files will be excluded using this method,
-i.e. the option translates to '\fI\-\fB\-exclude\fR hide=yes\fR'. The same applies to
-\fB\-I\fR/\fB\-\-ignore\fR which tranlates to '\fI\-\fB\-exclude\fR ignored=yes\fR'.
+The \fB\-e\fP/\fB\-\-exclude\fP option allows to exclude entries that match the <test>. Excluding takes place before all other tests are evaluated. If a directory matches it will not be descended into, so entries below it will not be produced.
+
+If \fB\-H\fP/\fB\-\-hide\fP is given, all hidden files will be excluded using this method, i.e. the option translates to '\fI\-\fB\-e\fPxclude hide=yes\fP'. The same applies to \fB\-I\fP/\fB\-\-ignore\fP which tranlates to '\fI\-\fB\-e\fPxclude ignored=yes\fP'.
+
 
 .SH IGNORE FILES
-By default, \fBff\fR(1) reads .gitignore, .ignore, .fdignore, and .ffignore files
-and excludes all entries that match the set of patterns in one of these
-files. The syntax of these files is described in \fBgitignore\fR(5).
+
+By default, \fBff\fP(1) reads .gitignore, .ignore, .fdignore, and .ffignore files and excludes all entries that match the set of patterns in one of these files. The syntax of these files is described in \fBgitignore\fP(5).
+
 
 .SH SORTING
-Sorting is controlled with the \fB\-S\fR/\fB\-\-sort\fR option. It is off by default, this
-way entries are processed and printed as soon as they are found instead of
-being collected and sorted first. This makes better use of \fBff\fR(1)'s parallel
-processing capabilities and is much faster.
 
-\fB\-S\fR/\fB\-\-sort\fR takes an optional <attribute\-list> argument. Without it, sorting is
-done alphabetically on the entry's path. <attribute\-list> is a
-comma\-separated list of attribute names that will be used as sort criteria.
-The sort order can be reversed with \fB\-R\fR/\fB\-\-reverse\fR.
+Sorting is controlled with the \fB\-S\fP/\fB\-\-sort\fP option. It is off by default, this way entries are processed and printed as soon as they are found instead of being collected and sorted first. This makes better use of \fBff\fP(1)'s parallel processing capabilities and is much faster.
+
+\fB\-S\fP/\fB\-\-sort\fP takes an optional <attribute\-list> argument. Without it, sorting is done alphabetically on the entry's path. <attribute\-list> is a comma\-separated list of attribute names that will be used as sort criteria. The sort order can be reversed with \fB\-R\fP/\fB\-\-reverse\fP.
+
 
 .SH COUNTING
-If the \fB\-\-count\fR option is specified, instead of printing the results of the
-search, count the entries and the attributes from <attribute\-list> and print
-these counts to standard output. If \fB\-\-count\fR is given without a list of
-attributes the total size of all files and statistics about the different
-file types is displayed. If <attribute\-list> is present a total or a count of
-these attributes is done. There is always a '\fI_total\fR' field that contains the
-number of all entries that matched.
 
-There are two possible ways in which attributes are counted that depend on
-their type. Types like file size or duration that vary widely are summed up
-to a total and for all other types the number of occurrences of each
-individual value is counted. This way you can get an overview on the variety
-of values of an attribute. For some attributes \fB\-\-count\fR makes not much sense,
-e.g. path or time. It is best suited for attributes like type, perm, hidden,
-depth, uid, gid, etc.
+If the \fB\-\-count\fP option is specified, instead of printing the results of the search, count the entries and the attributes from <attribute\-list> and print these counts to standard output. If \fB\-\-count\fP is given without a list of attributes the total size of all files and statistics about the different file types is displayed. If <attribute\-list> is present a total or a count of these attributes is done. There is always a '\fI_total\fP' field that contains the number of all entries that matched.
 
-The way a type is counted can be checked with \fB\-\-list\-types\fR.
+There are two possible ways in which attributes are counted that depend on their type. Types like file size or duration that vary widely are summed up to a total and for all other types the number of occurrences of each individual value is counted. This way you can get an overview on the variety of values of an attribute. For some attributes \fB\-\-count\fP makes not much sense, e.g. path or time. It is best suited for attributes like type, perm, hidden, depth, uid, gid, etc.
+
+The way a type is counted can be checked with \fB\-\-list\-types\fP.
+
 
 .SH PLUGINS
-It is possible to write your own plugins and extend \fBff\fR(1)'s functionality. A
-plugin is an ordinary python module. There are many examples included in the
-source distribution and a file '\fIplugin_template.py\fR' to start from. User
-plugins are imported from the '\fI~/.ff\fR' directory.
+
+It is possible to write your own plugins and extend \fBff\fP(1)'s functionality. A plugin is an ordinary python module. There are many examples included in the source distribution and a file '\fIplugin_template.py\fP' to start from. User plugins are imported from the '\fI~/.ff\fP' directory.
+
 
 .SH EXAMPLES
 
 Find only regular files in the current directory and all its subdirectories:
 
-\fB      $ ff -tf\fR
+\fB    $ ff -tf\fP
 
 Find only hidden files in directory /home/user:
 
-\fB      $ ff hidden=yes /home/user\fR
+\fB    $ ff hidden=yes /home/user\fP
 
 Find files matching the glob pattern:
 
-\fB      $ ff -g '*.txt'\fR
+\fB    $ ff -g '*.txt'\fP
 
 Find files executable by the user:
 
-\fB      $ ff type=f perm:700\fR
+\fB    $ ff type=f perm:700\fP
 
-\fB      $ ff type=f perm:u+x\fR
+\fB    $ ff type=f perm:u+x\fP
 
-\fB      $ ff exec=yes\fR
+\fB    $ ff exec=yes\fP
+
 
 .SH GET HELP
 
 View a list of available plugins:
 
-\fB    $ ff --list-plugins\fR
+\fB    $ ff --list-plugins\fP
 
 Get help on a specific plugin, including the attributes it provides:
 
-\fB    $ ff --help <plugin>\fR
+\fB    $ ff --help <plugin>\fP
 
 View a list of all available attributes:
 
-\fB    $ ff --list-attributes\fR
+\fB    $ ff --list-attributes\fP
 
 View a list of all available types and their supported operators:
 
-\fB    $ ff --list-types\fR
+\fB    $ ff --list-types\fP
+
 
 .SH EXIT CODES
-.IP "\fB1\fR" 4
-There was an error in the arguments provided by the user.
-.IP "\fB2\fR" 4
-One or more \fB\-\-exec\fR or \fB\-\-exec\-batch\fR subprocesses had errors.
-.IP "\fB3\fR" 4
-One or more ff processes had unrecoverable errors.
-.IP "\fB10\fR" 4
-A plugin had an unrecoverable error.
-.IP "\fB11\fR" 4
-An attribute was specified that does not exist.
-.IP "\fB12\fR" 4
-There was an error in a test expression.
 
-.SH ENVIRONMENT
-.IP "\fBFF_OPTIONS\fR" 4
-Default options to use for every invocation of \fBff\fR(1).
+
+.IP "\fB1\fP" 4
+There was an error in the arguments provided by the user.
 .PP
 
-.IP "\fBFF_PLUGIN_DIRS\fR" 4
+.IP "\fB2\fP" 4
+One or more \fB\-\-exec\fP or \fB\-\-exec\-batch\fP subprocesses had errors.
+.PP
+
+.IP "\fB3\fP" 4
+One or more ff processes had unrecoverable errors.
+.PP
+
+.IP "\fB10\fP" 4
+A plugin had an unrecoverable error.
+.PP
+
+.IP "\fB11\fP" 4
+An attribute was specified that does not exist.
+.PP
+
+.IP "\fB12\fP" 4
+There was an error in a test expression.
+.PP
+
+
+.SH ENVIRONMENT
+
+.IP "\fBFF_OPTIONS\fP" 4
+Default options to use for every invocation of \fBff\fP(1).
+.PP
+
+.IP "\fBFF_PLUGIN_DIRS\fP" 4
 A colon\-separated list of additional directories from which to load plugins.
 .PP
 
-.IP "\fBLS_COLORS\fR" 4
-A list of dircolors rules, see \fBdircolors\fR(1) and dir_\fBcolors\fR(5).
+.IP "\fBLS_COLORS\fP" 4
+A list of dircolors rules, see \fBdircolors\fP(1) and \fBdir_colors\fP(5).
 .PP
 
-.IP "\fBNO_COLOR\fR" 4
-Do not produce colorful terminal output regardless of \fBff\fR(1)'s options.
+.IP "\fBNO_COLOR\fP" 4
+Do not produce colorful terminal output regardless of \fBff\fP(1)'s options.
 .PP
+
 
 .SH SEE ALSO
-\fBff\-attributes\fR(7), \fBfind\fR(1), \fBfd\fR(1)
+
+\fBff\-attributes\fP(7), \fBfind\fP(1), \fBfd\fP(1)
+
 
 .SH AUTHOR
+
 Lars Gustäbel <lars@gustaebel.de>
 
 https://github.com/gustaebel/ff/
