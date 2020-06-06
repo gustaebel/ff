@@ -1,14 +1,12 @@
-.TH ff 7 "2020-06-06" "Version 566" "ff Plugin Attributes Reference"
+.TH ff 7 "2020-06-06" "Version 567" "ff Plugin Attributes Reference"
 .nh
 .SH DESCRIPTION
-This is a list of all attributes that are available. Attributes are provided by plugins. For more details use \fBff \fB\-\-help\fR <plugin>\fR.
+This is a list of all the attributes that are available. Attributes are provided by plugins. For more details on a specific plugin use '\fIff \fB\-\-help\fR <plugin>\fR'. Please note that if you got this help text by using '\fIman 7 ff\fR', the information you get is limited to the builtin plugins. Use '\fIff \fB\-\-help\-attributes\fR\fR' to get the full attribute list from all plugins that are available right now.
 
 .SH FILE PLUGIN
 
-.SS Description
 The "file" plugin provides all essential file attributes. Among these attributes are variations of the file's path name (e.g. dirname, basename, extension) and inode information from \fBstat\fR(2) (e.g. file size, file type, modification time). The leading '\fIfile.\fR' part is optional and can be omitted.
 
-.SS Attributes
 .IP "\fB[file.]path\fR" 4
 Type: path ( = : ~ % )
 .br
@@ -187,10 +185,8 @@ A list of key=value pairs from the file's extended attributes.
 
 .SH ELF PLUGIN
 
-.SS Description
 The "elf" plugin provides information extracted from ELF executable files. It requires the '\fIpyelftools\fR' module.
 
-.SS Attributes
 .IP "\fBelf.sonames\fR" 4
 Type: listofstrings ( = : ~ % )
 .br
@@ -199,10 +195,8 @@ The names of all shared objects that are linked in this executable file.
 
 .SH FS PLUGIN
 
-.SS Description
 The "fs" plugin provides information on the filesystem that a file is located in.
 
-.SS Attributes
 .IP "\fBfs.type\fR" 4
 Type: string ( = : ~ % )
 .br
@@ -216,10 +210,8 @@ Whether the file system is a remote file system.
 
 .SH GIT PLUGIN
 
-.SS Description
 The "git" plugin provides information about files that are inside a \fBgit\fR(1) repository.
 
-.SS Attributes
 .IP "\fBgit.tracked\fR" 4
 Type: boolean ( = )
 .br
@@ -228,10 +220,8 @@ Whether the file is tracked by a git repository.
 
 .SH GREP PLUGIN
 
-.SS Description
 The "grep" plugin provides access to the lines and the line count of a text file. It is useful for finding files that contain certain lines or certain substrings.
 
-.SS Attributes
 .IP "\fBgrep.linecount\fR" 4
 Type: number ( += \-= + \- = )
 .br
@@ -245,10 +235,8 @@ The lines of the file.
 
 .SH IGNORE PLUGIN
 
-.SS Description
 The "ignore" plugin shows whether files match patterns from .(git|fd|ff)ignore files. It is useful e.g. inside working copies of git repositories.
 
-.SS Attributes
 .IP "\fBignore.ignored\fR" 4
 Type: boolean ( = )
 .br
@@ -262,10 +250,8 @@ The path to the ignore file that contained the matching pattern.
 
 .SH MEDIUM PLUGIN
 
-.SS Description
 The "medium" plugin provides access to information from media files like image, audio and video files, e.g. image format, running time, mp3 tags, etc. It requires the '\fIpymediainfo\fR' module.
 
-.SS Attributes
 .IP "\fBmedium.duration\fR" 4
 Type: duration ( += \-= + \- = )
 .br
@@ -314,10 +300,8 @@ The height of a visual medium (image, video) in pixel.
 
 .SH MIME PLUGIN
 
-.SS Description
 The "mime" plugin provides information about the content type of files. It uses '\fIlibmagic\fR' to guess the mime type and encoding. It requires the '\fIfile\-magic\fR' module.
 
-.SS Attributes
 .IP "\fBmime.mime\fR" 4
 Type: string ( = : ~ % )
 .br
@@ -346,10 +330,8 @@ The full text description of the type of the file.
 
 .SH PACMAN PLUGIN
 
-.SS Description
 The "pacman" plugin provides information about which files were installed using the package manager pacman on an Arch Linux. It requires the '\fIpacman\fR' executable.
 
-.SS Attributes
 .IP "\fBpacman.installed\fR" 4
 Type: boolean ( = )
 .br
@@ -363,10 +345,8 @@ Name of package the file belongs to.
 
 .SH PY PLUGIN
 
-.SS Description
 The "py" plugin provides information about Python scripts.
 
-.SS Attributes
 .IP "\fBpy.imports\fR" 4
 Type: listofstrings ( = : ~ % )
 .br
@@ -375,10 +355,8 @@ A list of module and package names that are imported in a Python file.
 
 .SH SHEBANG PLUGIN
 
-.SS Description
 The "shebang" plugin extracts the shebang line from a script, i.e. the first line of the file if it starts with '\fI#!\fR'.
 
-.SS Attributes
 .IP "\fBshebang.shebang\fR" 4
 Type: string ( = : ~ % )
 .br
@@ -387,10 +365,8 @@ The contents of the shebang line (#!).
 
 .SH TAR PLUGIN
 
-.SS Description
 The "tar" plugin provides information about tar archives. It is useful for finding file names inside tar archives. It currently uses the tarfile module from the Python Standard Library which limits the supported compression methods to \fBgzip\fR(1), bzip2(1), \fBxz\fR(1) and uncompressed.
 
-.SS Attributes
 .IP "\fBtar.members\fR" 4
 Type: listofstrings ( = : ~ % )
 .br

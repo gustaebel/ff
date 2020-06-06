@@ -1,4 +1,4 @@
-.TH ff 1 "2020-06-06" "Version 566" "ff - Find files in the filesystem"
+.TH ff 1 "2020-06-06" "Version 567" "ff - Find files in the filesystem"
 .nh
 .SH NAME
 
@@ -79,18 +79,18 @@ Show a full help in man page format.
 .PP
 
 
-.IP "\fB--list-attributes\fR" 4
+.IP "\fB--help-attributes\fR" 4
 Show a list of available attributes to use for searching, sorting and output.
 .PP
 
 
-.IP "\fB--list-plugins\fR" 4
-Show the list of available plugins.
+.IP "\fB--help-plugins\fR" 4
+Show a list of available plugins.
 .PP
 
 
-.IP "\fB--list-types\fR" 4
-Show the list of available types.
+.IP "\fB--help-types\fR" 4
+Show a list of available types.
 .PP
 
 Search options:
@@ -272,7 +272,7 @@ Tests can be grouped with '\fIAND\fR' and '\fIOR\fR' operators and parenthesis, 
 
 The full name of an attribute consists of the <plugin> name, a dot, and the <attribute> name. The plugin part of the attribute is optional unless the same attribute name is provided by multiple plugins. It will produce an error if an attribute name in a test is ambiguous. An exception is the '\fIfile\fR' plugin whose attribute names are global, always take precedence and will never produce an error. It is recommended to always use the full attribute name.
 
-For more information about which attributes there are available use \fBff \fB\-\-list\-attributes\fR\fR.
+For more information about which attributes there are available use \fBff \fB\-\-help\-attributes\fR\fR.
 
 
 .SH TYPES
@@ -509,7 +509,7 @@ If the \fB\-\-count\fR option is specified, instead of printing the results of t
 
 There are two possible ways in which attributes are counted that depend on their type. Types like file size or duration that vary widely are summed up to a total and for all other types the number of occurrences of each individual value is counted. This way you can get an overview on the variety of values of an attribute. For some attributes \fB\-\-count\fR makes not much sense, e.g. path or time. It is best suited for attributes like type, perm, hidden, depth, uid, gid, etc.
 
-The way a type is counted can be checked with \fB\-\-list\-types\fR.
+The way a type is counted can be checked with \fB\-\-help\-types\fR.
 
 
 .SH PLUGINS
@@ -544,7 +544,7 @@ Find files executable by the user:
 
 View a list of available plugins:
 
-\fB    $ ff --list-plugins\fR
+\fB    $ ff --help-plugins\fR
 
 Get help on a specific plugin, including the attributes it provides:
 
@@ -552,11 +552,11 @@ Get help on a specific plugin, including the attributes it provides:
 
 View a list of all available attributes:
 
-\fB    $ ff --list-attributes\fR
+\fB    $ ff --help-attributes\fR
 
 View a list of all available types and their supported operators:
 
-\fB    $ ff --list-types\fR
+\fB    $ ff --help-types\fR
 
 
 .SH EXIT CODES
@@ -608,7 +608,7 @@ Do not produce colorful terminal output regardless of \fBff\fR(1)'s options.
 
 .SH SEE ALSO
 
-\fBff\-attributes\fR(7), \fBfind\fR(1), \fBfd\fR(1)
+\fBff\fR(7), \fBfind\fR(1), \fBfd\fR(1)
 
 
 .SH AUTHOR

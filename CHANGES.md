@@ -1,3 +1,9 @@
+### Version 567 - (2020-06-06)
+
+- Improve the manpage/help system.
+- Rename --list-attributes, --list-plugins, --list-types to
+  --help-attributes, --help-plugins, --help-types.
+
 ### Version 566 - (2020-06-05)
 
 - Show help as manpages.
