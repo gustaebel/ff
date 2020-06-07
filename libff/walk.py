@@ -28,7 +28,7 @@ import multiprocessing
 from . import TIMEOUT, Entries, BaseClass, Directory, join
 from .entry import Entry
 from .ignore import GitIgnore
-from .exceptions import EX_SUBPROCESS
+from .exceptions import EX_PROCESS, EX_SUBPROCESS
 
 
 class FilesystemWalker(BaseClass):
@@ -47,10 +47,9 @@ class FilesystemWalker(BaseClass):
         """Close the FilesystemWalker and clean up.
         """
         timeout = 10
-        for index, process in enumerate(self.processes):
+        for process in self.processes:
             process.join(timeout)
             if process.exitcode is None:
-                self.logger.warning(f"process #{index:02d} did not terminate within timeout")
                 # If join() hits the timeout once we don't wait for the other
                 # processes to terminate.
                 timeout = 0
@@ -127,6 +126,7 @@ class FilesystemWalker(BaseClass):
 
         except Exception:
             # Terminate all processes if an unexpected error occurs.
+            self.context.set_exitcode(EX_PROCESS)
             self.context.stop()
 
             # It proves to be safer to print the traceback ourselves instead of
