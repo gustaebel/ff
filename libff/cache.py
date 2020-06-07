@@ -139,6 +139,7 @@ class Cache(NullCache):
     def get(self, plugin, path, tag):
         """Return a row of cached values.
         """
+        path = path.encode("utf-8", "backslashreplace")
         tag = pickle.dumps(tag, pickle.HIGHEST_PROTOCOL)
 
         for row in self.conn.execute(
@@ -153,6 +154,7 @@ class Cache(NullCache):
     def set(self, plugin, path, tag, obj):
         """Write data to the cache.
         """
+        path = path.encode("utf-8", "backslashreplace")
         tag = pickle.dumps(tag, pickle.HIGHEST_PROTOCOL)
         data = pickle.dumps(obj, pickle.HIGHEST_PROTOCOL)
 
