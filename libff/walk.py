@@ -21,6 +21,7 @@
 import os
 import queue
 import signal
+import traceback
 import subprocess
 import multiprocessing
 
@@ -45,8 +46,14 @@ class FilesystemWalker(BaseClass):
     def close(self):
         """Close the FilesystemWalker and clean up.
         """
-        for process in self.processes:
-            process.join()
+        timeout = 10
+        for index, process in enumerate(self.processes):
+            process.join(timeout)
+            if process.exitcode is None:
+                self.logger.warning(f"process #{index:02d} did not terminate within timeout")
+                # If join() hits the timeout once we don't wait for the other
+                # processes to terminate.
+                timeout = 0
 
         self.queue.close()
 
@@ -74,9 +81,10 @@ class FilesystemWalker(BaseClass):
         """Get arguments from the queue and process them until searching has
            finished.
         """
-        # pylint:disable=too-many-branches,attribute-defined-outside-init
+        # pylint:disable=too-many-branches,attribute-defined-outside-init,broad-except
         if __debug__:
             self.index = index
+            self.logger.debug_proc(self.index, "started")
 
         if not (__debug__ and self.args.profile):
             # When profiling, loop() runs in the main thread, so we have to
@@ -115,12 +123,18 @@ class FilesystemWalker(BaseClass):
                     for obj in objs:
                         self.process_arguments(obj)
 
+            self.cache.close()
+
         except Exception:
             # Terminate all processes if an unexpected error occurs.
             self.context.stop()
-            raise
 
-        self.cache.close()
+            # It proves to be safer to print the traceback ourselves instead of
+            # relying on multiprocessing to do it for us.
+            traceback.print_exc()
+
+        if __debug__:
+            self.logger.debug_proc(self.index, "stopped")
 
     def scan_directory(self, parent):
         """Scan the directory `parent` and produce a list of entries and the

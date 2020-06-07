@@ -80,7 +80,7 @@ class Logger:
             """Print a debug message to standard error output if --debug-processes
                is switched on.
             """
-            self.debug("mp", f"#{index:02d} {message}")
+            self.debug("mp", f"process #{index:02d} {message}")
 
     def exception(self, message, traceback, exitcode=None):
         """Print an error message and a traceback to standard error output and
