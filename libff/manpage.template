@@ -274,7 +274,7 @@ EXAMPLES
 
     Find only regular files in the current directory and all its subdirectories:
 
-    $ ff -tf
+    $ ff type=f
 
     Find only hidden files in directory /home/user:
 
