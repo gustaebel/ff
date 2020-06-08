@@ -60,10 +60,12 @@ class Git(Plugin):
     """
 
     attributes = [
-        ("tracked", Boolean, "Whether the file is tracked by a git repository."),
-        ("dirty", Boolean, "Whether the git repository a file is in contains changed files."),
-        ("repo_dir", String, "The base directory of the git repository."),
-        ("repo", Boolean, "True if a directory contains a git repository.")
+        ("tracked", Boolean, "True if the file is tracked by a git repository."),
+        ("dirty", Boolean, "True if the file is tracked and has changed or if a directory "\
+                "contains a changed file."),
+        ("repo_dir", String, "The base directory of the git repository the file or "\
+                "directory is in."),
+        ("repo", Boolean, "True if the directory contains a git repository.")
     ]
 
     def __init__(self):
