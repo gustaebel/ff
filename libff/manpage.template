@@ -254,6 +254,13 @@ COUNTING
 
     The way a type is counted can be checked with --help-types.
 
+CACHING
+    Some plugins use a cache to store information between consecutive runs that
+    is time-consuming to prepare. This leads to a slow first run but
+    significantly faster subsequent runs. The location of the cache is
+    '~/.cache/ff.db' by default and can be changed with the --cache option. You
+    can turn off caching with the --no-cache option.
+
 PLUGINS
     It is possible to write your own plugins and extend ff(1)'s functionality. A
     plugin is an ordinary python module. There are many examples included in the

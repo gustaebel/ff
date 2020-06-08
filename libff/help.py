@@ -268,12 +268,15 @@ class ManPage:
         """Render the details of a specific plugin with or without author
            information.
         """
-        names = ("name", "source", "path")
+        names = ("name", "source", "path", "use_cache")
         if full:
             names += ("author", "email", "url")
 
         for name in names:
-            self.add(f"{name.capitalize()}: {getattr(plugin, name)}")
+            if name == "use_cache":
+                self.add(f"Uses cache: {'Yes' if plugin.use_cache else 'No'}")
+            else:
+                self.add(f"{name.capitalize()}: {getattr(plugin, name)}")
             self.add(br)
 
     def print(self):
