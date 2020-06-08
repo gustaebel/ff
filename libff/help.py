@@ -190,23 +190,29 @@ class ManPage:
         # Turn paragraphs into one long line each.
         string = "\n\n".join(" ".join(s.split()) for s in string.split("\n\n"))
 
-        # Highlight references to other manpages.
-        string = re.sub(r"([a-z_-]+)(\(\d\))",
-                lambda m: f"{bd}{m.group(1)}{rs}{m.group(2)}", string)
+        def replace(match):
+            if match.group(1):
+                # Make single-quoted strings italic. It should match "'s'" but not
+                # "file's".
+                return f"'{it}{match.group(1)}{rs}'"
+            elif match.group(2):
+                # Make double backtick-quoted strings italic.
+                return f"{it}{match.group(2)}{rs}"
+            elif match.group(3):
+                # Make backtick-quoted strings bold.
+                return f"{bd}{match.group(3)}{rs}"
+            elif match.group(4):
+                # Highlight references to other manpages.
+                return f"{bd}{match.group(4)}{rs}{match.group(5)}"
+            else:
+                # Highlight short and long options.
+                return f"{bd}{match.group(6)}{rs}"
 
-        # Make single-quoted strings italic. It should match "'s'" but not
-        # "file's".
-        string = re.sub(r"'(?!s\s)([^']+)'", lambda m: f"'{it}{m.group(1)}{rs}'", string)
-
-        # Make double backtick-quoted strings italic.
-        string = re.sub(r"``([^`]+)``", lambda m: f"{it}{m.group(1)}{rs}", string)
-
-        # Make backtick-quoted strings bold.
-        string = re.sub(r"`([^`]+)`", lambda m: f"{bd}{m.group(1)}{rs}", string)
-
-        # Highlight short and long options.
-        string = re.sub(r"(?<![a-zA-Z])(\-[a-zA-Z]|\-\-[a-zA-Z-]+)",
-                lambda m: f"{bd}{m.group(1)}{rs}", string)
+        string = re.sub(r"'(?!s\s)([^']+)'|"\
+                        r"``([^`]+)``|"\
+                        r"`([^`]+)`|"\
+                        r"([a-z_-]+)(\(\d\))|"\
+                        r"(?<![a-zA-Z])(\-[a-zA-Z]|\-\-[a-zA-Z-]+)", replace, string)
 
         # Escape dashes.
         return string.replace("-", "\\-")

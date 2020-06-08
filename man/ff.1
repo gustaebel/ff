@@ -1,4 +1,4 @@
-.TH ff 1 "2020-06-06" "Version 567" "ff - Find files in the filesystem"
+.TH ff 1 "2020-06-08" "Version 567" "ff - Find files in the filesystem"
 .nh
 .SH NAME
 
@@ -186,7 +186,7 @@ Separate results by the null character.
 
 
 .IP "\fB-v, --verbose\fR" 4
-Produce output similar to \fBls \fB\-l\fR\fR.
+Produce output similar to \fBls \-l\fR.
 .PP
 
 
@@ -272,7 +272,7 @@ Tests can be grouped with '\fIAND\fR' and '\fIOR\fR' operators and parenthesis, 
 
 The full name of an attribute consists of the <plugin> name, a dot, and the <attribute> name. The plugin part of the attribute is optional unless the same attribute name is provided by multiple plugins. It will produce an error if an attribute name in a test is ambiguous. An exception is the '\fIfile\fR' plugin whose attribute names are global, always take precedence and will never produce an error. It is recommended to always use the full attribute name.
 
-For more information about which attributes there are available use \fBff \fB\-\-help\-attributes\fR\fR.
+For more information about which attributes there are available use \fBff \-\-help\-attributes\fR.
 
 
 .SH TYPES
@@ -488,7 +488,7 @@ If no placeholder is found in the command template the full path is used as the 
 
 The \fB\-e\fR/\fB\-\-exclude\fR option allows to exclude entries that match the <test>. Excluding takes place before all other tests are evaluated. If a directory matches it will not be descended into, so entries below it will not be produced.
 
-If \fB\-H\fR/\fB\-\-hide\fR is given, all hidden files will be excluded using this method, i.e. the option translates to '\fI\-\fB\-e\fRxclude hide=yes\fR'. The same applies to \fB\-I\fR/\fB\-\-ignore\fR which tranlates to '\fI\-\fB\-e\fRxclude ignored=yes\fR'.
+If \fB\-H\fR/\fB\-\-hide\fR is given, all hidden files will be excluded using this method, i.e. the option translates to '\fI\-\-exclude hide=yes\fR'. The same applies to \fB\-I\fR/\fB\-\-ignore\fR which tranlates to '\fI\-\-exclude ignored=yes\fR'.
 
 
 .SH IGNORE FILES
@@ -510,6 +510,11 @@ If the \fB\-\-count\fR option is specified, instead of printing the results of t
 There are two possible ways in which attributes are counted that depend on their type. Types like file size or duration that vary widely are summed up to a total and for all other types the number of occurrences of each individual value is counted. This way you can get an overview on the variety of values of an attribute. For some attributes \fB\-\-count\fR makes not much sense, e.g. path or time. It is best suited for attributes like type, perm, hidden, depth, uid, gid, etc.
 
 The way a type is counted can be checked with \fB\-\-help\-types\fR.
+
+
+.SH CACHING
+
+Some plugins use a cache to store information between consecutive runs that is time\-consuming to prepare. This leads to a slow first run but significantly faster subsequent runs. The location of the cache is '\fI~/.cache/ff.db\fR' by default and can be changed with the \fB\-\-cache\fR option. You can turn off caching with the \fB\-\-no\-cache\fR option.
 
 
 .SH PLUGINS
