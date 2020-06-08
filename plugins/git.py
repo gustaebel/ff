@@ -18,36 +18,95 @@
 #
 # -----------------------------------------------------------------------
 
+import os
 import subprocess
 
 from libff.plugin import *
 
 
-class Git(Plugin):
-    """The "git" plugin provides information about files that are inside a
-       git(1) repository.
+class Filelist(set):
+    """The list of filenames that are tracked inside a git repository.
     """
 
-    use_cache = True
+    def __init__(self, dirname):
+        super().__init__()
+
+        proc = subprocess.run(["git", "-C", dirname, "ls-files"], capture_output=True, text=True,
+                check=False)
+        for filename in proc.stdout.splitlines():
+            self.add(os.path.join(dirname, filename))
+
+
+class Status(set):
+    """The list of filenames that are tracked inside a git repository and have
+       been changed.
+    """
+
+    def __init__(self, dirname):
+        super().__init__()
+
+        proc = subprocess.run(["git", "-C", dirname, "status", "--porcelain"], capture_output=True,
+                text=True, check=False)
+        for line in proc.stdout.splitlines():
+            status, filename = line.split(None, 1)
+            if status == "??":
+                continue
+            self.add(os.path.join(dirname, filename))
+
+
+class Git(Plugin):
+    """The "git" plugin provides information about files that are inside a
+       git(1) repository. It requires the 'git' executable.
+    """
+
     attributes = [
-        ("tracked", Boolean, "Whether the file is tracked by a git repository.")
+        ("tracked", Boolean, "Whether the file is tracked by a git repository."),
+        ("dirty", Boolean, "Whether the git repository a file is in contains changed files."),
+        ("repo_dir", String, "The base directory of the git repository."),
+        ("repo", Boolean, "True if a directory contains a git repository.")
     ]
 
-    def check_tracked(self, entry):
-        """Return True if the Entry object is under version control.
-        """
-        return subprocess.run(["git", "ls-files", "--error-unmatch", entry.basename],
-                cwd=entry.dirname, check=False,
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
+    def __init__(self):
+        super().__init__()
+
+        self._cache = {}
 
     def can_handle(self, entry):
-        return entry.is_file() or entry.is_symlink()
+        return True
 
-    def cache(self, entry):
-        try:
-            return self.check_tracked(entry)
-        except OSError:
-            raise NoData
+    def find_repo(self, dirname):
+        """Find a .git directory in the current or upper directories and return
+           a list of changed files and a list of tracked files.
+        """
+        if dirname not in self._cache:
+            path = os.path.join(dirname, ".git")
+            if os.path.isdir(path):
+                self._cache[dirname] = dirname, Filelist(dirname), Status(dirname)
+            else:
+                if dirname == os.sep:
+                    self._cache[dirname] = None, None, None
+                else:
+                    self._cache[dirname] = self.find_repo(os.path.dirname(dirname))
+
+        return self._cache[dirname]
 
     def process(self, entry, cached):
-        yield "tracked", cached
+        dirname = entry.abspath if entry.is_dir() else \
+                os.path.dirname(entry.abspath)
+
+        repo_dir, filelist, status = self.find_repo(dirname)
+
+        if repo_dir is None:
+            raise NoData
+
+        else:
+            data = {"repo_dir": repo_dir, "repo": repo_dir == entry.abspath}
+
+            for key, paths in ("tracked", filelist), ("dirty", status):
+                if entry.is_dir():
+                    data[key] = any((os.path.commonpath([entry.abspath, p]) == entry.abspath)
+                                  for p in paths)
+                else:
+                    data[key] = entry.abspath in paths
+
+            return data
