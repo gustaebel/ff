@@ -87,6 +87,9 @@ TYPES
 
     ::time_patterns
 
+    If none of the patterns above matches and the value is a plain number it is
+    interpreted as seconds since 1970-01-01 00:00:00.
+
     Durations consist of one or more partial time designations that are summed up, e.g.:
 
         ``1h30m25s``
