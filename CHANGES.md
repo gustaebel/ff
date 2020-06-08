@@ -1,3 +1,9 @@
+### Version 568 - (2020-06-08)
+
+- git plugin: Add dirty, repo and repo_dir attributes.
+- Fix caching of filenames that contain bad characters.
+- Improve error handling.
+
 ### Version 567 - (2020-06-06)
 
 - Improve the manpage/help system.
