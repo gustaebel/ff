@@ -206,7 +206,7 @@ def create_parser(formatter_class=HelpFormatter):
 
     group = parser.add_argument_group("Simple pattern options")
     group.add_argument("-g", "--glob", action="store_const", const="%", dest="default_operator",
-            default=Defaults.default_operator, help="Treat the pattern as a literal string.")
+            default=Defaults.default_operator, help="Treat the pattern as a glob(7) pattern.")
     group.add_argument("-r", "--regex", action="store_const", const="~", dest="default_operator",
             help="Perform a regular-expression based search (default).")
     group.add_argument("-F", "--fixed-strings", action="store_const", const=":",
