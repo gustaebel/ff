@@ -18,6 +18,7 @@
 #
 # -----------------------------------------------------------------------
 
+import os
 import time
 import pickle
 import string
@@ -191,3 +192,14 @@ class Cache(NullCache):
         self.num_cached_rows = 0
         self.cached_rows = {}
         self.last_commit = time.time()
+
+    def clean(self):
+        """Remove entries from the database for files that no longer exist.
+        """
+        for table, in self.conn.execute("select name from sqlite_master where type = 'table'"):
+            for path, in self.conn.execute(f"select path from {table}"):
+                if not os.path.exists(path):
+                    self.conn.execute(f"delete from {table} where path = ?", (path,))
+
+        self.conn.execute("vacuum")
+        self.conn.commit()

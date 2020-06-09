@@ -25,7 +25,7 @@ import pstats
 import argparse
 import cProfile
 
-from . import BaseClass
+from . import BaseClass, __copyright__
 from .walk import Directory, FilesystemWalker
 from .cache import Cache, NullCache
 from .entry import StartDirectory
@@ -111,8 +111,16 @@ class _Base(BaseClass):
             args.exec_batch = ExecBatchFields(self.context, args.exec_batch)
 
         if args.action is not None:
-            manpage = getattr(registry, f"get_{args.action}_manpage")()
-            manpage.show()
+            if args.action == "version":
+                print(__copyright__)
+
+            elif args.action == "clean":
+                self.context.cache.clean()
+
+            else:
+                manpage = getattr(registry, f"get_{args.action}_manpage")()
+                manpage.show()
+
             raise SystemExit(EX_OK)
 
         elif args.help is not None:

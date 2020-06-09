@@ -25,7 +25,7 @@ import shlex
 import argparse
 
 # These imports must be absolute because of __main__.
-from libff import MAX_CPU, __version__, __copyright__
+from libff import MAX_CPU
 from libff.exceptions import EX_OK, UsageError
 
 
@@ -142,6 +142,7 @@ class HelpFormatter(argparse.HelpFormatter):
 def create_parser(formatter_class=HelpFormatter):
     """Create the argparse.ArgumentParser object.
     """
+    # pylint:disable=too-many-statements
     parser = argparse.ArgumentParser(prog="ff", formatter_class=formatter_class, add_help=False,
             usage="%(prog)s [<options>] [<test/directory> ... | [-D] <directory> ...]")
 
@@ -158,6 +159,8 @@ def create_parser(formatter_class=HelpFormatter):
             help="Location of the metadata cache (default: %(default)s).")
     group.add_argument("--no-cache", action="store_const", dest="cache", const=None,
             help="Do not use the metadata cache.")
+    group.add_argument("--clean-cache", action="store_const", const="clean", dest="action",
+            help="Remove stale entries from the metadata cache.")
     group.add_argument("-j", "--jobs", type=type_jobs, default=Defaults.jobs, metavar="<num>",
             help="Set number of processes to use for searching and executing "\
                  "(default: the number of CPU cores).")
@@ -411,12 +414,8 @@ def parse_arguments():
     args = parser.parse_args(argv)
 
     if args.help == "all":
-        # Help on plugins is taken care of in the main script.
+        # Help on plugins is taken care of in libff/search.py.
         parser.print_help()
-        raise SystemExit(EX_OK)
-
-    elif args.action == "version":
-        print(__copyright__)
         raise SystemExit(EX_OK)
 
     processor = ArgumentsPostProcessor(args)
