@@ -1,3 +1,8 @@
+### Version 569 - (2020-06-09)
+
+- Add --clean-cache option.
+- Minor documentation fixes.
+
 ### Version 568 - (2020-06-08)
 
 - git plugin: Add dirty, repo and repo_dir attributes.

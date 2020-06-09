@@ -1,4 +1,4 @@
-.TH ff 1 "2020-06-08" "Version 568" "ff - Find files in the filesystem"
+.TH ff 1 "2020-06-09" "Version 569" "ff - Find files in the filesystem"
 .nh
 .SH NAME
 
@@ -49,6 +49,11 @@ Location of the metadata cache (default: /home/lars/.cache/ff.db).
 
 .IP "\fB--no-cache\fR" 4
 Do not use the metadata cache.
+.PP
+
+
+.IP "\fB--clean-cache\fR" 4
+Remove stale entries from the metadata cache.
 .PP
 
 
@@ -139,7 +144,7 @@ Simple pattern options:
 
 
 .IP "\fB-g, --glob\fR" 4
-Treat the pattern as a literal string.
+Treat the pattern as a \fBglob\fR(7) pattern.
 .PP
 
 
@@ -528,7 +533,7 @@ It is possible to write your own plugins and extend \fBff\fR(1)'s functionality.
 
 Find only regular files in the current directory and all its subdirectories:
 
-\fB    $ ff -tf\fR
+\fB    $ ff type=f\fR
 
 Find only hidden files in directory /home/user:
 
