@@ -31,7 +31,10 @@ class Tar(Plugin):
        uncompressed.
     """
 
+    speed = Speed.SLOW
+
     use_cache = True
+
     attributes = [
         ("members", ListOfStrings, "The list of file names that are stored in a .tar archive.")
     ]

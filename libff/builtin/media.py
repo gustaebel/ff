@@ -29,6 +29,8 @@ class Medium(Plugin):
        etc. It requires the 'pymediainfo' module.
     """
 
+    speed = Speed.SLOW
+
     use_cache = True
 
     attributes = [

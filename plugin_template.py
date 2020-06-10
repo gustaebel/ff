@@ -19,6 +19,25 @@ class Foo(Plugin):
     email = "jane@example.com"
     url = "https://example.com/foo-plugin/"
 
+    # Here you should tell ff(1) roughly how fast this plugin is able to
+    # extract data from the each entry. This is important in optimizing test
+    # sequences. ff(1) will put faster tests at the beginning and slower tests
+    # at the end of a test sequence to reduce the number of evaluations of
+    # slower tests. There are three possible settings: FAST, NORMAL (default)
+    # and SLOW:
+    #
+    # FAST:   Plugins that depend only on path names and inode information
+    #         like stat(2) results or maybe extended attributes.
+    #
+    # NORMAL: Use this if you are not sure. Suitable if the plugin opens the
+    #         file to read the data but does not do time-consuming
+    #         processing.
+    #
+    # SLOW:   If the plugin has to intensively process file data (e.g.
+    #         decompress it), calls external programs or libraries, or does
+    #         other very slow things like web requests etc.
+    speed = Speed.NORMAL
+
     # If use_cache is True it is possible to cache data for each entry that is
     # time-consuming to prepare. The cache() method will be called, its return
     # value will be cached and then passed to process(). Cached values are

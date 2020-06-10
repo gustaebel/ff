@@ -36,6 +36,8 @@ class File(Plugin):
     # Since 2.5 pylint warns about properties not having __doc__ attributes...
     # pylint:disable=no-member
 
+    speed = Speed.FAST
+
     attributes = [
         ("path",    Path,     "The full pathname of the file. It will be relative to the current "\
                               "working directory depending on the <directory> arguments that were "\

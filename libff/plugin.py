@@ -18,13 +18,24 @@
 #
 # -----------------------------------------------------------------------
 
+import enum
 import binascii
 
 from . import NoData, MissingImport
 from .type import *
 
 __all__ = ["NoData", "MissingImport", "Type", "String", "Path", "Number", "FileType", "Mode",
-        "Size", "Time", "Duration", "Boolean", "ListOfStrings", "Plugin"]
+        "Size", "Time", "Duration", "Boolean", "ListOfStrings", "Plugin", "Speed"]
+
+
+class Speed(enum.Enum):
+    """The speed at which a plugin extracts information from an entry. This is
+       used as a hint to group faster tests before slower tests in test
+       sequences.
+    """
+    FAST = 0
+    NORMAL = 1
+    SLOW = 2
 
 
 class Plugin:
@@ -36,6 +47,7 @@ class Plugin:
     url = "https://github.com/gustaebel/ff/"
 
     use_cache = False
+    speed = Speed.NORMAL
     attributes = {}
 
     def __init_subclass__(cls):

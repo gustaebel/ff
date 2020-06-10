@@ -59,6 +59,8 @@ class Git(Plugin):
        git(1) repository. It requires the 'git' executable.
     """
 
+    speed = Speed.SLOW
+
     attributes = [
         ("tracked", Boolean, "True if the file is tracked by a git repository."),
         ("dirty", Boolean, "True if the file is tracked and has changed or if a directory "\

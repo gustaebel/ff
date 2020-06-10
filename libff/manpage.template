@@ -264,6 +264,13 @@ CACHING
     '~/.cache/ff.db' by default and can be changed with the --cache option. You
     can turn off caching with the --no-cache option.
 
+OPTIMIZATIONS
+    ff(1) will automatically optimize the series of tests by grouping faster
+    tests before slower ones. This will lead to a considerable speedup in many
+    cases because a test sequence that is run for an entry is terminated as
+    soon as the first test fails. That way many of the slower tests at the end
+    of the sequence are more likely to be skipped.
+
 PLUGINS
     It is possible to write your own plugins and extend ff(1)'s functionality. A
     plugin is an ordinary python module. There are many examples included in the

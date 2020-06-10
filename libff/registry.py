@@ -295,6 +295,11 @@ class Registry(BaseClass):
             raise BadAttributeError(
                     f"{attribute.plugin!r} plugin has no attribute {attribute.name!r}")
 
+    def get_plugin_speed(self, attribute):
+        """Return the speed score of the plugin associated with the attribute.
+        """
+        return self.plugins[attribute.plugin].speed.value
+
     def get_file_attributes(self):
         """Get all attributes associated with the 'file' plugin.
         """

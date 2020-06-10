@@ -30,6 +30,7 @@ class Elf(Plugin):
     """
 
     use_cache = True
+
     attributes = [
         ("sonames", ListOfStrings, "The names of all shared objects that are linked in this "\
                                    "executable file.")

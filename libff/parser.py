@@ -101,6 +101,27 @@ class FlatParser(BaseClass):
         self.tokens = tokens.copy()
         self.sequence = self.parse()
 
+        self.optimize(self.sequence)
+
+    def get_speed_score(self, test):
+        """Return the speed score from a single test or the sum of scores from
+           all tests of a sub sequence.
+        """
+        if isinstance(test, Test):
+            return self.registry.get_plugin_speed(test.attribute)
+        else:
+            return sum(self.get_speed_score(t) for t in test)
+
+    def optimize(self, sequence):
+        """Optimize a test sequence, i.e. sort all sequences and their tests
+           according to speed score, so that faster tests are evaluated first.
+        """
+        sequence.sort(key=self.get_speed_score)
+
+        for seq in sequence:
+            if isinstance(seq, list):
+                self.optimize(seq)
+
     def __iter__(self):
         yield from self.sequence
 
@@ -115,15 +136,17 @@ class FlatParser(BaseClass):
         """Format a list of tests for output.
         """
         if tests is None:
-            tests = self
+            tests = self.sequence
+
+        yield ("    " *  level) + tests.name + "("
 
         for test in tests:
             if isinstance(test, list):
-                yield ("    " * level) + test.name + "("
                 yield from self.format(test, level + 1)
-                yield ("    " * level) + ")"
             else:
-                yield ("    " * level) + str(test)
+                yield ("    " * (level + 1)) + str(test)
+
+        yield ("    " *  level) + ")"
 
     def parse_test(self, test):
         """Parse an expression and return a Test object.

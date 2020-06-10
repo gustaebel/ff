@@ -27,6 +27,8 @@ class Mime(Plugin):
        requires the 'file-magic' module.
     """
 
+    speed = Speed.SLOW
+
     use_cache = True
 
     attributes = [

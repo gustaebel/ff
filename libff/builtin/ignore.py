@@ -30,6 +30,8 @@ class Ignore(Plugin):
        repositories.
     """
 
+    speed = Speed.SLOW
+
     attributes = [
         ("ignored", Boolean, "Whether the file matches patterns in a .(git|fd|ff)ignore file."),
         ("path", String, "The path to the ignore file that contained the matching pattern."),

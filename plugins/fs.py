@@ -72,6 +72,8 @@ class Fs(Plugin):
        located in.
     """
 
+    speed = Speed.FAST
+
     use_cache = False
 
     attributes = [
