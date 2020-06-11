@@ -106,10 +106,14 @@ class Git(Plugin):
         else:
             data = {"repo_dir": repo_dir, "repo": repo_dir == entry.abspath}
 
+            # Iterate the list of tracked files and the list of changed files
+            # and test whether the entry is in one of them. In case of
+            # directories it is checked whether it contains a file that is in
+            # one of these lists.
             for key, paths in ("tracked", filelist), ("dirty", status):
                 if entry.is_dir():
-                    data[key] = any((os.path.commonpath([entry.abspath, p]) == entry.abspath)
-                                  for p in paths)
+                    abspath = entry.abspath + os.sep
+                    data[key] = any(p.startswith(abspath) for p in paths)
                 else:
                     data[key] = entry.abspath in paths
 
