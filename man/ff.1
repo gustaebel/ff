@@ -1,4 +1,4 @@
-.TH ff 1 "2020-06-09" "Version 569" "ff - Find files in the filesystem"
+.TH ff 1 "2020-06-11" "Version 570" "ff - Find files in the filesystem"
 .nh
 .SH NAME
 
@@ -522,6 +522,11 @@ The way a type is counted can be checked with \fB\-\-help\-types\fR.
 .SH CACHING
 
 Some plugins use a cache to store information between consecutive runs that is time\-consuming to prepare. This leads to a slow first run but significantly faster subsequent runs. The location of the cache is '\fI~/.cache/ff.db\fR' by default and can be changed with the \fB\-\-cache\fR option. You can turn off caching with the \fB\-\-no\-cache\fR option.
+
+
+.SH OPTIMIZATIONS
+
+\fBff\fR(1) will automatically optimize the series of tests by grouping faster tests before slower ones. This will lead to a considerable speedup in many cases because a test sequence that is run for an entry is terminated as soon as the first test fails. That way many of the slower tests at the end of the sequence are more likely to be skipped.
 
 
 .SH PLUGINS

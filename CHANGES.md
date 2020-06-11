@@ -1,3 +1,9 @@
+### Version 570 - (2020-06-11)
+
+- Optimize queries by regrouping tests.
+- Speed up multiple use of the same plugin.
+- git plugin: Increase performance.
+
 ### Version 569 - (2020-06-09)
 
 - Add --clean-cache option.
