@@ -211,11 +211,11 @@ class FilesystemWalker(BaseClass):
                 if is_dir:
                     search.append(Directory(parent.start, entry.relpath, entry.ignore_paths))
 
-                # If there are plugins in action that use the cache, that means
-                # that processing entries may take more time than usual (except
-                # when they are already cached). Here we share the load of this
-                # process with another process that is currently idle.
-                if self.registry.optimize_for_caching_plugins and \
+                # If there are plugins active that are marked as slow, this
+                # means that processing entries may take more time than usual
+                # Here we share the load of this current process with other
+                # processes that are idle at the moment.
+                if self.registry.optimize_for_slow_plugins and \
                         self.context.idle_processes() / self.args.jobs > 0.25 and \
                         len(entries) > 10:
                     split = len(entries) // 2 + 1

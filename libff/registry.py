@@ -27,7 +27,7 @@ from .help import FullManPage, TypesManPage, PluginManPage, PluginsManPage, \
     AttributesManPage
 from .type import Type
 from .cache import NODATA, NOTSET
-from .plugin import Plugin
+from .plugin import Speed, Plugin
 from .exceptions import UsageError, BadPluginError, BadAttributeError
 
 
@@ -50,7 +50,7 @@ class Registry(BaseClass):
     def __init__(self, context):
         super().__init__(context)
 
-        self.optimize_for_caching_plugins = False
+        self.optimize_for_slow_plugins = False
 
         with self.context.global_lock:
             if not self.registered_plugins:
@@ -162,9 +162,9 @@ class Registry(BaseClass):
         except Exception:
             raise BadPluginError.from_exception(f"Unable to setup plugin {name!r}")
 
-        if plugin_cls.use_cache:
+        if plugin_cls.speed is Speed.SLOW:
             # See FilesystemWalker for an explanation.
-            self.optimize_for_caching_plugins = True
+            self.optimize_for_slow_plugins = True
 
     def parse_attribute(self, name):
         """Break down an attribute into plugin name and attribute name. If the
