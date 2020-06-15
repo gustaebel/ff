@@ -97,7 +97,12 @@ class BaseProcessing(BaseClass):
 
     def check_for_failed_processes(self):
         """Check regularly if all processes are still active and allow an
-           ordered shutdown even if processes terminated abnormally.
+           ordered shutdown even if processes terminated abnormally. In this
+           case, abnormal shutdown means that a process crashed in a way that
+           it could not do the usual cleanup procedure (print a traceback, send
+           stop signal to all other processes, set the exitcode). This may
+           happen if one the process is terminated by a signal e.g. a
+           segmentation fault.
         """
 
         if time.time() >= self.next_processes_check:
