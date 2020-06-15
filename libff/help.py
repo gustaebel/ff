@@ -286,7 +286,7 @@ class ManPage:
             self.add(br)
 
     def print(self):
-        """Print the manpage to stdout.
+        """Print the raw manpage to stdout.
         """
         print("\n".join(self.lines))
 
@@ -295,8 +295,10 @@ class ManPage:
         """
         try:
             subprocess.run(["man", "-l", "-"], input="\n".join(self.lines), text=True, check=True)
+        except FileNotFoundError:
+            raise SystemExit("unable to call man(1), is it installed?")
         except subprocess.CalledProcessError:
-            raise SystemExit("unable to call 'man -l -'")
+            raise SystemExit("calling man(1) failed")
 
 
 class FullManPage(ManPage):
