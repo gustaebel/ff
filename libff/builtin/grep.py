@@ -28,15 +28,24 @@ class Grep(Plugin):
     """
 
     attributes = [
+        ("text",    Boolean, "Whether the file contains text or binary data."),
         ("linecount", Number, "The number of lines in the file."),
         ("lines", ListOfStrings, "The lines of the file.")
     ]
 
     def can_handle(self, entry):
-        return entry.text
+        return entry.is_file()
 
     def process(self, entry, cached):
-        with open(entry.path, errors="surrogateescape") as lines:
-            lines = list(lines)
-            yield "linecount", len(lines)
-            yield "lines", lines
+        try:
+            with open(entry.path) as fobj:
+                try:
+                    lines = fobj.readlines()
+                except UnicodeDecodeError:
+                    yield "text", False
+                else:
+                    yield "text", True
+                    yield "linecount", len(lines)
+                    yield "lines", lines
+        except OSError:
+            raise NoData

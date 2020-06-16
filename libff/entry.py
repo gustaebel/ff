@@ -304,24 +304,6 @@ class Entry:
         return os.path.basename(self.pathx)
 
     @property
-    def text(self):
-        """Whether the file contains text or binary data.
-        """
-        if not self.is_file():
-            return False
-
-        try:
-            with open(self.path) as fobj:
-                try:
-                    fobj.readline()
-                except UnicodeDecodeError:
-                    return False
-                else:
-                    return True
-        except OSError:
-            return False
-
-    @property
     def mount(self):
         """Whether the entry is a mountpoint.
         """

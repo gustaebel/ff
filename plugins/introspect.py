@@ -103,7 +103,7 @@ class Shebang(Plugin):
         return None
 
     def can_handle(self, entry):
-        return entry.text
+        return entry.is_file()
 
     def process(self, entry, cached):
         shebang = self.extract_shebang(entry.path)
@@ -146,8 +146,6 @@ class Py(Plugin):
     def can_handle(self, entry):
         if entry.ext.lower() == "py":
             return True
-        elif not entry.text:
-            return False
         shebang = Shebang.extract_shebang(entry.path)
         return shebang is not None and "python" in shebang
 
