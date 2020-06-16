@@ -52,8 +52,8 @@ kwargs = {
                      "Programming Language :: Python :: 3"],
     "python_requires": ">=3.6",
 
-    "packages":     ["libff", "libff.builtin"],
-    "scripts":      ["ff"],
+    "packages":     ["ff", "libff", "libff.builtin"],
+    "scripts":      ["bin/ff"],
     "data_files":   [("/usr/share/man/man1", ["man/ff.1"]),
                      ("/usr/share/man/man7", ["man/ff.7"]),
                      ("/usr/lib/ff", glob.glob("plugins/*.py")),

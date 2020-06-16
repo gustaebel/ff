@@ -1,7 +1,7 @@
 check: isort lint test
 
 isort:
-	ff -HI name=ff or ext=py -X isort --length-sort --multi-line 2 --diff --check-only
+	ff -HI ext=py -X isort --length-sort --multi-line 2 --diff --check-only
 
 lint:
 	pylint --rcfile config/pylintrc -j0 ff libff plugins
@@ -26,12 +26,12 @@ create-arch-pkg:
 
 publish: create-pypi-pkg create-arch-pkg
 
-man/ff.1: libff/*.py libff/builtin/*.py libff/manpage.template
+man/ff.1: ff/*.py libff/*.py libff/builtin/*.py libff/manpage.template
 	mkdir -p man
-	python -c "from libff.search import Search; Search().registry.get_full_manpage().print()" > $@
+	python -c "from ff import Search; Search().registry.get_full_manpage().print()" > $@
 
-man/ff.7: libff/*.py libff/builtin/*.py plugins/*.py
+man/ff.7: ff/*.py libff/*.py libff/builtin/*.py plugins/*.py
 	mkdir -p man
-	python -c "from libff.search import Search; Search().registry.get_attributes_manpage().print()" > $@
+	python -c "from ff import Search; Search().registry.get_attributes_manpage().print()" > $@
 
 manpages: man/ff.1 man/ff.7

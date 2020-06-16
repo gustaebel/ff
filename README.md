@@ -65,7 +65,7 @@ plugins.
 You can use `ff`'s query capabilities in your own scripts:
 
 ```python
-from libff.search import Search
+from ff import Search
 
 for entry in Search("type=f git.tracked=yes", directories=["/home/user/project"], sort=["path"]):
     print(entry["relpath"])
@@ -78,10 +78,10 @@ exhaustive instructions and comments, so you can develop plugins for your own
 needs.
 
 Useful in that regard is `ff`'s debug mode. It can be activated by executing
-the `libff` module.
+the `ff` module.
 
 ```sh
-$ python -m libff --debug info,cache ...
+$ python -m ff --debug info,cache ...
 ```
 
 Debug mode produces lots of messages which can be limited to certain categories

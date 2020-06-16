@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -----------------------------------------------------------------------
 #
 # ff - a tool for finding files in the filesystem
@@ -19,16 +18,5 @@
 #
 # -----------------------------------------------------------------------
 
-# I hope this is only a temporary work-around: We rely heavily on assert
-# statements and __debug__ code blocks, which will be removed when using -O.
-# The idea was that in a production environment ff would be started via shebang
-# with the -O option, whereas debug mode could be entered by simply calling
-# `python -m libff`.
-# Unfortunately, setuptools seems to mess up the shebang line and replaces it
-# with the path to the python interpreter without with no regard for further
-# options.
-
-import os
-import sys
-
-os.execv(sys.executable, [sys.executable, "-O", "-m", "libff"] + sys.argv[1:])
+from libff.search import Search
+from libff.__version__ import __version__
