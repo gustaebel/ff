@@ -277,6 +277,13 @@ PLUGINS
     source distribution and a file 'plugin_template.py' to start from. User
     plugins are imported from the '~/.ff' directory.
 
+LIMITATIONS
+    The way ff(1) works messes with file access times. Most plugins (except for
+    the 'file' plugin) must open and read files to extract the information they
+    need. So, depending on which attributes you use, many files will get their
+    access times updated just by searching through them, and there is no way to
+    prevent that.
+
 EXAMPLES
 
     Find only regular files in the current directory and all its subdirectories:

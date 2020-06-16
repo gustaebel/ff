@@ -26,7 +26,7 @@ create-arch-pkg:
 
 publish: create-pypi-pkg create-arch-pkg
 
-man/ff.1: libff/*.py libff/builtin/*.py
+man/ff.1: libff/*.py libff/builtin/*.py libff/manpage.template
 	mkdir -p man
 	python -c "from libff.search import Search; Search().registry.get_full_manpage().print()" > $@
 

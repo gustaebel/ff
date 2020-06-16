@@ -1,4 +1,4 @@
-.TH ff 7 "2020-06-11" "Version 570" "ff Plugin Attributes Reference"
+.TH ff 7 "2020-06-16" "Version 570" "ff Plugin Attributes Reference"
 .nh
 .SH DESCRIPTION
 This is a list of all the attributes that are available. Attributes are provided by plugins. For more details on a specific plugin use '\fIff \-\-help <plugin>\fR'. Please note that if you got this help text by using '\fIman 7 ff\fR', the information you get is limited to the builtin plugins. Use '\fIff \-\-help\-attributes\fR' to get the full attribute list from all plugins that are available right now.
@@ -176,11 +176,6 @@ Whether the file contains text or binary data.
 Type: boolean ( = )
 .br
 Whether the entry is a mountpoint.
-
-.IP "\fB[file.]xattrs\fR" 4
-Type: listofstrings ( = : ~ % )
-.br
-A list of key=value pairs from the file's extended attributes.
 
 
 .SH ELF PLUGIN
@@ -386,6 +381,16 @@ The "tar" plugin provides information about tar archives. It is useful for findi
 Type: listofstrings ( = : ~ % )
 .br
 The list of file names that are stored in a .tar archive.
+
+
+.SH XATTR PLUGIN
+
+The "xattr" plugin provides access to a file's extended attributes.
+
+.IP "\fBxattr.xattrs\fR" 4
+Type: listofstrings ( = : ~ % )
+.br
+A list of key=value pairs from the file's extended attributes.
 
 
 .SH SEE ALSO
