@@ -47,6 +47,7 @@ class Plugin:
     url = "https://github.com/gustaebel/ff/"
 
     use_cache = False
+    cache_tag = None
     speed = Speed.NORMAL
     attributes = {}
 
@@ -62,9 +63,10 @@ class Plugin:
         cls.logger = logger
         cls.source = source
         cls.path = path
-        cls.tag = cls.get_plugin_cache_tag(path)
-        assert isinstance(cls.tag, int) and cls.tag >= 0
-        cls.sql_table_name = f"plugin_{cls.name}_{cls.tag}"
+        if cls.cache_tag is None:
+            cls.cache_tag = cls.get_plugin_cache_tag(path)
+        assert isinstance(cls.cache_tag, int) and cls.cache_tag >= 0
+        cls.sql_table_name = f"plugin_{cls.name}_{cls.cache_tag}"
 
     def __init__(self):
         self.setup()

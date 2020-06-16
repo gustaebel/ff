@@ -30,6 +30,7 @@ class Mime(Plugin):
     speed = Speed.SLOW
 
     use_cache = True
+    cache_tag = 0
 
     attributes = [
         ("mime", String, "The full mime type of the file."),

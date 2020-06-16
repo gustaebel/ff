@@ -32,6 +32,7 @@ class Medium(Plugin):
     speed = Speed.SLOW
 
     use_cache = True
+    cache_tag = 0
 
     attributes = [
         ("duration", Duration, "The duration of a medium (audio, video) in seconds."),

@@ -45,6 +45,11 @@ class Foo(Plugin):
     # the code of this module is altered.
     use_cache = False
 
+    # Explicitly set the cache tag. Rarely used. If cache_tag is None it will
+    # be set to the return value of get_plugin_cache_tag(). See there for a
+    # more in-depth explanation.
+    cache_tag = None
+
     # Here you tell ff(1) which attributes your plugin will provide.
     # `attributes` is a list of 3-element-tuples: (name, type, description).
     # `type` must be a subclass of Type. A Type's job is for example to
