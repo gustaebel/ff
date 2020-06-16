@@ -1,3 +1,7 @@
+### Version 572 - (2020-06-16)
+
+- Move the main components to a new 'ff' package.
+
 ### Version 571 - (2020-06-16)
 
 - Move 'xattrs' attribute to its own plugin.
