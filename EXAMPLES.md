@@ -94,7 +94,7 @@ $ ff shebang:python2
 Find all text files that contain a `FIXME` tag:
 
 ```sh
-$ ff fixme=yes
+$ ff lines~FIXME
 ```
 
 Find all executables in `/usr/bin` that require the `libz.so.1` shared library:
