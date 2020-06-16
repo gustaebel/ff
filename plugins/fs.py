@@ -74,8 +74,6 @@ class Fs(Plugin):
 
     speed = Speed.FAST
 
-    use_cache = False
-
     attributes = [
         ("type", String, "The name of the type of file system."),
         ("remote", Boolean, "Whether the file system is a remote file system.")

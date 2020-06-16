@@ -27,8 +27,6 @@ class Grep(Plugin):
        or certain substrings.
     """
 
-    use_cache = False
-
     attributes = [
         ("linecount", Number, "The number of lines in the file."),
         ("lines", ListOfStrings, "The lines of the file.")
