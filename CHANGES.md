@@ -1,3 +1,9 @@
+### Version 571 - (2020-06-16)
+
+- Move 'xattrs' attribute to its own plugin.
+- Move 'text' attribute to 'grep' plugin.
+- Minor documentation changes.
+
 ### Version 570 - (2020-06-11)
 
 - Optimize queries by regrouping tests.

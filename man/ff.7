@@ -1,4 +1,4 @@
-.TH ff 7 "2020-06-16" "Version 570" "ff Plugin Attributes Reference"
+.TH ff 7 "2020-06-16" "Version 571" "ff Plugin Attributes Reference"
 .nh
 .SH DESCRIPTION
 This is a list of all the attributes that are available. Attributes are provided by plugins. For more details on a specific plugin use '\fIff \-\-help <plugin>\fR'. Please note that if you got this help text by using '\fIman 7 ff\fR', the information you get is limited to the builtin plugins. Use '\fIff \-\-help\-attributes\fR' to get the full attribute list from all plugins that are available right now.
@@ -167,11 +167,6 @@ Type: boolean ( = )
 .br
 Whether the target of a symbolic link points to a file that does not exist.
 
-.IP "\fB[file.]text\fR" 4
-Type: boolean ( = )
-.br
-Whether the file contains text or binary data.
-
 .IP "\fB[file.]mount\fR" 4
 Type: boolean ( = )
 .br
@@ -231,6 +226,11 @@ True if the directory contains a git repository.
 .SH GREP PLUGIN
 
 The "grep" plugin provides access to the lines and the line count of a text file. It is useful for finding files that contain certain lines or certain substrings.
+
+.IP "\fBgrep.text\fR" 4
+Type: boolean ( = )
+.br
+Whether the file contains text or binary data.
 
 .IP "\fBgrep.linecount\fR" 4
 Type: number ( += \-= + \- = )
