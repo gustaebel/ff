@@ -211,7 +211,7 @@ class Registry(BaseClass):
 
         return attribute
 
-    @functools.lru_cache
+    @functools.lru_cache(maxsize=128)
     def get_data(self, entry, plugin):
         """Return all attribute values that are associated with entry.
         """
