@@ -29,7 +29,7 @@ if int(__version__.split(".", 1)[0]) < 3:
     raise SystemExit("cython >= 3.0 required")
 
 del kwargs["packages"]
-kwargs["ext_modules"] = cythonize(["ff/*.py", "libff/*.py", "libff/builtin/*.py"],
+kwargs["ext_modules"] = cythonize(["libff/[!_]*.py", "libff/builtin/*.py"],
         build_dir="build")
 
 setuptools.setup(**kwargs)
