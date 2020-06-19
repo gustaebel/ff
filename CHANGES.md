@@ -1,3 +1,7 @@
+### Version 574 - (2020-06-19)
+
+- Fix multiprocessing problems for cython build.
+
 ### Version 573 - (2020-06-19)
 
 - Improve building with cython.
