@@ -1,3 +1,8 @@
+### Version 573 - (2020-06-19)
+
+- Improve building with cython.
+- Add compatibility with pypy.
+
 ### Version 572 - (2020-06-16)
 
 - Move the main components to a new 'ff' package.
