@@ -61,11 +61,4 @@ kwargs = {
                      (os.path.join(get_python_lib(), "libff"), ["libff/manpage.template"])]
 }
 
-if os.environ.get("CYTHONIZE") == "yes":
-    from Cython.Build import cythonize
-    extensions = []
-    for name in glob.iglob("libff/[a-z]*.py"):
-        extensions.append(setuptools.Extension(name[:-3].replace("/", "."), [name]))
-    kwargs["ext_modules"] = cythonize(extensions, language_level=3)
-
 setuptools.setup(**kwargs)
