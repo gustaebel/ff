@@ -21,10 +21,11 @@
 import re
 import collections
 
-from . import Attribute, BaseClass
+from . import BaseClass
 from .type import Type
 from .entry import Entry
 from .ignore import Glob
+from .attribute import Attribute
 from .exceptions import UsageError, ExpressionError, BadAttributeError
 
 
@@ -72,9 +73,9 @@ class Test(collections.namedtuple("Test", "attribute operator type value ignore_
             value = self.value
 
         if with_type:
-            return f"{self.attribute.fullname()}[{self.type.name}]{self.operator}{value}"
+            return f"{self.attribute.fullname}[{self.type.name}]{self.operator}{value}"
         else:
-            return f"{self.attribute.fullname()}{self.operator}{value}"
+            return f"{self.attribute.fullname}{self.operator}{value}"
 
     def __str__(self):
         return self.format(with_type=True)

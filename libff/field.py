@@ -21,8 +21,8 @@
 import re
 import collections
 
-from . import Attribute
 from .type import Count
+from .attribute import Attribute
 from .exceptions import UsageError
 
 Field = collections.namedtuple("Field", "attribute type width modifier")

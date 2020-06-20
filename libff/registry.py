@@ -22,12 +22,13 @@ import os
 import functools
 import importlib.util
 
-from . import NoData, Attribute, BaseClass, MissingImport
+from . import NoData, BaseClass, MissingImport
 from .help import FullManPage, TypesManPage, PluginManPage, PluginsManPage, \
     AttributesManPage
 from .type import Type
 from .cache import NODATA, NOTSET
 from .plugin import Speed, Plugin
+from .attribute import Attribute
 from .exceptions import UsageError, BadPluginError, BadAttributeError
 
 
