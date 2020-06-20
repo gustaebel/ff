@@ -21,16 +21,16 @@
 import os
 from typing import Tuple
 
-separator : str = os.sep
+separator:str = os.sep
 
 
-def splitext(path : str) -> Tuple[str, str]:
+def splitext(path:str) -> Tuple[str, str]:
     """A simpler and faster version of os.path.splitext().
     """
-    sep : int = path.rfind(separator)
-    dot : int = path.rfind(".")
+    sep:int = path.rfind(separator)
+    dot:int = path.rfind(".")
     if dot > sep:
-        idx : int = sep + 1
+        idx:int = sep + 1
         while idx < dot:
             if path[idx:idx+1] != ".":
                 return path[:dot], path[dot:]
@@ -38,16 +38,16 @@ def splitext(path : str) -> Tuple[str, str]:
 
     return path, path[:0]
 
-def split(path: str) -> Tuple[str, str]:
+def split(path:str) -> Tuple[str, str]:
     """A simpler and faster version of os.path.split().
     """
-    sep : int = path.rfind(separator)
+    sep:int = path.rfind(separator)
     if sep < 0:
         return "", path
     else:
         return path[:sep], path[sep + 1:]
 
-def join(part1: str, part2 : str) -> str:
+def join(part1:str, part2:str) -> str:
     """A simpler and faster version of os.path.join().
     """
     if part1:
