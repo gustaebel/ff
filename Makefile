@@ -13,6 +13,9 @@ test:
 test-v:
 	python tests/runtests.py -v
 
+inplace:
+	python setup-cython.py build_ext --parallel 32 --inplace
+
 clean:
 	rm -rf build dist
 	rm -rf *.egg-info
