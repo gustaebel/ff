@@ -18,5 +18,5 @@
 #
 # -----------------------------------------------------------------------
 
-from libff.search import Search
+from libff.find import Find
 from libff.__version__ import __version__

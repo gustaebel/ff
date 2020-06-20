@@ -18,7 +18,7 @@
 #
 # -----------------------------------------------------------------------
 
-from libff.search import Main
+from libff.find import Main
 from libff.arguments import parse_arguments
 
 args, warnings = parse_arguments()

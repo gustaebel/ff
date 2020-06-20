@@ -65,9 +65,9 @@ plugins.
 You can use `ff`'s query capabilities in your own scripts:
 
 ```python
-from ff import Search
+from ff import Find
 
-for entry in Search("type=f git.tracked=yes", directories=["/home/user/project"], sort=["path"]):
+for entry in Find("type=f git.tracked=yes", directories=["/home/user/project"], sort=["path"]):
     print(entry["relpath"])
 ```
 

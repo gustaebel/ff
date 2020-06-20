@@ -24,8 +24,8 @@ import glob
 import unittest
 import subprocess
 
+from libff.find import Find
 from libff.ignore import Glob
-from libff.search import Search
 from libff.exceptions import BadAttributeError
 
 tests_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -146,7 +146,7 @@ class APITest(unittest.TestCase):
             expected_rows.append({k: v for k, v in zip(output, values[i:i+len(output)])})
 
         rows = []
-        for row in Search(output=output, **kwargs):
+        for row in Find(output=output, **kwargs):
             rows.append({k: v for k, v in row.items() if k in output})
 
         expected_rows = [tuple(row.items()) for row in expected_rows]
@@ -281,16 +281,16 @@ class APITest(unittest.TestCase):
         self._test([], query=["name%bA?"], case="sensitive")
 
     def test_case_error(self):
-        self.assertRaises(ValueError, Search, case="foo")
+        self.assertRaises(ValueError, Find, case="foo")
 
     def test_strict(self):
-        self.assertRaises(BadAttributeError, Search, query="ba?")
+        self.assertRaises(BadAttributeError, Find, query="ba?")
 
     def test_keys(self):
-        search = Search()
+        find = Find()
         count = 0
-        for row in search:
-            self.assertEqual(set(row.keys()), set(search.registry.get_file_attributes()))
+        for row in find:
+            self.assertEqual(set(row.keys()), set(find.registry.get_file_attributes()))
             count += 1
         self.assertEqual(count, 8)
 

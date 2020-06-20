@@ -187,7 +187,7 @@ class _Base(BaseClass):
                 self.logger.debug("info", "  " + line)
 
 
-class SearchNamespace(argparse.Namespace):
+class FindNamespace(argparse.Namespace):
     """An argparser.Namespace that contains the minimum number of arguments for
        setting up the Python API.
     """
@@ -213,7 +213,7 @@ class SearchNamespace(argparse.Namespace):
     no_parent_ignore = False
 
 
-class Search(_Base):
+class Find(_Base):
     """Query the filesystem and yield the resulting entries.
     """
     # pylint:disable=too-many-arguments,too-many-locals,dangerous-default-value,invalid-name
@@ -237,7 +237,7 @@ class Search(_Base):
         else:
             tests = query
 
-        args = SearchNamespace()
+        args = FindNamespace()
         args.tests = tests
         args.directories = directories.copy()
         args.exclude = exclude.copy()

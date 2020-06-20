@@ -413,7 +413,7 @@ def parse_arguments():
     args = parser.parse_args(argv)
 
     if args.help == "all":
-        # Help on plugins is taken care of in libff/search.py.
+        # Help on plugins is taken care of in libff/find.py.
         parser.print_help()
         raise SystemExit(EX_OK)
 
