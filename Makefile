@@ -4,6 +4,7 @@ isort:
 	ff -HI ext=py -X isort --length-sort --multi-line 2 --diff --check-only
 
 lint:
+	ff ext=so libff/ -x rm
 	pylint --rcfile config/pylintrc -j0 ff libff plugins
 
 test:
@@ -13,10 +14,10 @@ test-v:
 	python tests/runtests.py -v
 
 clean:
-	ff -I ext=egg-info -X rm -rf
 	rm -rf build dist
 	rm -rf *.egg-info
 	rm -rf __pycache__
+	ff ext=so libff/ -x rm
 
 create-pypi-pkg:
 	python setup.py sdist bdist_wheel

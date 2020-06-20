@@ -25,7 +25,8 @@ import traceback
 import subprocess
 import multiprocessing
 
-from . import TIMEOUT, Entries, BaseClass, Directory, join
+from . import TIMEOUT, Entries, BaseClass, Directory
+from .path import join
 from .entry import Entry
 from .ignore import GitIgnore
 from .exceptions import EX_PROCESS, EX_SUBPROCESS

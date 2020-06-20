@@ -23,7 +23,7 @@ import grp
 import pwd
 import stat
 
-from . import join
+from .path import join, split, splitext
 from .type import Mode
 
 
@@ -77,7 +77,7 @@ class Entry:
                 relpath = abspath[len(dirname):]
                 break
         else:
-            directory, relpath = os.path.split(path)
+            directory, relpath = split(path)
 
         start_directory = StartDirectory(args, directory)
         status = os.stat(path, follow_symlinks=args.follow_symlinks)
@@ -96,7 +96,7 @@ class Entry:
         self.path = join(self.root, self.relpath) if self.root != "." else self.relpath
         self.abspath = join(self.start_directory.absroot, self.relpath)
 
-        self.dir, self.name = os.path.split(self.path)
+        self.dir, self.name = split(self.path)
 
         # Collect information early to avoid having OSErrors later on.
         if stat.S_ISLNK(self.status.st_mode):
@@ -146,7 +146,7 @@ class Entry:
         """The file extension without the leading dot or the empty string if
            the file has no extension.
         """
-        return os.path.splitext(self.path)[1][1:]
+        return splitext(self.path)[1][1:]
 
     @property
     def device(self):
@@ -295,7 +295,7 @@ class Entry:
     def pathx(self):
         """The file path without the extension.
         """
-        return os.path.splitext(self.path)[0]
+        return splitext(self.path)[0]
 
     @property
     def namex(self):

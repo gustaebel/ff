@@ -18,8 +18,7 @@
 #
 # -----------------------------------------------------------------------
 
-import os
-
+from libff.path import split
 from libff.ignore import GitIgnore
 from libff.plugin import *
 
@@ -62,7 +61,7 @@ class Ignore(Plugin):
                     ignore = self.ignore_cache[path]
                 except KeyError:
                     try:
-                        ignore = GitIgnore(*os.path.split(path))
+                        ignore = GitIgnore(*split(path))
                     except OSError as exc:
                         self.logger.warning(exc, tag=f"ignore-{path}")
                         continue

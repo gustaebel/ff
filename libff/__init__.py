@@ -72,7 +72,7 @@ class _Attribute(collections.namedtuple("Attribute", "plugin name alias")):
         return f"{self.plugin}.{self.name}"
 
     def __eq__(self, other):
-        return self[:2] == other[:2]
+        return self[0] == other[0] and self[1] == other[1]
 
     def __hash__(self):
         return hash(self[:2])
@@ -108,13 +108,3 @@ class BaseClass:
         if name in self.component_names:
             setattr(self, name, attr)
         return attr
-
-
-def join(part1, part2):
-    """A simpler version of os.path.join() with a limited scope that is
-       significantly faster.
-    """
-    if part1:
-        return part1 + os.sep + part2
-    else:
-        return part2

@@ -22,7 +22,7 @@ import os
 import re
 import collections
 
-from . import join
+from .path import join
 
 GroupKey = collections.namedtuple("GroupKey", "include anchored directory")
 
