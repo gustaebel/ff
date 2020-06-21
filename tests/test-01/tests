@@ -58,6 +58,34 @@ foo
 
 
 
+ff -S -x echo {link}
+WARNING: Using both --sort and --exec makes no sense unless you set --jobs=1!
+foo
+
+
+
+ff -j1 -S -x echo {link}
+foo
+
+
+
+ff -x echo {name}-{link}
+BAR-foo
+
+
+
+ff --all -x echo {name}-{link}
+foo-
+BAR-foo
+baz-
+dir-
+dir-
+empty-
+empty_dir-
+.hidden-
+
+
+
 ff -X echo {link}
 foo
 

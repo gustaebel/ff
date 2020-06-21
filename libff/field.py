@@ -19,10 +19,10 @@
 # -----------------------------------------------------------------------
 
 import re
+import itertools
 import collections
 
 from .type import Count
-from .attribute import Attribute
 from .exceptions import UsageError
 
 Field = collections.namedtuple("Field", "attribute type width modifier")
@@ -123,70 +123,118 @@ class ExecFields(Fields):
     """Store a list of fields that help with calling subprocesses.
     """
 
-    def store(self, argument):
-        for string in argument:
-            if string == "{}":
-                field = self.make_field("file.path")
-            elif string == "{/}":
-                field = self.make_field("file.name")
-            elif string == "{//}":
-                field = self.make_field("file.dir")
-            elif string == "{.}":
-                field = self.make_field("file.pathx")
-            elif string == "{/.}":
-                field = self.make_field("file.namex")
-            elif string == "{..}":
-                field = self.make_field("file.ext")
-            elif string.startswith("{") and string.endswith("}"):
-                field = self.make_field(string[1:-1])
-            else:
-                field = string
+    regex_placeholder = re.compile(r"({[^}]*})")
 
-            self.append(field)
-
-        # Append path if there is no placeholder in the argument list.
-        if not any(isinstance(field, Field) for field in self):
-            attribute = Attribute("file", "path")
-            type_cls = self.registry.get_attribute_type(attribute)
-            self.append(Field(attribute, type_cls, None, None))
-
-    def render(self, entry):
-        """Create a list of arguments from an Entry object for calling a
-           subprocess.
+    def replace(self, part):
+        """Replace a placeholder with a Field.
         """
-        return self.render_fields(self, [entry], ignore_missing=False)
+        if part == "{}":
+            field = self.make_field("file.path")
+        elif part == "{/}":
+            field = self.make_field("file.name")
+        elif part == "{//}":
+            field = self.make_field("file.dir")
+        elif part == "{.}":
+            field = self.make_field("file.pathx")
+        elif part == "{/.}":
+            field = self.make_field("file.namex")
+        elif part == "{..}":
+            field = self.make_field("file.ext")
+        elif part.startswith("{") and part.endswith("}"):
+            field = self.make_field(part[1:-1])
+        else:
+            field = part
+        return field
 
-    def render_fields(self, fields, entries, ignore_missing=True):
+    def store(self, argument):
+        # This list of arguments:
+        #
+        #    ["convert", "{}", "new-{.}.jpg"]
+        #
+        # will be translated to:
+        #
+        #    [["convert"], [Field("file.path")], ["new-", Field("file.pathx"), ".jpg"]]
+        #
+        for string in argument:
+            self.append([self.replace(part)
+                for part in self.regex_placeholder.split(string)
+                if part])
+
+        # Append a path field if there was no placeholder found in the argument
+        # list.
+        if not any(isinstance(field, Field) for field in itertools.chain(*self[1:])):
+            self.append([self.make_field("file.path")])
+
+    def render_field(self, entry, field):
+        """Return a rendered Field value for the Entry object.
+        """
+        if isinstance(field, Field):
+            try:
+                value = self.registry.get_attribute(entry, field.attribute)
+            except KeyError:
+                if self.args.all or field.modifier == "n":
+                    return ""
+                else:
+                    raise
+            else:
+                return field.type.output(self.args, field.modifier, value)
+        else:
+            # Fields that do not contain a placeholder will be left unchanged.
+            return field
+
+    def render_fields(self, fields, entries, batch):
         """Return a list of arguments with all placeholders replaced.
         """
         output = []
-        for field in fields:
-            if isinstance(field, Field):
+        for subfields in fields:
+            # Each element of the list of 'fields' is a alternating sequence of strings and Field
+            # objects that act as placeholders, see the comment in store().
+            # If in batch mode each Entry from the 'entries' list will produce a new argument in
+            # the output argument list, i.e. ["echo", "{/}"] with ["foo", "bar", "baz"] as entries
+            # will produce ["echo", "foo", "bar", "baz"].
+            # When not in batch mode the same will produce: ["echo", "foo"], ["echo", "bar"],
+            # ["echo", "baz"].
+            if any(isinstance(a, Field) for a in subfields):
                 for entry in entries:
+                    # Build one argument for each Entry at a time.
                     try:
-                        value = self.registry.get_attribute(entry, field.attribute)
+                        argument = []
+                        for field in subfields:
+                            argument.append(self.render_field(entry, field))
+                        output.append("".join(argument))
+
                     except KeyError:
-                        if self.args.all or field.modifier == "n":
-                            output.append("")
-                        elif not ignore_missing:
+                        # One of the attributes produced no value. If in batch mode, we ignore this
+                        # and simply add no new argument. If not in batch mode we want this problem
+                        # to be propagated to the caller, so that there is no --exec call.
+                        if not batch:
                             raise
-                    else:
-                        output.append(field.type.output(self.args, field.modifier, value))
+
             else:
-                # Fields that do not contain a placeholder will be left
-                # unchanged.
-                output.append(field)
+                assert len(subfields) == 1
+                output.append(subfields[0])
+
         return output
+
+    def render(self, entry):
+        """Create a list of arguments from an Entry object for calling a subprocess.
+        """
+        return self.render_fields(self, [entry], False)
 
 
 class ExecBatchFields(ExecFields):
-    """Store a list of fields that help with calling one subprocess with
-       arguments from multiple Entry objects.
+    """Store a list of fields that help with calling one subprocess with arguments from multiple
+       Entry objects.
     """
+
+    def store(self, argument):
+        super().store(argument)
+
+        if any(isinstance(field, Field) for field in self[0]):
+            raise UsageError("The first part of the command must not contain placeholders!")
 
     # pylint:disable=arguments-differ
     def render(self, entries):
-        """Create a list of arguments from multiple Entry objects for calling a
-           subprocess.
+        """Create a list of arguments from multiple Entry objects for calling a subprocess.
         """
-        return [self[0]] + self.render_fields(self[1:], entries, ignore_missing=True)
+        return ["".join(self[0])] + self.render_fields(self[1:], entries, True)

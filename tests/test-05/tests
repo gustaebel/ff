@@ -96,3 +96,22 @@ a b dir/bar dir/baz dir/foo c
 
 ff type=f -S -X echo a b {//} {/} c
 a b dir dir dir bar baz foo c
+
+
+
+ff type=f -x echo {} {}.txt
+dir/foo dir/foo.txt
+dir/bar dir/bar.txt
+dir/baz dir/baz.txt
+
+
+
+ff type=f -x echo {/} {/}-{size}.txt
+foo foo-4.txt
+bar bar-4.txt
+baz baz-7.txt
+
+
+
+ff type=f -S -X echo {/} {/}-{size}.txt
+bar baz foo bar-4.txt baz-7.txt foo-4.txt
