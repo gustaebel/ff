@@ -83,7 +83,10 @@ class Parallel(BaseClass):
     def add_job(self, entry):
         """Add a subprocess to the queue for an Entry object.
         """
-        self.queue.put(self.args.exec.render(entry))
+        try:
+            self.queue.put(self.args.exec.render(entry))
+        except KeyError:
+            pass
 
 
 class BaseProcessing(BaseClass):
