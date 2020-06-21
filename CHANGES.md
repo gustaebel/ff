@@ -1,3 +1,11 @@
+### Version 576 - (2020-06-21)
+
+- Rename ff.Search to ff.Find.
+- Fix placeholders inside arguments. Arguments are now allowed to contain more
+  than one placeholder.
+- Fix warnings from argument parsing.
+- Fix missing attribute errors in -x/--exec.
+
 ### Version 575 - (2020-06-20)
 
 - Speed improvements.
