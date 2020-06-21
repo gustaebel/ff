@@ -55,15 +55,15 @@ class _Base(BaseClass):
         """Initialize the central Context object which will be passed to all
            components.
         """
-        for warning in warnings:
-            self.logger.warning(warning)
-
         self.context.args = args
         self.context.setup()
 
         self.context.logger = Logger()
         if __debug__:
             self.context.logger.set_debug(args.debug)
+
+        for warning in warnings:
+            self.logger.warning(warning)
 
     def setup_components(self):
         """Set up all remaining components like the registry, the cache and so
