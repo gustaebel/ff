@@ -1,3 +1,7 @@
+### Version 577 - (2020-06-23)
+
+- Add --ndjson alias for --jsonl.
+
 ### Version 576 - (2020-06-21)
 
 - Rename ff.Search to ff.Find.
