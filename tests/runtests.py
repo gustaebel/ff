@@ -299,7 +299,7 @@ if __name__ == "__main__":
     for path in glob.glob(os.path.join(tests_directory, "test-??/tests")):
         test = os.path.basename(os.path.dirname(path))
 
-        test_number = 0
+        test_number = 1
         with open(path) as lines:
             workdir = os.path.join(os.path.dirname(path), "workdir")
 
