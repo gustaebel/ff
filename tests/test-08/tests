@@ -1,0 +1,10 @@
+ff -x {/}
+ls
+dir
+ls
+dir
+
+
+
+ff -X {/} 2>/dev/null; echo $?
+1
