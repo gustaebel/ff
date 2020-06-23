@@ -351,6 +351,13 @@ ff -H --jsonl -o name,size type=f -S name
 
 
 
+ff -H --ndjson -o name,size type=f -S name
+{"name": "baz", "size": 10}
+{"name": "empty", "size": 0}
+{"name": "foo", "size": 4}
+
+
+
 # Counts
 ff -H --count size type=f
 size=14

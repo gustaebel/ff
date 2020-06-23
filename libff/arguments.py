@@ -251,7 +251,7 @@ def create_parser(formatter_class=HelpFormatter):
             help="Show all entries including the ones with missing attribute values.")
     group.add_argument("--json", action="store_const", const="json", dest="json", default=None,
             help="Print attributes as one big json object to stdout.")
-    group.add_argument("--jsonl", action="store_const", const="jsonl", dest="json",
+    group.add_argument("--jsonl", "--ndjson", action="store_const", const="jsonl", dest="json",
             help="Print attributes as jsonl (one json object per line) to stdout.")
     group.add_argument("--si", action="store_true", default=Defaults.si,
             help="Parse and print file sizes in units of 1K=1000 bytes instead of 1K=1024 bytes.")
