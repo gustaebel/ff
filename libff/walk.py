@@ -154,10 +154,10 @@ class FilesystemWalker(BaseClass):
 
                     except FileNotFoundError:
                         # Do not warn about files that have vanished.
-                        pass
+                        continue
                     except PermissionError:
                         # Do not warn about files that we are not allowed to access.
-                        pass
+                        continue
                     except OSError as exc:
                         self.logger.warning(exc)
                         continue
