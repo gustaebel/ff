@@ -30,6 +30,7 @@ if int(__version__.split(".", 1)[0]) < 3:
 
 del kwargs["packages"]
 kwargs["ext_modules"] = cythonize(["libff/[!_]*.py", "libff/builtin/*.py"],
-        build_dir="build", language_level=3)
+        build_dir="build", language_level=3,
+        extra_compile_args=["-O3", "-DCYTHON_WITHOUT_ASSERTIONS"])
 
 setuptools.setup(**kwargs)
