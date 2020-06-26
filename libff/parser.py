@@ -339,6 +339,8 @@ class Parser(FlatParser):
     def parse_sequence(self, sequences):
         """Parse a part of a list of tokens into a sequence of tests.
         """
+        # pylint:disable=too-many-branches
+
         while self.tokens:
             token = self.tokens.pop(0)
             utoken = token.upper()
@@ -380,3 +382,6 @@ class Parser(FlatParser):
                     continue
 
             sequences[-1].append(self.parse_test(token))
+
+        if len(sequences) > 1 and any(not seq for seq in sequences):
+            raise ParserError("empty expression")

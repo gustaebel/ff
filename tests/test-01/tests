@@ -311,6 +311,18 @@ ff -H type=f and {{ not name=baz and not name=empty }}
 foo
 
 
+ff name=baz or 2>/dev/null; echo $?
+1
+
+
+ff or name=baz 2>/dev/null; echo $?
+1
+
+
+ff name=baz or or name=foo 2>/dev/null; echo $?
+1
+
+
 # usage
 ( cd ..; ff -H workdir/ type=f and {{ not name=baz and not name=empty }} )
 workdir/foo
