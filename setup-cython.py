@@ -28,9 +28,11 @@ from setup import kwargs
 if int(__version__.split(".", 1)[0]) < 3:
     raise SystemExit("cython >= 3.0 required")
 
+extra_compile_args = ["-O3", "-DCYTHON_WITHOUT_ASSERTIONS"]
+
 del kwargs["packages"]
-kwargs["ext_modules"] = cythonize(["libff/[!_]*.py", "libff/builtin/*.py"],
-        build_dir="build", language_level=3,
-        extra_compile_args=["-O3", "-DCYTHON_WITHOUT_ASSERTIONS"])
+kwargs["ext_modules"] = cythonize(["libff/[!_]*.py", "libff/builtin/*.py"], language_level=3)
+for ext in kwargs["ext_modules"]:
+    ext.extra_compile_args += extra_compile_args
 
 setuptools.setup(**kwargs)
