@@ -28,7 +28,7 @@ class Logger:
     """Class that centralizes logging.
     """
 
-    warnings_emitted = set()
+    tags_emitted = set()
 
     def __init__(self):
         self.debug_categories = None
@@ -38,35 +38,40 @@ class Logger:
         """
         self.debug_categories = debug_categories
 
-    def wrap(self, category, message):
-        """Format and wrap the text of a message for output.
+    def print_message(self, category, message, tag=None):
+        """Format, wrap and print the text of a message for output.
         """
-        return textwrap.fill(category + ": " + str(message), width=OUTPUT_WIDTH,
-                subsequent_indent=" " * (len(category) + 2))
+        if tag is not None:
+            if tag in self.tags_emitted:
+                return
+            else:
+                self.tags_emitted.add(tag)
+
+        print(textwrap.fill(category + ": " + str(message), width=OUTPUT_WIDTH,
+                subsequent_indent=" " * (len(category) + 2)), file=sys.stderr)
 
     def warning(self, message, tag=None):
         """Print a warning to standard error output. If tag is not None hide
            the warning if there has already been another warning with that tag.
         """
-        if tag is not None:
-            if tag in self.warnings_emitted:
-                return
-            else:
-                self.warnings_emitted.add(tag)
+        self.print_message("WARNING", message, tag)
 
-        print(self.wrap("WARNING", message), file=sys.stderr)
+    def hint(self, message, tag=None):
+        """Print a hint to standard error output. A hint is some kind of "soft" warning.
+        """
+        self.print_message("HINT", message, tag)
 
     def error(self, message, exitcode):
         """Print an error message to standard error output and exit.
         """
-        print(self.wrap("ERROR", message), file=sys.stderr)
+        self.print_message("ERROR", message)
         if exitcode is not None:
             raise SystemExit(exitcode)
 
     def info(self, message):
         """Print an info message to standard error output.
         """
-        print(self.wrap("INFO", message), file=sys.stderr)
+        self.print_message("INFO", message)
 
     if __debug__:
         def debug(self, category, message):
@@ -86,7 +91,7 @@ class Logger:
         """Print an error message and a traceback to standard error output and
            exit.
         """
-        print(self.wrap("INTERNAL", message + ":"), file=sys.stderr)
+        self.print_message("INTERNAL", message + ":")
         sys.stderr.write(traceback)
         if exitcode is not None:
             raise SystemExit(exitcode)

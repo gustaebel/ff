@@ -283,22 +283,22 @@ class FlatParser(BaseClass):
                 value = Glob(value)
                 if value.anchored:
                     if attribute == ("file", "path"):
-                        # Guarantee that glob patterns are always matched against
-                        # the path relative to the start directory, because that
-                        # is what you want.
-                        self.logger.warning(f"{value.pattern!r} is a full-path glob pattern "\
+                        # Guarantee that glob patterns are always matched against the path relative
+                        # to the start directory, because that is what you want.
+                        self.logger.hint(f"{value.pattern!r} is a full-path glob pattern "\
                                 "that is supposed to be used relative to the start directory. "\
-                                "Changing 'file.path' attribute to 'file.relpath'.",
+                                "Change the attribute from 'file.path' to 'file.relpath' to " \
+                                "make this message go away.",
                                 tag="glob-anchored-path")
                         attribute = Attribute("file", "relpath")
 
                     elif attribute == ("file", "name"):
-                        # If the glob pattern contains path separators it is
-                        # supposed to match the whole path name, so we implicitly
-                        # adjust the attribute name.
-                        self.logger.warning(f"{value.pattern!r} is a full-path glob pattern "\
+                        # If the glob pattern contains path separators it is supposed to match the
+                        # whole path name, so we implicitly adjust the attribute name.
+                        self.logger.hint(f"{value.pattern!r} is a full-path glob pattern "\
                                 "that will not match on the basename. "\
-                                "Changing 'file.name' attribute to 'file.relpath'.",
+                                "Change the attribute from 'file.name' to 'file.relpath' to " \
+                                "make this message go away.",
                                 tag="glob-anchored-name")
                         attribute = Attribute("file", "relpath")
 
