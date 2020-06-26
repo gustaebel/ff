@@ -36,8 +36,7 @@ br = ".br"
 
 
 class ManPageHelpFormatter(HelpFormatter):
-    """Produce help output from an argparse.ArgumentParser suitable for the
-       manpage.
+    """Produce help output from an argparse.ArgumentParser suitable for the manpage.
     """
 
     def add_usage(self, usage, actions, groups, prefix=None):
@@ -56,8 +55,7 @@ class ManPageHelpFormatter(HelpFormatter):
 
 
 class ManPageUsageFormatter(HelpFormatter):
-    """Produce usage output from an argparse.ArgumentParser suitable for the
-       manpage.
+    """Produce usage output from an argparse.ArgumentParser suitable for the manpage.
     """
 
     def _format_usage(self, usage, actions, groups, prefix):
@@ -65,8 +63,8 @@ class ManPageUsageFormatter(HelpFormatter):
 
 
 class ManPage:
-    """Programmatically create a manpage from text-format parts. The format is
-       similar to that of txt2man(1).
+    """Programmatically create a manpage from text-format parts. The format is similar to that of
+       txt2man(1).
     """
 
     name = "ff"
@@ -94,19 +92,17 @@ class ManPage:
             level = len(line) - len(line.lstrip())
 
             if level < current_level or (current_level == 0 and level > 0) or "  " in line.lstrip():
-                # Start a new paragraph if the line is empty, its indentation
-                # level is smaller than before, if the previous line was a
-                # section header line, or the line contains the start of a
-                # definition (identified by two consecutive spaces like
-                # txt2man(1)'s tag list).
+                # Start a new paragraph if the line is empty, its indentation level is smaller than
+                # before, if the previous line was a section header line, or the line contains the
+                # start of a definition (identified by two consecutive spaces like txt2man(1)'s tag
+                # list).
                 if text:
                     yield text
                 yield ""
                 text = line
 
             else:
-                # The line is a continuation line, append it to the current
-                # paragraph.
+                # The line is a continuation line, append it to the current paragraph.
                 if not text:
                     text = line
                 else:
@@ -184,16 +180,14 @@ class ManPage:
                 self.add(line)
 
     def process(self, string):
-        """Process a string containing one of more lines and produce roff(7)
-           output.
+        """Process a string containing one of more lines and produce roff(7) output.
         """
         # Turn paragraphs into one long line each.
         string = "\n\n".join(" ".join(s.split()) for s in string.split("\n\n"))
 
         def replace(match):
             if match.group(1):
-                # Make single-quoted strings italic. It should match "'s'" but not
-                # "file's".
+                # Make single-quoted strings italic. It should match "'s'" but not "file's".
                 return f"'{it}{match.group(1)}{rs}'"
             elif match.group(2):
                 # Make double backtick-quoted strings italic.
@@ -271,8 +265,7 @@ class ManPage:
         self.add()
 
     def render_plugin_detail(self, plugin, full=False):
-        """Render the details of a specific plugin with or without author
-           information.
+        """Render the details of a specific plugin with or without author information.
         """
         names = ("name", "source", "path", "use_cache")
         if full:
@@ -319,12 +312,11 @@ class AttributesManPage(ManPage):
     title = "ff Plugin Attributes Reference"
     section = 7
     description = """
-        This is a list of all the attributes that are available. Attributes are
-        provided by plugins. For more details on a specific plugin use 'ff
-        --help <plugin>'. Please note that if you got this help text by using
-        'man 7 ff', the information you get is limited to the builtin plugins.
-        Use 'ff --help-attributes' to get the full attribute list from all
-        plugins that are available right now.
+        This is a list of all the attributes that are available. Attributes are provided by
+        plugins. For more details on a specific plugin use 'ff --help <plugin>'. Please note that
+        if you got this help text by using 'man 7 ff', the information you get is limited to the
+        builtin plugins. Use 'ff --help-attributes' to get the full attribute list from all plugins
+        that are available right now.
     """
 
     def __init__(self, plugins):
@@ -389,9 +381,9 @@ class TypesManPage(ManPage):
     title = "ff Types Reference"
     section = 7
     description = """
-        This is a list of all the types that are available. Furthermore, there
-        is information about which test operators are supported by each type and
-        if and how attributes of certain types will be counted ('ff --count').
+        This is a list of all the types that are available. Furthermore, there is information about
+        which test operators are supported by each type and if and how attributes of certain types
+        will be counted ('ff --count').
     """
 
     def __init__(self, types):
@@ -429,8 +421,8 @@ class PluginsManPage(ManPage):
     title = "ff Plugins Reference"
     section = 7
     description = """
-        This is a list of all the plugins that are currently available.
-        For more details on a specific plugin use 'ff --help <plugin>'.
+        This is a list of all the plugins that are currently available. For more details on a
+        specific plugin use 'ff --help <plugin>'.
     """
 
     def __init__(self, plugins):

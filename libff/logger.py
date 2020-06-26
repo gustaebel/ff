@@ -51,8 +51,8 @@ class Logger:
                 subsequent_indent=" " * (len(category) + 2)), file=sys.stderr)
 
     def warning(self, message, tag=None):
-        """Print a warning to standard error output. If tag is not None hide
-           the warning if there has already been another warning with that tag.
+        """Print a warning to standard error output. If tag is not None hide the warning if there
+           has already been another warning with that tag.
         """
         self.print_message("WARNING", message, tag)
 
@@ -75,21 +75,18 @@ class Logger:
 
     if __debug__:
         def debug(self, category, message):
-            """Print a debug message to standard error output if --debug is
-               switched on.
+            """Print a debug message to standard error output if --debug is switched on.
             """
             if self.debug_categories is None or category in self.debug_categories:
                 print(f"DEBUG:{category}: {message}", file=sys.stderr)
 
         def debug_proc(self, index, message):
-            """Print a debug message to standard error output if --debug-processes
-               is switched on.
+            """Print a debug message to standard error output if --debug-processes is switched on.
             """
             self.debug("mp", f"process #{index:02d} {message}")
 
     def exception(self, message, traceback, exitcode=None):
-        """Print an error message and a traceback to standard error output and
-           exit.
+        """Print an error message and a traceback to standard error output and exit.
         """
         self.print_message("INTERNAL", message + ":")
         sys.stderr.write(traceback)

@@ -37,9 +37,8 @@ class EntryAttributeError(AttributeError):
 
 
 class StartDirectory:
-    """A basic version of an Entry that is used for start directories and is
-       passed to Entry objects as the reference point for relpath, depth and
-       samedev.
+    """A basic version of an Entry that is used for start directories and is passed to Entry
+       objects as the reference point for relpath, depth and samedev.
     """
 
     def __init__(self, args, root):
@@ -51,9 +50,9 @@ class StartDirectory:
 
 # pylint:disable=too-many-instance-attributes,too-many-public-methods
 class Entry:
-    """Provide access to all of a file's information. The attributes and
-       properties have to adhere to the attributes dict of the File plugin,
-       because it just redirects requests right to the Entry object.
+    """Provide access to all of a file's information. The attributes and properties have to adhere
+       to the attributes dict of the File plugin, because it just redirects requests right to the
+       Entry object.
     """
 
     _pwd_cache = {}
@@ -61,17 +60,16 @@ class Entry:
 
     @classmethod
     def as_reference(cls, args, path):
-        """Create an Entry from scratch, e.g when a file is given as reference.
-           The resulting Entry object has emulated values for depth and samedev.
+        """Create an Entry from scratch, e.g when a file is given as reference. The resulting Entry
+           object has emulated values for depth and samedev.
         """
-        # This is a bit kludgy, but here we try to attribute a reference file
-        # to a search directory from the command line, in order to emulate
-        # attributes like depth and samedev. If the reference file is outside
-        # of the search area we use default values.
+        # This is a bit kludgy, but here we try to attribute a reference file to a search directory
+        # from the command line, in order to emulate attributes like depth and samedev. If the
+        # reference file is outside of the search area we use default values.
         abspath = os.path.abspath(path)
         for directory in args.directories:
-            # Go through the list of search directories and pick the first one
-            # that matches the reference file.
+            # Go through the list of search directories and pick the first one that matches the
+            # reference file.
             dirname = os.path.abspath(directory) + os.sep
             if abspath.startswith(dirname):
                 relpath = abspath[len(dirname):]
@@ -104,8 +102,7 @@ class Entry:
             self.target = os.path.realpath(join(self.dir, self.link))
             self.broken = not os.path.exists(self.target)
         else:
-            # Don't set link and target so that KeyError is raised in
-            # get_attribute().
+            # Don't set link and target so that KeyError is raised in get_attribute().
             self.broken = False
 
         self.hide = self.name[0] == "."
@@ -143,8 +140,8 @@ class Entry:
     #
     @property
     def ext(self):
-        """The file extension without the leading dot or the empty string if
-           the file has no extension.
+        """The file extension without the leading dot or the empty string if the file has no
+           extension.
         """
         return splitext(self.path)[1][1:]
 
@@ -180,8 +177,7 @@ class Entry:
 
     @property
     def size(self):
-        """The size of the file in bytes. All types except 'file' have a size
-           of 0.
+        """The size of the file in bytes. All types except 'file' have a size of 0.
         """
         if stat.S_ISREG(self.status.st_mode):
             return self.status.st_size
@@ -266,8 +262,8 @@ class Entry:
 
     @property
     def hidden(self):
-        """Whether the file is "hidden" or not, i.e. if one of the path
-           components contains a leading dot.
+        """Whether the file is "hidden" or not, i.e. if one of the path components contains a
+           leading dot.
         """
         return any(part.startswith(".") for part in self.path.split(os.sep))
 
@@ -276,12 +272,10 @@ class Entry:
         """Whether the file or directory is empty or not.
         """
         if stat.S_ISDIR(self.status.st_mode):
-            # The far better solution would be to set some kind of "empty"
-            # attribute in FilesystemWalker, so that we don't have to call
-            # os.scandir() two times for every directory. But the way
-            # FilesystemWalker is designed makes this impossible: the directory
-            # has already been yielded before we find out if it is empty or
-            # not.
+            # The far better solution would be to set some kind of "empty" attribute in
+            # FilesystemWalker, so that we don't have to call os.scandir() two times for every
+            # directory. But the way FilesystemWalker is designed makes this impossible: the
+            # directory has already been yielded before we find out if it is empty or not.
             with os.scandir(self.path) as entries:
                 for _ in entries:
                     return False
@@ -374,15 +368,14 @@ class Entry:
         raise EntryAttributeError(name)
 
     def get_attribute(self, name):
-        """Return attribute `name` from this Entry object and raise KeyError if
-           the attribute is not defined.
+        """Return attribute `name` from this Entry object and raise KeyError if the attribute is
+           not defined.
         """
         try:
             return getattr(self, name)
         except EntryAttributeError as exc:
-            # We have to check if the AttributeError that was raised
-            # was actually about attribute.name, so we don't hide
-            # programming errors inside the Entry object.
+            # We have to check if the AttributeError that was raised was actually about
+            # attribute.name, so we don't hide programming errors inside the Entry object.
             if exc.name != name:
                 raise AttributeError(exc.name)
 

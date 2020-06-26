@@ -105,8 +105,8 @@ class FlatParser(BaseClass):
         self.optimize(self.sequence)
 
     def get_speed_score(self, test):
-        """Return the speed score from a single test or the sum of scores from
-           all tests of a sub sequence.
+        """Return the speed score from a single test or the sum of scores from all tests of a sub
+           sequence.
         """
         if isinstance(test, Test):
             return self.registry.get_plugin_speed(test.attribute)
@@ -114,8 +114,8 @@ class FlatParser(BaseClass):
             return sum(self.get_speed_score(t) for t in test)
 
     def optimize(self, sequence):
-        """Optimize a test sequence, i.e. sort all sequences and their tests
-           according to speed score, so that faster tests are evaluated first.
+        """Optimize a test sequence, i.e. sort all sequences and their tests according to speed
+           score, so that faster tests are evaluated first.
         """
         sequence.sort(key=self.get_speed_score)
 
@@ -202,8 +202,7 @@ class FlatParser(BaseClass):
 
         ref_type_cls = self.registry.get_attribute_type(ref_attribute)
 
-        # Check if both attributes are comparable, i.e. they have a similar
-        # type.
+        # Check if both attributes are comparable, i.e. they have a similar type.
         try:
             self.get_common_super_type(type_cls, ref_type_cls)
         except ValueError:
@@ -215,9 +214,8 @@ class FlatParser(BaseClass):
 
     @staticmethod
     def get_common_super_type(a_type, b_type):
-        """Find the common Type subclass of both Type subclasses. If both
-           arguments have a common Type, i.e. Number or String, they are
-           comparable.
+        """Find the common Type subclass of both Type subclasses. If both arguments have a common
+           Type, i.e. Number or String, they are comparable.
         """
         assert issubclass(a_type, Type)
         assert issubclass(b_type, Type)
@@ -230,9 +228,8 @@ class FlatParser(BaseClass):
         raise ValueError("no common Type subclass found")
 
     def create_test(self, attribute, operator, reference, value):
-        """Create the Test object. Before that, do some sanity checks, handle
-           case sensitivity, prepare regular expressions and fetch the value
-           from a reference file if required.
+        """Create the Test object. Before that, do some sanity checks, handle case sensitivity,
+           prepare regular expressions and fetch the value from a reference file if required.
         """
         # pylint:disable=broad-except,too-many-branches
         type_cls = self.registry.get_attribute_type(attribute)
@@ -244,8 +241,8 @@ class FlatParser(BaseClass):
         ignore_case = None
 
         try:
-            # We either use the provided value directly or in case of a
-            # reference we use the value from after evaluating the reference.
+            # We either use the provided value directly or in case of a reference we use the value
+            # from after evaluating the reference.
             if reference is not None:
                 value = self.get_reference_value(type_cls, attribute, reference, value)
             else:
@@ -259,12 +256,12 @@ class FlatParser(BaseClass):
                     f"for attribute '{attribute}'! Allowed values are: " + \
                     ",".join(sorted(type_cls.choices)) + ".")
 
-        # Do some preparation for Type classes that claim to be string types,
-        # i.e. handle case sensitivity and compile regexes.
+        # Do some preparation for Type classes that claim to be string types, i.e. handle case
+        # sensitivity and compile regexes.
         if type_cls.string_type:
             if self.args.case == "smart":
-                # If the value is in lower case compare ignoring the case, if
-                # it contains uppercase letters compare using sensitive case.
+                # If the value is in lower case compare ignoring the case, if it contains uppercase
+                # letters compare using sensitive case.
                 ignore_case = value == value.lower()
             else:
                 ignore_case = self.args.case == "ignore"
@@ -313,8 +310,7 @@ class FlatParser(BaseClass):
 
 
 class Parser(FlatParser):
-    """Parse a list of test expressions and operators into a nested test
-       structure.
+    """Parse a list of test expressions and operators into a nested test structure.
     """
 
     OPENING_BRACKETS = ("(", "{{")

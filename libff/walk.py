@@ -33,9 +33,8 @@ from .exceptions import EX_PROCESS, EX_SUBPROCESS
 
 
 class FilesystemWalker(BaseClass):
-    """Walk through the directories of a filesystem using multiple processes,
-       collect information about the entries that were found and process them
-       accordingly.
+    """Walk through the directories of a filesystem using multiple processes, collect information
+       about the entries that were found and process them accordingly.
     """
 
     def __init__(self, context):
@@ -51,17 +50,16 @@ class FilesystemWalker(BaseClass):
         for process in self.processes:
             process.join(timeout)
             if process.exitcode is None:
-                # If join() hits the timeout once we don't wait for the other
-                # processes to terminate.
+                # If join() hits the timeout once we don't wait for the other processes to
+                # terminate.
                 timeout = 0
 
         self.queue.close()
 
     def put(self, chunk):
-        """Put a chunk of objects in the queue for processing by the
-           FilesystemWalker. Either these objects are Directory objects for
-           searching or lists of arguments from an ImmediateExecProcessing
-           processor to run as subprocesses in the context of the
+        """Put a chunk of objects in the queue for processing by the FilesystemWalker. Either these
+           objects are Directory objects for searching or lists of arguments from an
+           ImmediateExecProcessing processor to run as subprocesses in the context of the
            FilesystemWalker.
         """
         self.queue.put(chunk)
@@ -69,8 +67,8 @@ class FilesystemWalker(BaseClass):
     def start_processes(self):
         """Start a pool of processes that walk through the filesystem.
         """
-        # We set the processes daemon=True because this seems to make them more
-        # reactive on KeyboardInterrupt.
+        # We set the processes daemon=True because this seems to make them more reactive on
+        # KeyboardInterrupt.
         for index in range(self.args.jobs):
             process = multiprocessing.Process(target=self.loop, args=(index,))
             process.daemon = True
@@ -78,8 +76,7 @@ class FilesystemWalker(BaseClass):
             self.processes.append(process)
 
     def loop(self, index):
-        """Get arguments from the queue and process them until searching has
-           finished.
+        """Get arguments from the queue and process them until searching has finished.
         """
         # pylint:disable=too-many-branches,attribute-defined-outside-init,broad-except
         if __debug__:
@@ -87,8 +84,8 @@ class FilesystemWalker(BaseClass):
             self.logger.debug_proc(self.index, "started")
 
         if not (__debug__ and self.args.profile):
-            # When profiling, loop() runs in the main thread, so we have to
-            # allow KeyboardInterrupt.
+            # When profiling, loop() runs in the main thread, so we have to allow
+            # KeyboardInterrupt.
             signal.signal(signal.SIGINT, signal.SIG_IGN)
 
         try:
@@ -130,16 +127,16 @@ class FilesystemWalker(BaseClass):
             self.context.set_exitcode(EX_PROCESS)
             self.context.stop()
 
-            # It proves to be safer to print the traceback ourselves instead of
-            # relying on multiprocessing to do it for us.
+            # It proves to be safer to print the traceback ourselves instead of relying on
+            # multiprocessing to do it for us.
             traceback.print_exc()
 
         if __debug__:
             self.logger.debug_proc(self.index, "stopped")
 
     def scan_directory(self, parent):
-        """Scan the directory `parent` and produce a list of entries and the
-           names of .*ignore files that were found.
+        """Scan the directory `parent` and produce a list of entries and the names of .*ignore
+           files that were found.
         """
         entries = []
         ignore_paths = parent.ignore_paths.copy()
@@ -168,9 +165,9 @@ class FilesystemWalker(BaseClass):
                         if __debug__:
                             self.logger.debug("walk", f"Found ignore file {entry.name!r} "\
                                     f"in {entry.dirname!r}")
-                        # Please note that we take advantage of the side-effect,
-                        # that we can still update the same ignore_paths list we
-                        # already passed to a number of Entry objects earlier.
+                        # Please note that we take advantage of the side-effect, that we can still
+                        # update the same ignore_paths list we already passed to a number of Entry
+                        # objects earlier.
                         ignore_paths.append(entry.abspath)
 
         except FileNotFoundError:
@@ -185,18 +182,17 @@ class FilesystemWalker(BaseClass):
         return entries
 
     def process_directory(self, parent):
-        """Scan the directory `parent` for entries, collect .*ignore files, and
-           process the entries or distribute them to other FilesystemWalkers
-           for processing.
+        """Scan the directory `parent` for entries, collect .*ignore files, and process the entries
+           or distribute them to other FilesystemWalkers for processing.
         """
         entries = self.scan_directory(parent)
         if entries:
             self.process_entries(parent, entries)
 
     def process_entries(self, parent, entries):
-        """Go through the list of entries and see which ones we have to ignore,
-           and exclude, which ones match and will be taken to further
-           processing and which directory entries to descend into.
+        """Go through the list of entries and see which ones we have to ignore, and exclude, which
+           ones match and will be taken to further processing and which directory entries to
+           descend into.
         """
         search = []
         process = []
@@ -215,10 +211,9 @@ class FilesystemWalker(BaseClass):
                 if is_dir:
                     search.append(Directory(parent.start, entry.relpath, entry.ignore_paths))
 
-                # If there are plugins active that are marked as slow, this
-                # means that processing entries may take more time than usual
-                # Here we share the load of this current process with other
-                # processes that are idle at the moment.
+                # If there are plugins active that are marked as slow, this means that processing
+                # entries may take more time than usual Here we share the load of this current
+                # process with other processes that are idle at the moment.
                 if self.registry.optimize_for_slow_plugins and \
                         self.context.idle_processes() / self.args.jobs > 0.25 and \
                         len(entries) > 10:
@@ -230,9 +225,8 @@ class FilesystemWalker(BaseClass):
             self.logger.warning(exc)
 
         if search:
-            # Calculate a reasonable size for a chunk of Entry objects based on
-            # the number of parallel jobs, use at least 10 and at most 100
-            # entries to avoid unnecessary overhead.
+            # Calculate a reasonable size for a chunk of Entry objects based on the number of
+            # parallel jobs, use at least 10 and at most 100 entries to avoid unnecessary overhead.
             chunk_size = min(100, max(10, int(len(search) / self.args.jobs) + 1))
 
             for i in range(0, len(search), chunk_size):
@@ -242,8 +236,7 @@ class FilesystemWalker(BaseClass):
             self.processing.process(process)
 
     def process_arguments(self, arguments):
-        """Call a subprocess with a list of arguments and wait for its
-           completion.
+        """Call a subprocess with a list of arguments and wait for its completion.
         """
         try:
             process = subprocess.run(arguments, check=False)

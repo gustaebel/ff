@@ -150,8 +150,8 @@ time_formats = (
 )
 
 def parse_time(string):
-    """Convert a date and time or a duration to the corresponding number of
-       seconds. A simple integer or float is taken as seconds since epoch.
+    """Convert a date and time or a duration to the corresponding number of seconds. A simple
+       integer or float is taken as seconds since epoch.
     """
     try:
         return int(float(string))

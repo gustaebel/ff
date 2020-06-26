@@ -103,9 +103,8 @@ def type_ranges(string):
 
 
 class HelpFormatter(argparse.HelpFormatter):
-    """HelpFormatter subclass that does not show arguments for short but only
-       for long options and shows the argument for REMAINDER options instead of
-       three dots.
+    """HelpFormatter subclass that does not show arguments for short but only for long options and
+       shows the argument for REMAINDER options instead of three dots.
     """
 
     def __init__(self, prog, indent_increment=2, max_help_position=27, width=None):
@@ -130,8 +129,7 @@ class HelpFormatter(argparse.HelpFormatter):
             return ', '.join(parts)
 
     def _format_args(self, action, default_metavar):
-        # Instead of three dots ... show the name of the argument for REMAINDER
-        # arguments.
+        # Instead of three dots ... show the name of the argument for REMAINDER arguments.
         result = super()._format_args(action, default_metavar)
         if action.nargs == argparse.REMAINDER:
             return self._metavar_formatter(action, default_metavar)(1)[0]
@@ -269,8 +267,8 @@ def create_parser(formatter_class=HelpFormatter):
 
 
 def collect_arguments():
-    """Join arguments for the ArgumentParser from the FF_OPTIONS environment
-       variable with the ones from the command line.
+    """Join arguments for the ArgumentParser from the FF_OPTIONS environment variable with the ones
+       from the command line.
     """
     ff_options = os.environ.get("FF_OPTIONS")
     if ff_options:
@@ -338,8 +336,8 @@ class ArgumentsPostProcessor:
         """
         if not self.args.directories:
             # Check which arguments are existing directories and append them to
-            # self.args.directories. We allow directory arguments only at the start or
-            # the end of the list of tests.
+            # self.args.directories. We allow directory arguments only at the start or the end of
+            # the list of tests.
             for tests in (list(self.args.tests), reversed(self.args.tests)):
                 for test in tests:
                     if os.sep in test and os.path.isdir(test):
@@ -349,8 +347,7 @@ class ArgumentsPostProcessor:
                     else:
                         break
 
-        # Default to the current directory if no directory arguments are specified
-        # or detected.
+        # Default to the current directory if no directory arguments are specified or detected.
         if not self.args.directories:
             self.args.directories = ["."]
 
@@ -379,15 +376,14 @@ class ArgumentsPostProcessor:
             self.args.exclude.append("hide=yes")
 
         if self.args.depth:
-            # Look for an upper limit in the given ranges and exclude
-            # everything above it, so we go only as deep into the tree as
-            # necessary.
+            # Look for an upper limit in the given ranges and exclude everything above it, so we go
+            # only as deep into the tree as necessary.
             if not [stop for start, stop in self.args.depth if stop is None]:
                 stop = max(stop for start, stop in self.args.depth)
                 self.args.exclude.append(f"depth+{stop}")
 
-            # Construct a set of tests for all the given ranges and embed the
-            # existing set of tests in it.
+            # Construct a set of tests for all the given ranges and embed the existing set of tests
+            # in it.
             tests = []
             tests.append("{{")
 
@@ -413,8 +409,8 @@ class ArgumentsPostProcessor:
 
 
 def parse_arguments():
-    """Parse the arguments from the command line, check for conflicts and
-       postprocess them for later use.
+    """Parse the arguments from the command line, check for conflicts and postprocess them for
+       later use.
     """
     parser = create_parser()
 

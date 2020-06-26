@@ -25,8 +25,8 @@ from .parser import Parser
 
 
 class MatcherParser(Parser):
-    """The MatcherParser warns about using the file.hide/file.hidden attributes
-       without using -H/--hidden.
+    """The MatcherParser warns about using the file.hide/file.hidden attributes without using
+       -H/--hidden.
     """
 
     def create_test(self, attribute, operator, reference, value):
@@ -55,11 +55,10 @@ class Filter(BaseClass):
 
 
 class Excluder(Filter):
-    """Excluder class that allows to exclude Entry objects based on their
-       attributes.
+    """Excluder class that allows to exclude Entry objects based on their attributes.
 
-       The Excluder works differently from the Matcher. It is simpler and only
-       supports a flat list of tests.
+       The Excluder works differently from the Matcher. It is simpler and only supports a flat list
+       of tests.
     """
     # pylint:disable=method-hidden
 
@@ -73,8 +72,8 @@ class Excluder(Filter):
         return False
 
     def test(self, entry):
-        """Evaluate the list of Test objects for the entry object. Return True
-           if the entry matches and is to be excluded.
+        """Evaluate the list of Test objects for the entry object. Return True if the entry matches
+           and is to be excluded.
         """
         for test in itertools.chain.from_iterable(self.parser):
             try:
@@ -83,8 +82,8 @@ class Excluder(Filter):
                 # Ignore entries that don't provide this attribute.
                 continue
 
-            # If an entry matches the test, we return immediately without
-            # further going through the TestSequence.
+            # If an entry matches the test, we return immediately without further going through the
+            # TestSequence.
             if type_cls.test(entry, test, value):
                 return True
 
@@ -92,8 +91,7 @@ class Excluder(Filter):
 
 
 class Matcher(Filter):
-    """Matcher class that allows filtering Entry objects based on their
-       attributes.
+    """Matcher class that allows filtering Entry objects based on their attributes.
     """
     # pylint:disable=method-hidden
 
@@ -107,15 +105,13 @@ class Matcher(Filter):
         return True
 
     def test(self, entry):
-        """Evaluate the main sequence of Test objects and its sub sequences for
-           the attributes from the entry object. Return True if the entry
-           matches.
+        """Evaluate the main sequence of Test objects and its sub sequences for the attributes from
+           the entry object. Return True if the entry matches.
         """
         return any(self._test(self.parser, entry))
 
     def _test(self, tests, entry):
-        """Handle a single sub test sequence by evaluating the
-           Test objects it contains.
+        """Handle a single sub test sequence by evaluating the Test objects it contains.
         """
         for test in tests:
             if test.name == "AND":
@@ -132,8 +128,8 @@ class Matcher(Filter):
                 try:
                     value, type_cls = self.registry.get_attribute_and_type(entry, test.attribute)
                 except KeyError:
-                    # The plugin was unable to provide a value for this
-                    # attribute, so we remove this entry from the result.
+                    # The plugin was unable to provide a value for this attribute, so we remove
+                    # this entry from the result.
                     yield False
                 else:
                     yield type_cls.test(entry, test, value)

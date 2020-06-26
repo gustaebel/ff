@@ -60,11 +60,9 @@ Entries = collections.namedtuple("Entries", "parent entries")
 
 
 class BaseClass:
-    """This class can be used as the base for each class that depends on
-       Context and access to args, registry, etc. It offers shortcuts to the
-       each of these components as self.component instead of
-       self.context.component without using properties. Not exactly a matter of
-       life and death but nice nevertheless.
+    """This class can be used as the base for each class that depends on Context and access to
+       args, registry, etc. It offers shortcuts to the each of these components as self.component
+       instead of self.context.component without using properties.
     """
 
     component_names = set(["args", "registry", "excluder", "matcher", "walker"])

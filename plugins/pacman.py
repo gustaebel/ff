@@ -25,9 +25,8 @@ from libff.plugin import *
 
 
 class Pacman(Plugin):
-    """The "pacman" plugin provides information about which files were installed
-       using the package manager pacman on an Arch Linux. It requires the
-       'pacman' executable.
+    """The "pacman" plugin provides information about which files were installed using the package
+       manager pacman on an Arch Linux. It requires the 'pacman' executable.
     """
 
     attributes = [

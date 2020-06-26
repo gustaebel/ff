@@ -99,13 +99,11 @@ class BaseProcessing(BaseClass):
         self.next_processes_check = time.time() + 10
 
     def check_for_failed_processes(self):
-        """Check regularly if all processes are still active and allow an
-           ordered shutdown even if processes terminated abnormally. In this
-           case, abnormal shutdown means that a process crashed in a way that
-           it could not do the usual cleanup procedure (print a traceback, send
-           stop signal to all other processes, set the exitcode). This may
-           happen if one the process is terminated by a signal e.g. a
-           segmentation fault.
+        """Check regularly if all processes are still active and allow an ordered shutdown even if
+           processes terminated abnormally. In this case, abnormal shutdown means that a process
+           crashed in a way that it could not do the usual cleanup procedure (print a traceback,
+           send stop signal to all other processes, set the exitcode). This may happen if one the
+           process is terminated by a signal e.g. a segmentation fault.
         """
 
         if time.time() >= self.next_processes_check:
@@ -121,8 +119,8 @@ class BaseProcessing(BaseClass):
         return False
 
     def processing_done(self, timeout=TIMEOUT):
-        """Check if processing is done (because all processes wait on the
-           barrier) or one or more processes failed unexpectedly.
+        """Check if processing is done (because all processes wait on the barrier) or one or more
+           processes failed unexpectedly.
         """
         return self.context.barrier_wait(timeout) or self.check_for_failed_processes()
 
@@ -132,13 +130,12 @@ class BaseProcessing(BaseClass):
         raise NotImplementedError
 
     def loop(self):
-        """Wait for the Walker processes to finish (while possibly collecting
-           entries).
+        """Wait for the Walker processes to finish (while possibly collecting entries).
         """
 
     def finalize(self):
-        """Process the collected list of Entry objects (in case this is a
-           Processing class that collects entries first).
+        """Process the collected list of Entry objects (in case this is a Processing class that
+           collects entries first).
         """
 
     def close(self):
@@ -147,8 +144,7 @@ class BaseProcessing(BaseClass):
 
 
 class ImmediateBaseProcessing(BaseProcessing):
-    """Base class for Processing classes that will process entries
-       without collecting them first.
+    """Base class for Processing classes that will process entries without collecting them first.
     """
     # pylint:disable=abstract-method
 
@@ -194,8 +190,8 @@ class BaseConsoleProcessing(ImmediateBaseProcessing):
 class ImmediateExecProcessing(ImmediateBaseProcessing):
     """Processing class for direct execution of --exec jobs.
 
-       Ensure an even distribution of jobs to processes, therefore
-       put only one Call in the queue at a time.
+       Ensure an even distribution of jobs to processes, therefore put only one Call in the queue
+       at a time.
     """
 
     def process(self, entries):
@@ -212,8 +208,8 @@ class ImmediateConsoleProcessing(BaseConsoleProcessing):
 
 
 class CollectiveMixin(BaseProcessing):
-    """Processing mixin class that collects all entries first and
-       then does the processing afterwards.
+    """Processing mixin class that collects all entries first and then does the processing
+       afterwards.
     """
 
     def __init__(self, context):
@@ -241,10 +237,9 @@ class CollectiveMixin(BaseProcessing):
 
             self.entries += entries
 
-            # Exit prematurely if there are already enough entries to satisfy
-            # the limit, unless sorting is enabled in which case we want to
-            # collect all entries first, sort them and then print the first N
-            # entries.
+            # Exit prematurely if there are already enough entries to satisfy the limit, unless
+            # sorting is enabled in which case we want to collect all entries first, sort them and
+            # then print the first N entries.
             if self.args.sort is None and self.args.limit is not None and \
                     len(self.entries) >= self.args.limit:
                 self.context.stop()
@@ -300,15 +295,15 @@ class CollectiveMixin(BaseProcessing):
                     # This is a dictionary with a by-value count.
                     count[name] = {}
                     for key, val in value.items():
-                        # Format the key which is the counted value in this case,
-                        # JSON objects allow only string keys anyway.
+                        # Format the key which is the counted value in this case, JSON objects
+                        # allow only string keys anyway.
                         key = field.type.output(self.args, field.modifier, key)
                         count[name][key] = val
 
                 else:
                     if field.modifier is not None:
-                        # Format the value only in case there is a modifier, so
-                        # that numbers won't turn out as strings.
+                        # Format the value only in case there is a modifier, so that numbers won't
+                        # turn out as strings.
                         value = field.type.output(self.args, field.modifier, value)
                     count[name] = value
 
@@ -334,8 +329,8 @@ class CollectiveMixin(BaseProcessing):
 
 
 class CollectiveConsoleProcessing(CollectiveMixin, BaseConsoleProcessing):
-    """Processing class for collection and ordering of entries with output to
-       the console afterwards.
+    """Processing class for collection and ordering of entries with output to the console
+       afterwards.
     """
 
     def finalize(self):
@@ -347,8 +342,7 @@ class CollectiveConsoleProcessing(CollectiveMixin, BaseConsoleProcessing):
 
 
 class CollectiveExecProcessing(CollectiveMixin, BaseProcessing):
-    """Processing class for collective execution of --exec and --exec-batch
-       jobs.
+    """Processing class for collective execution of --exec and --exec-batch jobs.
     """
 
     def finalize(self):
@@ -404,8 +398,7 @@ class ImmediateGenerator(ImmediateBaseProcessing):
 
 
 class CollectiveGenerator(ImmediateGenerator):
-    """Processing class that allows iteration over the results after they have
-       been postprocessed.
+    """Processing class that allows iteration over the results after they have been postprocessed.
     """
 
     def __init__(self, context):

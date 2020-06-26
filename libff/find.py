@@ -27,8 +27,8 @@ from .processing import ImmediateGenerator, CollectiveGenerator
 
 
 class FindNamespace(argparse.Namespace):
-    """An argparser.Namespace that contains the minimum number of arguments for
-       setting up the Python API.
+    """An argparser.Namespace that contains the minimum number of arguments for setting up the
+       Python API.
     """
     # pylint:disable=too-many-instance-attributes
 
@@ -42,8 +42,8 @@ class FindNamespace(argparse.Namespace):
 
     depth = None
 
-    # Options that have no relevance for the Python API but will be referenced
-    # somewhere in the code. Would be nice to remove these one day.
+    # Options that have no relevance for the Python API but will be referenced somewhere in the
+    # code. Would be nice to remove these one day.
     count = None
     exec = None
     exec_batch = None
@@ -118,8 +118,7 @@ class Find(_Base):
             # Collect Entry objects from the Walker.
             self.context.processing.loop()
 
-            # Finalize and put out the result if --sort or --exec-batch is
-            # involved.
+            # Finalize and put out the result if --sort or --exec-batch is involved.
             self.context.processing.finalize()
 
             yield from self.context.processing

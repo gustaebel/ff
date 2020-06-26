@@ -28,8 +28,8 @@ from .convert import parse_size, parse_time, format_size, format_time, \
 
 
 class Count(Enum):
-    """Specify if a value shall be summed up (TOTAL), counted individually
-       (COUNT) or raise an error (UNCOUNTABLE).
+    """Specify if a value shall be summed up (TOTAL), counted individually (COUNT) or raise an
+       error (UNCOUNTABLE).
     """
     COUNT = 0
     TOTAL = 1
@@ -37,13 +37,11 @@ class Count(Enum):
 
 
 class Type:
-    """Type class that implements how an attribute interfaces with the outside
-       world.
+    """Type class that implements how an attribute interfaces with the outside world.
     """
 
-    # A set of operators that this Type supports. There is a fixed number of
-    # available operators. The first group is more suited for strings the
-    # second group more for numbers.
+    # A set of operators that this Type supports. There is a fixed number of available operators.
+    # The first group is more suited for strings the second group more for numbers.
     #
     #    =          equals
     #    :          contains
@@ -57,27 +55,23 @@ class Type:
     #
     operators = ()
 
-    # This value is used as a fallback value during sorting, when a Plugin does
-    # not provide a particular attribute. It must be suitable for using it in a
-    # comparison to another value of this Type, e.g. the empty string for
-    # strings or 0 for integers.
+    # This value is used as a fallback value during sorting, when a Plugin does not provide a
+    # particular attribute. It must be suitable for using it in a comparison to another value of
+    # this Type, e.g. the empty string for strings or 0 for integers.
     sort_none = None
 
-    # Return how this attribute and value shall be included in the statistics.
-    # If the value itself shall be summed up to a total (TOTAL) or whether each
-    # individual value increases a count by 1 (COUNT). TOTAL is most suited for
-    # things like size or duration whose values vary widely but are interesting
-    # in total, COUNT is best for string values like e.g. extension, type etc.
-    # to count how many files have a certain extension or a certain type.
-    # If a type is uncountable it must use UNCOUNTABLE.
+    # Return how this attribute and value shall be included in the statistics. If the value itself
+    # shall be summed up to a total (TOTAL) or whether each individual value increases a count by 1
+    # (COUNT). TOTAL is most suited for things like size or duration whose values vary widely but
+    # are interesting in total, COUNT is best for string values like e.g. extension, type etc. to
+    # count how many files have a certain extension or a certain type. If a type is uncountable it
+    # must use UNCOUNTABLE.
     count = Count.COUNT
 
-    # Indicate whether this Type is a string type. This affects case
-    # conversion, see test().
+    # Indicate whether this Type is a string type. This affects case conversion, see test().
     string_type = False
 
-    # Limit test values/patterns to certain choices. Should be a set of values
-    # that are allowed.
+    # Limit test values/patterns to certain choices. Should be a set of values that are allowed.
     choices = None
 
     def __init_subclass__(cls):
@@ -87,15 +81,14 @@ class Type:
 
     @classmethod
     def input(cls, value):
-        """Convert a value from a string from the command-line to the required
-           type.
+        """Convert a value from a string from the command-line to the required type.
         """
         return value
 
     @classmethod
     def test(cls, entry, test, value):
-        """Return True or False depending on whether the `test` matches `value`.
-           `test` is a namedtuple with the following attributes:
+        """Return True or False depending on whether the `test` matches `value`. `test` is a
+           namedtuple with the following attributes:
 
                 attribute           An Attribute(plugin, name) namedtuple.
                 operator            The operator: '=', '~', etc.
@@ -104,29 +97,27 @@ class Type:
                 ignore_case         Whether or not to consider case for string comparison,
                                     None if the Type is not a string type.
 
-            If both string_type and `test.ignore_case` are True test.value will
-            be in lowercase. It is up to you to convert `value` to lowercase as
-            well.
+            If both string_type and `test.ignore_case` are True test.value will be in lowercase. It
+            is up to you to convert `value` to lowercase as well.
         """
         raise NotImplementedError
 
     @classmethod
     def output(cls, args, modifier, value):
         # pylint:disable=unused-argument
-        """Create a representation of the value for output on the screen.
-           `args` is the global ArgumentParser object. At the moment it is only
-           used to detect whether --si was specified or not. Modifier is either
-           "h" for human readable, "x" for hexadecimal, "o" for octal or None.
+        """Create a representation of the value for output on the screen. `args` is the global
+           ArgumentParser object. At the moment it is only used to detect whether --si was
+           specified or not. Modifier is either "h" for human readable, "x" for hexadecimal, "o"
+           for octal or None.
         """
         return str(value)
 
     @classmethod
     def check_type(cls, value):
-        """Check if a value conforms to this Type class. This is used to check
-           whether values returned by plugins have the correct type and is only
-           used in __debug__ mode. The default implementation uses the type of
-           the .sort_none attribute, but this may be insufficient, e.g. for
-           compound types like lists.
+        """Check if a value conforms to this Type class. This is used to check whether values
+           returned by plugins have the correct type and is only used in __debug__ mode. The
+           default implementation uses the type of the .sort_none attribute, but this may be
+           insufficient, e.g. for compound types like lists.
         """
         return isinstance(value, type(cls.sort_none))
 
@@ -148,8 +139,8 @@ class String(Type):
 
     @classmethod
     def test(cls, entry, test, value):
-        # If the test is case insensitive, the test.value argument has
-        # already been converted to lower case.
+        # If the test is case insensitive, the test.value argument has already been converted to
+        # lower case.
         if test.ignore_case:
             value = value.lower()
 
@@ -169,8 +160,8 @@ class String(Type):
 
 
 class Path(String):
-    """String containing a filesystem path or a portion thereof. Examples:
-       'file.name%*.txt' 'file.dir=foo/bar'
+    """String containing a filesystem path or a portion thereof. Examples: 'file.name%*.txt'
+       'file.dir=foo/bar'
     """
 
     @classmethod
@@ -196,17 +187,16 @@ class Path(String):
 
 
 class FileType(Type):
-    """String representing the type of a file. The value is one of d,
-       directory, f, file, l, symlink, s, socket, p, pipe, fifo, char, block,
-       door, port, whiteout or other. Example: 'type=f'
+    """String representing the type of a file. The value is one of d, directory, f, file, l,
+       symlink, s, socket, p, pipe, fifo, char, block, door, port, whiteout or other. Example:
+       'type=f'
     """
 
     operators = ("=",)
     sort_none = ""
     count = Count.COUNT
-    choices = set(["d", "directory", "f", "file", "l", "symlink", "s",
-        "socket", "p", "pipe", "fifo", "char", "block", "door", "port",
-        "whiteout", "other"])
+    choices = set(["d", "directory", "f", "file", "l", "symlink", "s", "socket", "p", "pipe",
+        "fifo", "char", "block", "door", "port", "whiteout", "other"])
 
     @classmethod
     def test(cls, entry, test, value):
@@ -225,9 +215,9 @@ class FileType(Type):
 
 
 class ListOfStrings(Type):
-    """List of strings, e.g. the lines of a file or filenames inside a tar
-       archive. A given test will be applied to each string in the list.
-       Example: 'grep.lines~foobar', 'tar.members=./foobar.txt'
+    """List of strings, e.g. the lines of a file or filenames inside a tar archive. A given test
+       will be applied to each string in the list. Example: 'grep.lines~foobar',
+       'tar.members=./foobar.txt'
     """
 
     operators = String.operators
@@ -287,8 +277,8 @@ class Number(Type):
 
 
 class Mode(Type):
-    """File permissions. Either octal numbers or symbolic notation is
-       supported. Examples: 'file.perm=a+rwx' 'file.perm-u+x' 'file.perm+700'
+    """File permissions. Either octal numbers or symbolic notation is supported. Examples:
+       'file.perm=a+rwx' 'file.perm-u+x' 'file.perm+700'
     """
 
     operators = ("=", ":", "~")
@@ -406,8 +396,8 @@ class Size(Number):
 
 
 class Time(Number):
-    """Time in seconds since 1970-01-01 00:00:00. Examples:
-       'file.time=1589234400' 'file.time+=2020-05-12' 'file.time+=1d12h'
+    """Time in seconds since 1970-01-01 00:00:00. Examples: 'file.time=1589234400'
+       'file.time+=2020-05-12' 'file.time+=1d12h'
     """
 
     @classmethod
@@ -441,8 +431,8 @@ class Duration(Number):
 
 
 class Boolean(Type):
-    """Boolean value. May be one of (true, t, 1, yes, y, on) or (false, f, 0,
-       no, n, off). The case is ignored. Example: 'empty=yes'
+    """Boolean value. May be one of (true, t, 1, yes, y, on) or (false, f, 0, no, n, off). The case
+       is ignored. Example: 'empty=yes'
     """
 
     operators = ("=",)

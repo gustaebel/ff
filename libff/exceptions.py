@@ -42,8 +42,7 @@ class BaseError(Exception):
 
     @classmethod
     def from_exception(cls, message):
-        """Create a BaseError exception with the traceback of the current
-           exception.
+        """Create a BaseError exception with the traceback of the current exception.
         """
         return cls(message, traceback.format_exc())
 

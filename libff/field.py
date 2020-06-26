@@ -160,8 +160,7 @@ class ExecFields(Fields):
                 for part in self.regex_placeholder.split(string)
                 if part])
 
-        # Append a path field if there was no placeholder found in the argument
-        # list.
+        # Append a path field if there was no placeholder found in the argument list.
         if not any(isinstance(field, Field) for field in itertools.chain(*self[1:])):
             self.append([self.make_field("file.path")])
 

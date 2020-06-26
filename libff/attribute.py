@@ -22,8 +22,7 @@ import collections
 
 
 class _Attribute(collections.namedtuple("Attribute", "plugin name")):
-    """An Attribute namedtuple that contains the plugin name and the attribute
-       name.
+    """An Attribute namedtuple that contains the plugin name and the attribute name.
     """
 
     def __new__(cls, plugin:str, name:str, fullname:str, alias:str):

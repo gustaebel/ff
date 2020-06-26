@@ -22,9 +22,8 @@ from libff.plugin import *
 
 
 class Grep(Plugin):
-    """The "grep" plugin provides access to the lines and the line count of a
-       text file. It is useful for finding files that contain certain lines
-       or certain substrings.
+    """The "grep" plugin provides access to the lines and the line count of a text file. It is
+       useful for finding files that contain certain lines or certain substrings.
     """
 
     attributes = [

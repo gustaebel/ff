@@ -24,9 +24,9 @@ from libff.plugin import *
 
 
 class Medium(Plugin):
-    """The "medium" plugin provides access to information from media files like
-       image, audio and video files, e.g. image format, running time, mp3 tags,
-       etc. It requires the 'pymediainfo' module.
+    """The "medium" plugin provides access to information from media files like image, audio and
+       video files, e.g. image format, running time, mp3 tags, etc. It requires the 'pymediainfo'
+       module.
     """
 
     speed = Speed.SLOW
@@ -97,8 +97,8 @@ class Medium(Plugin):
                 if value:
                     cached[key] = value
 
-        # Extract the width and height of a video or an image. If there are
-        # both video and image streams give precedence to video.
+        # Extract the width and height of a video or an image. If there are both video and image
+        # streams give precedence to video.
         if video_track is not None:
             if video_track.height is not None and video_track.width is not None:
                 cached["width"] = video_track.width

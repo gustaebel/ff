@@ -38,8 +38,7 @@ class Filelist(set):
 
 
 class Status(set):
-    """The list of filenames that are tracked inside a git repository and have
-       been changed.
+    """The list of filenames that are tracked inside a git repository and have been changed.
     """
 
     def __init__(self, dirname):
@@ -55,8 +54,8 @@ class Status(set):
 
 
 class Git(Plugin):
-    """The "git" plugin provides information about files that are inside a
-       git(1) repository. It requires the 'git' executable.
+    """The "git" plugin provides information about files that are inside a git(1) repository. It
+       requires the 'git' executable.
     """
 
     speed = Speed.SLOW
@@ -79,8 +78,8 @@ class Git(Plugin):
         return True
 
     def find_repo(self, dirname):
-        """Find a .git directory in the current or upper directories and return
-           a list of changed files and a list of tracked files.
+        """Find a .git directory in the current or upper directories and return a list of changed
+           files and a list of tracked files.
         """
         if dirname not in self._cache:
             path = os.path.join(dirname, ".git")
@@ -106,10 +105,9 @@ class Git(Plugin):
         else:
             data = {"repo_dir": repo_dir, "repo": repo_dir == entry.abspath}
 
-            # Iterate the list of tracked files and the list of changed files
-            # and test whether the entry is in one of them. In case of
-            # directories it is checked whether it contains a file that is in
-            # one of these lists.
+            # Iterate the list of tracked files and the list of changed files and test whether the
+            # entry is in one of them. In case of directories it is checked whether it contains a
+            # file that is in one of these lists.
             for key, paths in ("tracked", filelist), ("dirty", status):
                 if entry.is_dir():
                     abspath = entry.abspath + os.sep

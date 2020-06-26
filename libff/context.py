@@ -27,8 +27,8 @@ from . import TIMEOUT
 
 
 class Context:
-    """The Context class contains a global state and is globally accessible so that
-       all components find all other components.
+    """The Context class contains a global state and is globally accessible so that all components
+       find all other components.
     """
     # pylint:disable=too-many-instance-attributes
 
@@ -58,20 +58,19 @@ class Context:
         """
         self.global_lock = multiprocessing.Lock()
 
-        # We use a Queue object to emulate a stop event, because
-        # multiprocessing.Event did not work the way I expected it.
+        # We use a Queue object to emulate a stop event, because multiprocessing.Event did not work
+        # the way I expected it.
         self.stop_queue = multiprocessing.Queue(self.args.jobs)
 
-        # Create a Barrier with the number of processes plus one for the main
-        # process.
+        # Create a Barrier with the number of processes plus one for the main process.
         if __debug__ and self.args.profile:
             num_jobs = 1
         else:
             num_jobs = self.args.jobs + 1
         self.barrier = multiprocessing.Barrier(num_jobs)
 
-        # The exitcode object provides a way for --exec and --exec-batch
-        # processes to feed back errors to the main process.
+        # The exitcode object provides a way for --exec and --exec-batch processes to feed back
+        # errors to the main process.
         self.exitcode_object = multiprocessing.sharedctypes.RawValue("i", 0)
 
         # Provide a shared counter for cache hits and misses.
@@ -84,8 +83,7 @@ class Context:
         self.stop_queue.close()
 
     def set_exitcode(self, exitcode):
-        """Set the shared resource 'exitcode' to the value that will
-           be used as the main exit code.
+        """Set the shared resource 'exitcode' to the value that will be used as the main exit code.
         """
         self.exitcode_object.value = exitcode
 
@@ -96,8 +94,8 @@ class Context:
         return self.exitcode_object.value
 
     def barrier_wait(self, timeout=TIMEOUT):
-        """Wait for all processes to reach the Barrier. If all processes do
-           that means that there is no more input and processing is finished.
+        """Wait for all processes to reach the Barrier. If all processes do that means that there
+           is no more input and processing is finished.
         """
         try:
             self.barrier.wait(timeout)
@@ -108,8 +106,8 @@ class Context:
             return True
 
     def idle_processes(self):
-        """Return the number of idle processes, i.e. processes that are waiting
-           for the barrier because there is nothing in the queue.
+        """Return the number of idle processes, i.e. processes that are waiting for the barrier
+           because there is nothing in the queue.
         """
         return self.barrier.n_waiting
 

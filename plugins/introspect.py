@@ -25,8 +25,8 @@ from libff.plugin import *
 
 
 class Elf(Plugin):
-    """The "elf" plugin provides information extracted from ELF executable
-       files. It requires the 'pyelftools' module.
+    """The "elf" plugin provides information extracted from ELF executable files. It requires the
+       'pyelftools' module.
     """
 
     use_cache = True
@@ -80,8 +80,8 @@ class Elf(Plugin):
 
 
 class Shebang(Plugin):
-    """The "shebang" plugin extracts the shebang line from a script, i.e. the
-       first line of the file if it starts with '#!'.
+    """The "shebang" plugin extracts the shebang line from a script, i.e. the first line of the
+       file if it starts with '#!'.
     """
 
     attributes = [
@@ -121,8 +121,7 @@ class Py(Plugin):
     ]
 
     def parse_imports(self, entry):
-        """Extract the names of modules and packages that a Python script
-           imports.
+        """Extract the names of modules and packages that a Python script imports.
         """
         with open(entry.path) as fobj:
             data = fobj.read()

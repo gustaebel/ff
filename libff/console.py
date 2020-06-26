@@ -39,8 +39,8 @@ class BaseConsole(BaseClass):
         self.fields = self.args.output
 
     def process(self, entry):
-        """Create a record from the Entry object by fetching all required
-           attribute values and print the record to standard output.
+        """Create a record from the Entry object by fetching all required attribute values and
+           print the record to standard output.
         """
         raise NotImplementedError
 
@@ -65,8 +65,7 @@ class JsonlConsole(BaseConsole):
         super().__init__(context)
 
         if __debug__ and self.args.profile:
-            # Suppress output when profiling but still go through all the
-            # moves.
+            # Suppress output when profiling but still go through all the moves.
             self.print_record = lambda record: None
         else:
             self.print_record = self._print_record
@@ -123,9 +122,8 @@ class Console(BaseConsole):
             self.write_line = self._write_line
 
     def render_field(self, entry, field):
-        """Render a field for output, i.e. get the value from the plugin and
-           convert it to an individual form using its Type. If required turn it
-           into a human-readable form.
+        """Render a field for output, i.e. get the value from the plugin and convert it to an
+           individual form using its Type. If required turn it into a human-readable form.
         """
         if field.attribute == ("file", "dir"):
             return self.render_directory(entry.dir)
@@ -206,8 +204,8 @@ class Console(BaseConsole):
         return String(name, len(name))
 
     def pad_string(self, string, width):
-        """Pad a string with spaces. string.length is the net length of
-           string.value (without ansi escape sequences).
+        """Pad a string with spaces. string.length is the net length of string.value (without ansi
+           escape sequences).
         """
         fill = max(0, abs(width) - string.length)
         if width < 0:
@@ -216,8 +214,7 @@ class Console(BaseConsole):
             return " " * fill + string.value
 
     def format_field(self, entry, field):
-        """Format a field for output, i.e. render colors if required, pad with
-           spaces, etc.
+        """Format a field for output, i.e. render colors if required, pad with spaces, etc.
         """
         string = self.render_field(entry, field)
 
@@ -250,16 +247,15 @@ class Console(BaseConsole):
             print(line.encode(self.encoding, "backslashreplace").decode(self.encoding),
                     end=self.args.newline)
 
-        # If we don't flush stdout, printed results may be lost. That is
-        # because when the main process exits, all multiprocessing processes
-        # vanish instantly without pending output buffers being written.
+        # If we don't flush stdout, printed results may be lost. That is because when the main
+        # process exits, all multiprocessing processes vanish instantly without pending output
+        # buffers being written.
         sys.stdout.flush()
 
 
 class ColorConsole(Console):
-    """Provide colorful console output using ansi escape sequences. The rules
-       are are read from the LS_COLORS environment variable. For more info see
-       man dir_colors(5).
+    """Provide colorful console output using ansi escape sequences. The rules are are read from the
+       LS_COLORS environment variable. For more info see man dir_colors(5).
     """
 
     def __init__(self, context):
@@ -277,9 +273,8 @@ class ColorConsole(Console):
                     "but the LS_COLORS environment variable is not set")
             return
 
-        # The content of LS_COLORS is a pathsep separated list of key=value
-        # pairs. File type rules consist of two characters, extensions have the
-        # form '*.ext'.
+        # The content of LS_COLORS is a pathsep separated list of key=value pairs. File type rules
+        # consist of two characters, extensions have the form '*.ext'.
         for part in colors.split(os.pathsep):
             try:
                 key, value = part.split("=", 1)
@@ -295,8 +290,8 @@ class ColorConsole(Console):
 
         self.reset = esc(rules.get("rs", "0"))
 
-        # Prepare escape sequences for directories, executables, symlinks and
-        # orphans. There are some more we might add in the future.
+        # Prepare escape sequences for directories, executables, symlinks and orphans. There are
+        # some more we might add in the future.
         self.colors = {}
         for rule in ("di", "ex", "ln", "or"):
             if rule in rules:

@@ -305,10 +305,9 @@ if __name__ == "__main__":
 
             lines = list(lines)
 
-            # Parse a test file. The command is on the first line, the
-            # required output follows. Tests are separated by one or more empty
-            # lines. Directive lines start with a # and stay valid for all
-            # tests that follow.
+            # Parse a test file. The command is on the first line, the required output follows.
+            # Tests are separated by one or more empty lines. Directive lines start with a # and
+            # stay valid for all tests that follow.
             keep_order = False
             while lines:
                 while lines:

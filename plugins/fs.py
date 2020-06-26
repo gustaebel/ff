@@ -68,8 +68,7 @@ fs_types = {
 
 
 class Fs(Plugin):
-    """The "fs" plugin provides information on the filesystem that a file is
-       located in.
+    """The "fs" plugin provides information on the filesystem that a file is located in.
     """
 
     speed = Speed.FAST
@@ -80,11 +79,10 @@ class Fs(Plugin):
     ]
 
     def get_fs_type(self, path):
-        """Return the name of the filesystem for path and whether it is
-           a remote filesystem or not.
+        """Return the name of the filesystem for path and whether it is a remote filesystem or not.
         """
-        # Create a buffer with approximately the size of the statfs structure,
-        # we only care about the first field anyway.
+        # Create a buffer with approximately the size of the statfs structure, we only care about
+        # the first field anyway.
         statfs_struct = (c_uint * 64)()
 
         path_buf = create_string_buffer(os.fsencode(path))

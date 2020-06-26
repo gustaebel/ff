@@ -49,15 +49,14 @@ class NullCache(BaseClass):
         """
 
     def get(self, plugin, path, tag):
-        """Get the object for a specific Plugin class, path with a specific
-           modification time from the cache. Return NOTSET if nothing is found.
+        """Get the object for a specific Plugin class, path with a specific modification time from
+           the cache. Return NOTSET if nothing is found.
         """
         # pylint:disable=unused-argument
         return NOTSET
 
     def set(self, plugin, path, tag, obj):
-        """Add an object to the cache for a specific Plugin class, path and
-           modification time.
+        """Add an object to the cache for a specific Plugin class, path and modification time.
         """
 
 
@@ -106,8 +105,8 @@ class Cache(NullCache):
         self.registered[plugin_cls.name] = plugin_cls
 
     def init_table(self, plugin_cls):
-        """Check if there is already a table for this plugin in the database.
-           Also drop tables from older versions of this plugin.
+        """Check if there is already a table for this plugin in the database. Also drop tables from
+           older versions of this plugin.
         """
         # Ask the database if a table exists for this plugin.
         curs = self.conn.execute(
@@ -129,8 +128,7 @@ class Cache(NullCache):
             self.conn.execute(f"drop table {table}")
 
     def get_sql_create_table(self, plugin_cls):
-        """Return the statements needed to create a table for a specific Plugin
-           class.
+        """Return the statements needed to create a table for a specific Plugin class.
         """
         table_name = plugin_cls.sql_table_name
         yield f"create table {table_name} "\
@@ -170,8 +168,8 @@ class Cache(NullCache):
             self.commit()
 
     def commit(self):
-        """We commit cached data in chunks, so that parallel processes will
-           block each other less often.
+        """We commit cached data in chunks, so that parallel processes will block each other less
+           often.
         """
         for plugin, rows in self.cached_rows.items():
             while True:

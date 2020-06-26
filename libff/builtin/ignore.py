@@ -24,9 +24,8 @@ from libff.plugin import *
 
 
 class Ignore(Plugin):
-    """The "ignore" plugin shows whether files match patterns from
-       .(git|fd|ff)ignore files. It is useful e.g. inside working copies of git
-       repositories.
+    """The "ignore" plugin shows whether files match patterns from .(git|fd|ff)ignore files. It is
+       useful e.g. inside working copies of git repositories.
     """
 
     speed = Speed.SLOW
@@ -46,13 +45,12 @@ class Ignore(Plugin):
         return True
 
     def get_ignores(self, paths):
-        """Return a list of GitIgnore objects that apply to this particular
-           directory.
+        """Return a list of GitIgnore objects that apply to this particular directory.
         """
         paths = tuple(paths)
 
-        # Construct a chain of GitIgnore objects one for each ignore file found
-        # from the parent directories on down to the current directory.
+        # Construct a chain of GitIgnore objects one for each ignore file found from the parent
+        # directories on down to the current directory.
         if paths not in self.ignores_cache:
             ignores = []
             for path in paths:
@@ -75,8 +73,7 @@ class Ignore(Plugin):
         return self.ignores_cache[paths]
 
     def is_ignored(self, entry):
-        """Return True if the Entry object matches a pattern in one of the
-           ignore files that apply.
+        """Return True if the Entry object matches a pattern in one of the ignore files that apply.
         """
         if entry.ignore_paths:
             ignores = self.get_ignores(entry.ignore_paths)

@@ -52,8 +52,7 @@ class _Base(BaseClass):
         raise NotImplementedError
 
     def setup_context(self, args, warnings):
-        """Initialize the central Context object which will be passed to all
-           components.
+        """Initialize the central Context object which will be passed to all components.
         """
         self.context.args = args
         self.context.setup()
@@ -66,8 +65,7 @@ class _Base(BaseClass):
             self.logger.warning(warning)
 
     def setup_components(self):
-        """Set up all remaining components like the registry, the cache and so
-           on.
+        """Set up all remaining components like the registry, the cache and so on.
         """
         # pylint:disable=too-many-branches
 
@@ -221,9 +219,8 @@ class Main(_Base):
     def setup_processing(self):
         args = self.context.args
 
-        # Set up processing. There are two modes of operation: Either collect all
-        # results and process them in their entirety, or process results
-        # immediately as they come in.
+        # Set up processing. There are two modes of operation: Either collect all results and
+        # process them in their entirety, or process results immediately as they come in.
         if args.sort or args.count or args.limit or args.exec_batch or args.json == "json":
             if args.exec or args.exec_batch:
                 self.context.processing = CollectiveExecProcessing(self.context)
@@ -239,8 +236,8 @@ class Main(_Base):
         """
         try:
             if __debug__ and self.context.args.profile:
-                # Start profiling. No multiprocessing is involved, Walker.loop() is
-                # run in the main thread.
+                # Start profiling. No multiprocessing is involved, Walker.loop() is run in the main
+                # thread.
                 profiler = cProfile.Profile()
                 profiler.enable()
                 self.context.walker.loop(0)
@@ -250,8 +247,7 @@ class Main(_Base):
             # Collect Entry objects from the Walker.
             self.context.processing.loop()
 
-            # Finalize and put out the result if --sort or --exec-batch is
-            # involved.
+            # Finalize and put out the result if --sort or --exec-batch is involved.
             self.context.processing.finalize()
 
             if __debug__ and self.context.args.profile:

@@ -33,8 +33,7 @@ from .exceptions import UsageError, BadPluginError, BadAttributeError
 
 
 class Registry(BaseClass):
-    """Registry class that keeps track of all installed plugins and the
-       attributes they provide.
+    """Registry class that keeps track of all installed plugins and the attributes they provide.
     """
     # pylint:disable=too-many-public-methods
 
@@ -76,8 +75,8 @@ class Registry(BaseClass):
         yield "user", self.PLUGIN_DIR_USER
 
     def load_plugin(self, name, source, path):
-        """Load the plugin code from path into a python module. After that
-           inpect the module namespace to find the Type and Plugin classes.
+        """Load the plugin code from path into a python module. After that inpect the module
+           namespace to find the Type and Plugin classes.
         """
         spec = importlib.util.spec_from_file_location(name, path)
         module = importlib.util.module_from_spec(spec)
@@ -85,8 +84,7 @@ class Registry(BaseClass):
         self.inspect_namespace(source, path, module)
 
     def inspect_namespace(self, source, path, module):
-        """Go through the objects in a module namespace and collect Type and
-           Plugin classes.
+        """Go through the objects in a module namespace and collect Type and Plugin classes.
         """
         # pylint:disable=unidiomatic-typecheck
         for obj in vars(module).values():
@@ -149,8 +147,8 @@ class Registry(BaseClass):
                 self.attributes[Attribute(name, attr)] = type_cls
 
     def init_plugin(self, name):
-        """Setup the Plugin class for later use (register it in the cache and
-           call the setup() method).
+        """Setup the Plugin class for later use (register it in the cache and call the setup()
+           method).
         """
         # pylint:disable=broad-except
         plugin_cls = self.registered_plugins[name]
@@ -168,8 +166,8 @@ class Registry(BaseClass):
             self.optimize_for_slow_plugins = True
 
     def parse_attribute(self, name):
-        """Break down an attribute into plugin name and attribute name. If the
-           attribute is without a plugin name guess which one it is.
+        """Break down an attribute into plugin name and attribute name. If the attribute is without
+           a plugin name guess which one it is.
         """
         try:
             attribute = Attribute(*name.split(".", 1))
@@ -198,8 +196,8 @@ class Registry(BaseClass):
         return attribute
 
     def setup_attribute(self, attribute):
-        """Setup an attribute for later use, i.e. setup the plugin that
-           provides it if it has not been setup already.
+        """Setup an attribute for later use, i.e. setup the plugin that provides it if it has not
+           been setup already.
         """
         attribute = self.parse_attribute(attribute)
 
@@ -239,10 +237,9 @@ class Registry(BaseClass):
                 tag = plugin.get_entry_cache_tag(entry)
                 cached = self.cache.get(plugin, entry.abspath, tag)
                 if cached is NOTSET:
-                    # There is no cached result for this entry, so we ask the
-                    # plugin for the data. Even if the plugin fails to process
-                    # this entry, we cache the return value, so that we know we
-                    # don't have to try again in the future.
+                    # There is no cached result for this entry, so we ask the plugin for the data.
+                    # Even if the plugin fails to process this entry, we cache the return value, so
+                    # that we know we don't have to try again in the future.
                     if __debug__:
                         self.logger.debug("cache",
                                 f"Cache {plugin.name!r} data for {entry.path!r}")
@@ -250,8 +247,7 @@ class Registry(BaseClass):
                     try:
                         cached = plugin.cache(entry)
                     except NoData:
-                        # Do not bother to call process() below, we could not
-                        # handle this entry.
+                        # Do not bother to call process() below, we could not handle this entry.
                         cached = NODATA
 
                     self.cache.set(plugin, entry.abspath, tag, cached)
@@ -276,9 +272,8 @@ class Registry(BaseClass):
         """Return the attribute value that is associated with entry.
         """
         if attribute.plugin == "file":
-            # Use a shortcut for attributes from the 'file' plugin. Fetch the
-            # value directly from the Entry object instead of going through the
-            # plugin.
+            # Use a shortcut for attributes from the 'file' plugin. Fetch the value directly from
+            # the Entry object instead of going through the plugin.
             return entry.get_attribute(attribute.name)
 
         data = self.get_data(entry, attribute.plugin)
