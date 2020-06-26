@@ -34,6 +34,7 @@ class Defaults:
 
     case = "smart"
     case_choices = ["smart", "ignore", "sensitive"]
+    expression_mode = "auto"
     default_attribute = "name"
     default_operator = "~"
     follow_symlinks = False
@@ -204,6 +205,14 @@ def create_parser(formatter_class=HelpFormatter):
             help="Do not descend into different file systems.")
 
     group = parser.add_argument_group("Simple pattern options")
+    group.add_argument("--auto", action="store_const", const="auto", dest="expression_mode",
+            default=Defaults.expression_mode,
+            help="Auto-detect whether an argument is a simple pattern or a full expression. "\
+                 "This is the default.")
+    group.add_argument("--strict", action="store_const", const="strict", dest="expression_mode",
+            help="Treat all arguments as expressions and treat invalid arguments as errors.")
+    group.add_argument("--simple", action="store_const", const="simple", dest="expression_mode",
+            help="Treat all arguments as simple patterns.")
     group.add_argument("-g", "--glob", action="store_const", const="%", dest="default_operator",
             default=Defaults.default_operator, help="Treat the pattern as a glob(7) pattern.")
     group.add_argument("-r", "--regex", action="store_const", const="~", dest="default_operator",

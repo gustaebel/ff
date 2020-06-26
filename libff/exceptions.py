@@ -68,7 +68,7 @@ class BadPluginError(BaseError):
     exitcode = EX_BAD_PLUGIN
 
 class BadAttributeError(BaseError):
-    """An attribute was specified that does not exist.
+    """An attribute was specified that is invalid or does not exist.
     """
     exitcode = EX_BAD_ATTRIBUTE
 

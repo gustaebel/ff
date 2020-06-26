@@ -26,7 +26,7 @@ import subprocess
 
 from libff.find import Find
 from libff.ignore import Glob
-from libff.exceptions import BadAttributeError
+from libff.exceptions import ExpressionError
 
 tests_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
 
@@ -284,7 +284,7 @@ class APITest(unittest.TestCase):
         self.assertRaises(ValueError, Find, case="foo")
 
     def test_strict(self):
-        self.assertRaises(BadAttributeError, Find, query="ba?")
+        self.assertRaises(ExpressionError, Find, query="ba?")
 
     def test_keys(self):
         find = Find()
