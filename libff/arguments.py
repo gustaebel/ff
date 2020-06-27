@@ -142,7 +142,7 @@ def create_parser(formatter_class=HelpFormatter):
     """
     # pylint:disable=too-many-statements
     parser = argparse.ArgumentParser(prog="ff", formatter_class=formatter_class, add_help=False,
-            usage="%(prog)s [<options>] [<test/directory> ... | [-D] <directory> ...]")
+            usage="%(prog)s [<options>] [<test/directory> ... | -D <directory> ...]")
 
     group = parser.add_argument_group("Global options")
 
@@ -162,8 +162,9 @@ def create_parser(formatter_class=HelpFormatter):
     group.add_argument("-j", "--jobs", type=type_jobs, default=Defaults.jobs, metavar="<num>",
             help="Set number of processes to use for searching and executing "\
                  "(default: the number of CPU cores).")
-    group.add_argument("-D", "--directories", nargs="+", default=[], metavar="<path>",
-            help="Search entries in these paths (default is current directory).")
+    group.add_argument("-D", "--directory", action="append", metavar="<path>", dest="directories",
+            default=[], help="Search entries in this path (default is current directory). May be "\
+                             "specified multiple times.")
 
     group = parser.add_argument_group("Commands")
     group.add_argument("-h", "--help", nargs="?", const="all", metavar="<plugin>",

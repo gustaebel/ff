@@ -18,7 +18,7 @@ DESCRIPTION
     Directories may be at the start or the end of the list of arguments. They are
     identified as directories when they contain at least one '/' and point to an
     existing name in the filesystem. However, directories can be explicitly
-    specified using the -D/--directories option, in which case auto-detection
+    specified using the -D/--directory option, in which case auto-detection
     will not be used. If no directory argument is found the current directory is
     used as the starting point.
 
