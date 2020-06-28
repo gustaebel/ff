@@ -1,3 +1,9 @@
+### Version 580 - (2020-06-28)
+
+- Improve glob pattern matching.
+- No longer show all debug messages by default.
+- Documentation changes.
+
 ### Version 579 - (2020-06-28)
 
 - Remove auto-detection of simple patterns.
