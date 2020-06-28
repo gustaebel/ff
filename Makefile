@@ -1,12 +1,10 @@
-FF := python -m ff --debug=none
-
 check: isort lint test
 
 isort:
-	$(FF) -HI ext=py -X isort --length-sort --multi-line 2 --diff --check-only
+	python -m ff -HI ext=py -X isort --length-sort --multi-line 2 --diff --check-only
 
 lint:
-	$(FF) ext=so libff/ -x rm
+	python -m ff ext=so libff/ -x rm
 	pylint --rcfile config/pylintrc -j0 ff libff plugins
 
 test:
@@ -22,7 +20,7 @@ clean:
 	rm -rf build dist
 	rm -rf *.egg-info
 	rm -rf __pycache__
-	$(FF) ext=so libff/ -x rm
+	python -m ff ext=so libff/ -x rm
 
 create-pypi-pkg:
 	python setup.py sdist bdist_wheel
