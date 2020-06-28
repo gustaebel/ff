@@ -34,9 +34,9 @@ class Defaults:
 
     case = "smart"
     case_choices = ["smart", "ignore", "sensitive"]
-    expression_mode = "auto"
-    default_attribute = "name"
-    default_operator = "~"
+    simple_mode = False
+    simple_attribute = "name"
+    simple_operator = "~"
     follow_symlinks = False
     jobs = MAX_CPU
     cache = os.path.expanduser("~/.cache/ff.db")
@@ -203,24 +203,22 @@ def create_parser(formatter_class=HelpFormatter):
     group.add_argument("--one-file-system", "--mount", "--xdev", action="store_true", default=False,
             help="Do not descend into different file systems.")
 
-    group = parser.add_argument_group("Simple pattern options")
-    group.add_argument("--auto", action="store_const", const="auto", dest="expression_mode",
-            default=Defaults.expression_mode,
-            help="Auto-detect whether an argument is a simple pattern or a full expression. "\
+    group = parser.add_argument_group("Simple mode options")
+    group.add_argument("-s", "--simple", action="store_true", dest="simple_mode",
+            default=Defaults.simple_mode,
+            help="Switch on simple mode and treat all arguments as patterns.")
+    group.add_argument("--strict", action="store_false", dest="simple_mode",
+            help="Do not use simple mode and treat all arguments as expressions. "\
                  "This is the default.")
-    group.add_argument("--strict", action="store_const", const="strict", dest="expression_mode",
-            help="Treat all arguments as expressions and treat invalid arguments as errors.")
-    group.add_argument("--simple", action="store_const", const="simple", dest="expression_mode",
-            help="Treat all arguments as simple patterns.")
-    group.add_argument("-g", "--glob", action="store_const", const="%", dest="default_operator",
-            default=Defaults.default_operator, help="Treat the pattern as a glob(7) pattern.")
-    group.add_argument("-r", "--regex", action="store_const", const="~", dest="default_operator",
-            help="Perform a regular-expression based search (default).")
-    group.add_argument("-F", "--fixed-strings", action="store_const", const=":",
-            dest="default_operator", help="Treat the pattern as a literal string.")
+    group.add_argument("-g", "--glob", action="store_const", const="%", dest="simple_operator",
+            default=Defaults.simple_operator, help="Treat simple patterns as glob(7) patterns.")
+    group.add_argument("-r", "--regex", action="store_const", const="~", dest="simple_operator",
+            help="Treat simple patterns as regular-expression patterns (default).")
+    group.add_argument("-F", "--fixed-string", action="store_const", const=":",
+            dest="simple_operator", help="Treat simple patterns as literal strings.")
     group.add_argument("-p", "--full-path", action="store_const", const="path",
-            dest="default_attribute", default=Defaults.default_attribute,
-            help="Search full path (default: basename only).")
+            dest="simple_attribute", default=Defaults.simple_attribute,
+            help="Search simple patterns in full path (default: basename only).")
 
     group = parser.add_argument_group("Output options")
     group.add_argument("-x", "--exec", nargs=argparse.REMAINDER, metavar="<cmd>",

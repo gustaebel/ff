@@ -1,26 +1,3 @@
-# auto
-ff --auto name=foo
-foo
-
-
-ff --auto foo
-foo
-
-
-ff --auto foo or bar
-foo
-bar
-
-
-ff --auto baz-quux
-baz-quux
-
-
-ff --auto name:ba
-bar
-baz-quux
-
-
 # strict
 ff --strict name=foo
 foo

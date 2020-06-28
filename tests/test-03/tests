@@ -1,81 +1,81 @@
-ff --case ignore case
+ff -s --case ignore case
 lowercase
 UpperCase
 
 
 
-ff --case smart case
+ff -s --case smart case
 lowercase
 UpperCase
 
 
 
-ff --case sensitive case
+ff -s --case sensitive case
 lowercase
 
 
 
-ff --case ignore Case
+ff -s --case ignore Case
 lowercase
 UpperCase
 
 
 
-ff --case smart Case
+ff -s --case smart Case
 UpperCase
 
 
 
-ff --case sensitive Case
+ff -s --case sensitive Case
 UpperCase
 
 
 
-ff lower
+ff -s lower
 lowercase
 
 
 
-ff --case ignore lower
+ff -s --case ignore lower
 lowercase
 
 
 
-ff --case smart lower
+ff -s --case smart lower
 lowercase
 
 
 
-ff --case sensitive lower
+ff -s --case sensitive lower
 lowercase
 
 
 
-ff --case ignore upper
+ff -s --case ignore upper
 UpperCase
 
 
 
-ff --case smart upper
+ff -s --case smart upper
 UpperCase
 
 
 
-ff --case sensitive upper
+ff -s --case sensitive upper
 
 
 
-ff --case ignore Upper
+ff -s --case ignore Upper
 UpperCase
 
 
 
-ff --case smart Upper
+ff -s --case smart Upper
 UpperCase
 
 
 
-ff --case sensitive Upper
+ff -s --case sensitive Upper
 UpperCase
 
 

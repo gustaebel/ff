@@ -327,25 +327,27 @@ ff name=baz or or name=foo 2>/dev/null; echo $?
 ( cd ..; ff -H workdir/ type=f and {{ not name=baz and not name=empty }} )
 workdir/foo
 
-( cd ..; ff type=f workdir/ and {{ not name=baz and not name=empty }} )
+( cd ..; ff type=f workdir/ and {{ not name=baz and not name=empty }} 2>/dev/null ); echo $?
+12
 
-( cd ..; ff type=f and {{ not name=baz workdir/ and not name=empty }} )
+( cd ..; ff type=f and {{ not name=baz workdir/ and not name=empty }} 2>/dev/null ); echo $?
+12
 
 ( cd ..; ff -H type=f and {{ not name=baz and not name=empty }} workdir/ )
 workdir/foo
 
 # --glob, --fixed-strings, --regex
-ff -g 'ba?'
+ff -s -g 'ba?'
 BAR
 baz
 
-ff -F 'ba?'
+ff -s -F 'ba?'
 
-ff -p -F dir/empty
+ff -s -p -F dir/empty
 dir/dir/empty
 dir/empty_dir
 
-ff --regex 'ba.'
+ff -s --regex 'ba.'
 BAR
 baz
 

@@ -36,9 +36,9 @@ class FindNamespace(argparse.Namespace):
     profile = None
     json = None
 
-    expression_mode = "strict"
-    default_attribute = None
-    default_operator = None
+    simple_mode = False
+    simple_attribute = None
+    simple_operator = None
 
     depth = None
 

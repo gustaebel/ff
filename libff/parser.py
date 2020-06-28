@@ -26,7 +26,7 @@ from .type import Type
 from .entry import Entry
 from .ignore import Glob
 from .attribute import Attribute
-from .exceptions import UsageError, ExpressionError, BadAttributeError
+from .exceptions import UsageError, ExpressionError
 
 
 class ParserError(Exception):
@@ -96,8 +96,8 @@ class FlatParser(BaseClass):
     def __init__(self, context, tokens, attribute=None, operator=None):
         super().__init__(context)
 
-        self.default_attribute = self.args.default_attribute if attribute is None else attribute
-        self.default_operator = self.args.default_operator if operator is None else operator
+        self.simple_attribute = self.args.simple_attribute if attribute is None else attribute
+        self.simple_operator = self.args.simple_operator if operator is None else operator
 
         self.tokens = tokens.copy()
         self.sequence = self.parse()
@@ -151,46 +151,33 @@ class FlatParser(BaseClass):
 
     def parse_test(self, test):
         """Parse an expression and return a Test object. The way the expression is interpreted
-           depends on the expression_mode. In 'strict' mode, anything that is not a valid
-           expression is treated as an error. In 'auto' mode invalid expressions will be treated as
-           simple patterns. In 'simple' mode all expressions will be treated as simple patterns.
+           depends on simple_mode. In --simple mode all expressions will be treated as simple
+           patterns instead of full expressions.
         """
-        if self.args.expression_mode in ("auto", "strict"):
+        if self.args.simple_mode:
+            # Interpret the expression as a simple pattern.
+            return self.create_test(Attribute("file", self.simple_attribute),
+                    self.simple_operator, None, test)
+
+        else:
             # Try to parse the expression.
             match = self.expression_regex.match(test)
             if match is not None:
-                # Check the expression for errors. In 'auto' mode these errors will lead to the
-                # expression being interpreted as a simple pattern.
                 attribute, operator, reference, value = match.groups()
-                try:
-                    attribute = self.registry.setup_attribute(attribute)
-                except BadAttributeError:
-                    # The attribute/plugin does not exists.
-                    if self.args.expression_mode == "strict":
-                        raise
-                else:
-                    if reference is not None:
-                        reference = reference.strip("{}")
+                attribute = self.registry.setup_attribute(attribute)
+                if reference is not None:
+                    reference = reference.strip("{}")
 
-                    # Normalize operators that contain > and <.
-                    operator = operator.replace(">", "+").replace("<", "-")
+                # Normalize operators that contain > and <.
+                operator = operator.replace(">", "+").replace("<", "-")
 
-                    if attribute.plugin is None:
-                        attribute = Attribute("file", attribute.name)
+                if attribute.plugin is None:
+                    attribute = Attribute("file", attribute.name)
 
-                    try:
-                        return self.create_test(attribute, operator, reference, value)
-                    except ExpressionError:
-                        # The expression contains errors.
-                        if self.args.expression_mode == "strict":
-                            raise
+                return self.create_test(attribute, operator, reference, value)
 
-            elif self.args.expression_mode == "strict":
-                raise ExpressionError(f"Simple patterns like {test!r} are not allowed!")
-
-        # Interpret the expression as a simple pattern.
-        return self.create_test(Attribute("file", self.default_attribute),
-                self.default_operator, None, test)
+            else:
+                raise ExpressionError(f"Invalid expression {test!r}!")
 
     def get_reference_value(self, type_cls, attribute, reference, value):
         """Fetch the value from the reference.
@@ -345,7 +332,7 @@ class Parser(FlatParser):
             token = self.tokens.pop(0)
             utoken = token.upper()
 
-            if self.args.expression_mode in ("auto", "strict"):
+            if not self.args.simple_mode:
                 if token in self.OPENING_BRACKETS:
                     self.parse_bracket_sequence(sequences, OR(AND()))
                     continue
