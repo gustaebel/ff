@@ -1,81 +1,81 @@
-ff -s --case ignore case
+ff --case ignore name:case
 lowercase
 UpperCase
 
 
 
-ff -s --case smart case
+ff --case smart name:case
 lowercase
 UpperCase
 
 
 
-ff -s --case sensitive case
+ff --case sensitive name:case
 lowercase
 
 
 
-ff -s --case ignore Case
+ff --case ignore name:Case
 lowercase
 UpperCase
 
 
 
-ff -s --case smart Case
+ff --case smart name:Case
 UpperCase
 
 
 
-ff -s --case sensitive Case
+ff --case sensitive name:Case
 UpperCase
 
 
 
-ff -s lower
+ff name:lower
 lowercase
 
 
 
-ff -s --case ignore lower
+ff --case ignore name:lower
 lowercase
 
 
 
-ff -s --case smart lower
+ff --case smart name:lower
 lowercase
 
 
 
-ff -s --case sensitive lower
+ff --case sensitive name:lower
 lowercase
 
 
 
-ff -s --case ignore upper
+ff --case ignore name:upper
 UpperCase
 
 
 
-ff -s --case smart upper
+ff --case smart name:upper
 UpperCase
 
 
 
-ff -s --case sensitive upper
+ff --case sensitive name:upper
 
 
 
-ff -s --case ignore Upper
+ff --case ignore name:Upper
 UpperCase
 
 
 
-ff -s --case smart Upper
+ff --case smart name:Upper
 UpperCase
 
 
 
-ff -s --case sensitive Upper
+ff --case sensitive name:Upper
 UpperCase
 
 

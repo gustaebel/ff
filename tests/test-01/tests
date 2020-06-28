@@ -195,6 +195,19 @@ ff -H -o perm:o,size:o,name not type=d depth=0
 
 
 
+# exclude
+ff -H -e dir 2>/dev/null; echo $?
+12
+
+
+
+ff -H -e name=dir
+foo
+BAR
+baz
+
+
+
 # keep_order
 ff -H -S
 BAR
@@ -337,17 +350,17 @@ workdir/foo
 workdir/foo
 
 # --glob, --fixed-strings, --regex
-ff -s -g 'ba?'
+ff name%ba?
 BAR
 baz
 
-ff -s -F 'ba?'
+ff name:ba?
 
-ff -s -p -F dir/empty
+ff path:dir/empty
 dir/dir/empty
 dir/empty_dir
 
-ff -s --regex 'ba.'
+ff name~ba.
 BAR
 baz
 

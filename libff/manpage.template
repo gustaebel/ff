@@ -51,22 +51,6 @@ TESTS
     must be escaped or quoted properly to prevent the shell from interpreting
     them. It is recommended to use the alternative forms '{{' and '}}'.
 
-SIMPLE MODE
-    Simple mode allows to find files by patterns using a limited but much
-    simpler syntax. It is activated by the -s/--simple option. You just specify
-    a <pattern> that each entry's basename will be matched against. It is short
-    for a test with the following syntax:
-
-    ``file.name~<pattern>``
-
-    Pattern is either interpreted as a regular expression (-r/--regex), a
-    glob(7) pattern (-g/--glob) or a fixed string (-F/--fixed-string). The
-    -p/--full-path option defines that the <pattern> is to be used against each
-    entry's full path instead of the basename.
-
-    In simple mode all arguments are treated as patterns, so there is no way of
-    grouping tests with operators or parenthesis.
-
 ATTRIBUTES
     ff(1) lets you test for a wide variety of file attributes. Attributes are
     provided by plugins. Essential plugins like 'file' and 'mime' are built in,

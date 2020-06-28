@@ -93,11 +93,8 @@ class FlatParser(BaseClass):
                                   r"(\{(?:\w+\.)?\w+?\}|\{\})?"\
                                   r"\s*(.+)\s*$")
 
-    def __init__(self, context, tokens, attribute=None, operator=None):
+    def __init__(self, context, tokens):
         super().__init__(context)
-
-        self.simple_attribute = self.args.simple_attribute if attribute is None else attribute
-        self.simple_operator = self.args.simple_operator if operator is None else operator
 
         self.tokens = tokens.copy()
         self.sequence = self.parse()
@@ -150,34 +147,25 @@ class FlatParser(BaseClass):
         yield ("    " *  level) + ")"
 
     def parse_test(self, test):
-        """Parse an expression and return a Test object. The way the expression is interpreted
-           depends on simple_mode. In --simple mode all expressions will be treated as simple
-           patterns instead of full expressions.
+        """Parse an expression and return a Test object.
         """
-        if self.args.simple_mode:
-            # Interpret the expression as a simple pattern.
-            return self.create_test(Attribute("file", self.simple_attribute),
-                    self.simple_operator, None, test)
+        match = self.expression_regex.match(test)
+        if match is not None:
+            attribute, operator, reference, value = match.groups()
+            attribute = self.registry.setup_attribute(attribute)
+            if reference is not None:
+                reference = reference.strip("{}")
+
+            # Normalize operators that contain > and <.
+            operator = operator.replace(">", "+").replace("<", "-")
+
+            if attribute.plugin is None:
+                attribute = Attribute("file", attribute.name)
+
+            return self.create_test(attribute, operator, reference, value)
 
         else:
-            # Try to parse the expression.
-            match = self.expression_regex.match(test)
-            if match is not None:
-                attribute, operator, reference, value = match.groups()
-                attribute = self.registry.setup_attribute(attribute)
-                if reference is not None:
-                    reference = reference.strip("{}")
-
-                # Normalize operators that contain > and <.
-                operator = operator.replace(">", "+").replace("<", "-")
-
-                if attribute.plugin is None:
-                    attribute = Attribute("file", attribute.name)
-
-                return self.create_test(attribute, operator, reference, value)
-
-            else:
-                raise ExpressionError(f"Invalid expression {test!r}!")
+            raise ExpressionError(f"Invalid expression {test!r}!")
 
     def get_reference_value(self, type_cls, attribute, reference, value):
         """Fetch the value from the reference.
@@ -332,41 +320,40 @@ class Parser(FlatParser):
             token = self.tokens.pop(0)
             utoken = token.upper()
 
-            if not self.args.simple_mode:
-                if token in self.OPENING_BRACKETS:
-                    self.parse_bracket_sequence(sequences, OR(AND()))
-                    continue
+            if token in self.OPENING_BRACKETS:
+                self.parse_bracket_sequence(sequences, OR(AND()))
+                continue
 
-                elif token in self.CLOSING_BRACKETS:
-                    if not sequences[-1]:
-                        raise ParserError("empty expression")
-                    self.tokens.insert(0, token)
-                    return
+            elif token in self.CLOSING_BRACKETS:
+                if not sequences[-1]:
+                    raise ParserError("empty expression")
+                self.tokens.insert(0, token)
+                return
 
-                elif utoken == "AND":
-                    continue
+            elif utoken == "AND":
+                continue
 
-                elif utoken == "OR":
-                    sequences.append(AND())
-                    continue
+            elif utoken == "OR":
+                sequences.append(AND())
+                continue
 
-                elif utoken == "NOT":
-                    if not self.tokens:
-                        raise ParserError("premature eof")
+            elif utoken == "NOT":
+                if not self.tokens:
+                    raise ParserError("premature eof")
 
-                    utoken = self.tokens[0].upper()
+                utoken = self.tokens[0].upper()
 
-                    if utoken in self.OPENING_BRACKETS:
-                        self.tokens.pop(0)
-                        self.parse_bracket_sequence(sequences, NOT(AND()))
+                if utoken in self.OPENING_BRACKETS:
+                    self.tokens.pop(0)
+                    self.parse_bracket_sequence(sequences, NOT(AND()))
 
-                    elif utoken in ("AND", "OR", "NOT") + self.CLOSING_BRACKETS:
-                        raise ParserError(f"unexpected token {utoken!r}")
+                elif utoken in ("AND", "OR", "NOT") + self.CLOSING_BRACKETS:
+                    raise ParserError(f"unexpected token {utoken!r}")
 
-                    else:
-                        sequences[-1].append(NOT(AND(self.parse_test(self.tokens.pop(0)))))
+                else:
+                    sequences[-1].append(NOT(AND(self.parse_test(self.tokens.pop(0)))))
 
-                    continue
+                continue
 
             sequences[-1].append(self.parse_test(token))
 

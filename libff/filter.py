@@ -63,7 +63,7 @@ class Excluder(Filter):
     # pylint:disable=method-hidden
 
     def __init__(self, context, tokens):
-        super().__init__(context, Parser(context, tokens, "name", "%"))
+        super().__init__(context, Parser(context, tokens))
 
     def test_empty(self, entry):
         """Default test method when the list of tests is empty.
