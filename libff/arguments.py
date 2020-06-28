@@ -119,11 +119,11 @@ class HelpFormatter(argparse.HelpFormatter):
                 default = self._get_default_metavar_for_optional(action)
                 args_string = self._format_args(action, default)
                 for i, option_string in enumerate(action.option_strings):
-                    if i == 0:
+                    if len(option_string) == 2:
                         parts.append(option_string)
                     else:
-                        parts.append('%s %s' % (option_string, args_string))
-            return ', '.join(parts)
+                        parts.append("%s %s" % (option_string, args_string))
+            return ", ".join(parts)
 
     def _format_args(self, action, default_metavar):
         # Instead of three dots ... show the name of the argument for REMAINDER arguments.
