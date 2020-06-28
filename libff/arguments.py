@@ -22,9 +22,9 @@ import os
 import re
 import sys
 import shlex
-import argparse
 
 from . import MAX_CPU
+from .argparse import ArgumentParser
 from .exceptions import EX_OK, UsageError
 
 
@@ -99,148 +99,113 @@ def type_ranges(string):
     return segments
 
 
-class HelpFormatter(argparse.HelpFormatter):
-    """HelpFormatter subclass that does not show arguments for short but only for long options and
-       shows the argument for REMAINDER options instead of three dots.
-    """
-
-    def __init__(self, prog, indent_increment=2, max_help_position=27, width=None):
-        super().__init__(prog, indent_increment, max_help_position, width)
-
-    def _format_action_invocation(self, action):
-        # Don't show the argument for short options. This looks cleaner.
-        if not action.option_strings:
-            return super()._format_action_invocation(action)
-        else:
-            parts = []
-            if action.nargs == 0:
-                parts.extend(action.option_strings)
-            else:
-                default = self._get_default_metavar_for_optional(action)
-                args_string = self._format_args(action, default)
-                for option_string in action.option_strings:
-                    if len(option_string) == 2:
-                        parts.append(option_string)
-                    else:
-                        parts.append("%s %s" % (option_string, args_string))
-            return ", ".join(parts)
-
-    def _format_args(self, action, default_metavar):
-        # Instead of three dots ... show the name of the argument for REMAINDER arguments.
-        result = super()._format_args(action, default_metavar)
-        if action.nargs == argparse.REMAINDER:
-            return self._metavar_formatter(action, default_metavar)(1)[0]
-        else:
-            return result
-
-
-def create_parser(formatter_class=HelpFormatter):
-    """Create the argparse.ArgumentParser object.
+def create_parser():
+    """Create the ArgumentParser object.
     """
     # pylint:disable=too-many-statements
-    parser = argparse.ArgumentParser(prog="ff", formatter_class=formatter_class, add_help=False,
-            usage="%(prog)s [<options>] [<test/directory> ... | -D <directory> ...]")
+    parser = ArgumentParser()
 
-    group = parser.add_argument_group("Global options")
-
-    group.add_argument("tests", nargs="*", metavar="<test/directory>",
+    parser.add_group("Global options")
+    parser.add_option("tests", action="arguments", metavar="<test/directory>",
             help="A test for file matching or a the path to a directory to search.")
     if __debug__:
-        group.add_argument("--profile", action="store_true", default=False,
+        parser.add_option("--profile", action="store_true", default=False,
                 help="Do a profiling run on the given arguments and suppress the output.")
-        group.add_argument("--debug", type=type_list, default=["none"], metavar="<categories>",
+        parser.add_option("--debug", type=type_list, default=["none"], metavar="<categories>",
                 help="Show debug messages. Specify either 'all', 'none' or a comma-separated list "\
                      "of <categories>, default is to show 'none'.")
-    group.add_argument("--cache", default=Defaults.cache, metavar="<path>",
-            help="Location of the metadata cache (default: %(default)s).")
-    group.add_argument("--no-cache", action="store_const", dest="cache", const=None,
+    parser.add_option("--cache", default=Defaults.cache, metavar="<path>",
+            help="Location of the metadata cache, the default is ~/.cache/ff.db.")
+    parser.add_option("--no-cache", action="store_const", dest="cache", const=None,
             help="Do not use the metadata cache.")
-    group.add_argument("--clean-cache", action="store_const", const="clean", dest="action",
+    parser.add_option("--clean-cache", action="store_const", const="clean", dest="action",
             help="Remove stale entries from the metadata cache.")
-    group.add_argument("-j", "--jobs", type=type_jobs, default=Defaults.jobs, metavar="<num>",
+    parser.add_option("-j", "--jobs", type=type_jobs, default=Defaults.jobs, metavar="<num>",
             help="Set number of processes to use for searching and executing "\
                  "(default: the number of CPU cores).")
-    group.add_argument("-D", "--directory", action="append", metavar="<path>", dest="directories",
+    parser.add_option("-D", "--directory", action="append", metavar="<path>", dest="directories",
             default=[], help="Search entries in this path (default is current directory). May be "\
                              "specified multiple times.")
 
-    group = parser.add_argument_group("Commands")
-    group.add_argument("-h", "--help", nargs="?", const="all", metavar="<plugin>",
+    parser.add_group("Commands")
+    parser.add_option("-h", "--help", action="store_optional", const="all", metavar="<plugin>",
             help="Show this help message or the help message for a particular plugin.")
-    group.add_argument("--version", action="store_const", const="version", dest="action",
-            default=None, help="Show program's version number and exit.")
-    group.add_argument("--help-full", action="store_const", const="full", dest="action",
+    parser.add_option("--version", action="store_const", const="version", dest="action",
+            help="Show program's version number and exit.")
+    parser.add_option("--help-full", action="store_const", const="full", dest="action",
             help="Show a full help in man page format.")
-    group.add_argument("--help-attributes", action="store_const", const="attributes", dest="action",
+    parser.add_option("--help-attributes", action="store_const", const="attributes",
+            dest="action",
             help="Show a list of available attributes to use for searching, sorting and output.")
-    group.add_argument("--help-plugins", action="store_const", const="plugins", dest="action",
+    parser.add_option("--help-plugins", action="store_const", const="plugins", dest="action",
             help="Show a list of available plugins.")
-    group.add_argument("--help-types", action="store_const", const="types", dest="action",
+    parser.add_option("--help-types", action="store_const", const="types", dest="action",
             help="Show a list of available types.")
 
-    group = parser.add_argument_group("Search options")
-    group.add_argument("-H", "--hide", action="store_true",  default=False,
+    parser.add_group("Search options")
+    parser.add_option("-e", "--exclude", action="append", default=[], metavar="<test>",
+            help="Exclude entries that match the given test.")
+    parser.add_option("-H", "--hide", action="store_true",  default=False,
             help="Do not show hidden files and directories.")
-    group.add_argument("-I", "--ignore", action="store_true", default=False,
+    parser.add_option("-I", "--ignore", action="store_true", default=False,
             help="Do not show files that are excluded by patterns from .(git|fd|ff)ignore files.")
-    group.add_argument("-d", "--depth", type=type_ranges, default=None, metavar="<range>",
+    parser.add_option("--no-parent-ignore", action="store_true", default=False,
+            help="Do not read patterns from ignore files from parent directories.")
+    parser.add_option("-d", "--depth", type=type_ranges, metavar="<range>",
             help="Show only files that are located at a certain depth level of the directory "\
                  "tree that is within the given <range>. A <range> is a string of the form "\
                  "'<start>-<stop>'. <start> and <stop> are optional and may be omitted. "\
                  "<range> may also be a single number. It is possible to specify multiple "\
                  "ranges separated by comma.")
-    group.add_argument("--no-parent-ignore", action="store_true", default=False,
-            help="Do not read patterns from ignore files from parent directories.")
-    group.add_argument("-e", "--exclude", action="append", default=[], metavar="<test>",
-            help="Exclude entries that match the given test.")
-    group.add_argument("-c", "--case", choices=Defaults.case_choices, dest="case",
+    parser.add_option("-c", "--case", choices=Defaults.case_choices, dest="case",
             default=Defaults.case, metavar="<mode>",
             help="How to treat the case of text attributes (smart, ignore or sensitive).")
-    group.add_argument("-L", "--follow", action="store_true", dest="follow_symlinks",
+    parser.add_option("-L", "--follow", action="store_true", dest="follow_symlinks",
             default=Defaults.follow_symlinks, help="Follow symbolic links.")
-    group.add_argument("--one-file-system", "--mount", "--xdev", action="store_true", default=False,
+    parser.add_option("--one-file-system", "--mount", "--xdev", action="store_true",
+            default=False,
             help="Do not descend into different file systems.")
 
-    group = parser.add_argument_group("Output options")
-    group.add_argument("-x", "--exec", nargs=argparse.REMAINDER, metavar="<cmd>",
+    parser.add_group("Output options")
+    parser.add_option("-x", "--exec", action="store_remainder", metavar="<cmd>",
             help="Execute a command for each search result.")
-    group.add_argument("-X", "--exec-batch", nargs=argparse.REMAINDER, metavar="<cmd>",
+    parser.add_option("-X", "--exec-batch", action="store_remainder", metavar="<cmd>",
             help="Execute a command with all search results at once.")
-    group.add_argument("-C", "--color", choices=["auto", "never", "always"],
+    parser.add_option("-C", "--color", choices=["auto", "never", "always"],
             default="never" if "NO_COLOR" in os.environ else "auto",
             metavar="<when>", help="When to use colors: never, *auto*, always.")
-    group.add_argument("-a", "--absolute-path", action="store_true", default=False,
+    parser.add_option("-a", "--absolute-path", action="store_true", default=False,
             help="Show absolute instead of relative paths.")
-    group.add_argument("-0", "--print0", action="store_const", const="\0", dest="newline",
+    parser.add_option("-0", "--print0", action="store_const", const="\0", dest="newline",
             default="\n", help="Separate results by the null character.")
-    group.add_argument("-v", "--verbose", action="store_const", dest="output", default=["path"],
+    parser.add_option("-v", "--verbose", action="store_const", dest="output", default=["path"],
             const=["mode:h", "links", "user:h", "group:h", "size:5h", "time:h", "path:h"],
             help="Produce output similar to `ls -l`.")
-    group.add_argument("-S", "--sort", nargs="?", type=type_list, const="file.path", default=None,
+    parser.add_option("-S", "--sort", action="store_optional", type=type_list, const="file.path",
             metavar="<attribute-list>", help="Sort entries by path or any other attribute.")
-    group.add_argument("-R", "--reverse", action="store_true", default=False,
+    parser.add_option("-R", "--reverse", action="store_true", default=False,
             help="Reverse the sort order.")
-    group.add_argument("--count", nargs="?", type=type_list, const="file.size:h,file.type",
-            default=None, metavar="<attribute-list>",
+    parser.add_option("--count", action="store_optional", type=type_list,
+            const="file.size:h,file.type", metavar="<attribute-list>",
             help="Count the attributes from <attribute-list> and print statistics, "\
                  "instead of the result, the default is to count the total size and "\
                  "the file types of the entries found. Add --json for JSON output.")
-    group.add_argument("-l", "--limit", action="store", type=type_number, default=None,
+    parser.add_option("-l", "--limit", action="store", type=type_number,
             metavar="<n>", help="Limit output to at most <n> entries.")
-    group.add_argument("-1", action="store_const", const=1, dest="limit",
+    parser.add_option("-1", action="store_const", const=1, dest="limit",
             help="Print only the first entry and exit immediately.")
-    group.add_argument("-o", "--output", type=type_list, metavar="<attribute-list>",
+    parser.add_option("-o", "--output", type=type_list, metavar="<attribute-list>",
             help="Print each entry by using a template of comma-separated attributes. "\
                  "The special value 'file' stands for all file attributes.")
-    group.add_argument("--sep", default=" ", metavar="<string>", dest="separator",
+    parser.add_option("--sep", default=" ", metavar="<string>", dest="separator",
             help="Separate each attribute of --output with <string>, default is a single space.")
-    group.add_argument("--all", action="store_true", default=False,
+    parser.add_option("--all", action="store_true", default=False,
             help="Show all entries including the ones with missing attribute values.")
-    group.add_argument("--json", action="store_const", const="json", dest="json", default=None,
+    parser.add_option("--json", action="store_const", const="json", dest="json",
             help="Print attributes as one big json object to stdout.")
-    group.add_argument("--jsonl", "--ndjson", action="store_const", const="jsonl", dest="json",
+    parser.add_option("--jsonl", "--ndjson", action="store_const", const="jsonl", dest="json",
             help="Print attributes as jsonl (one json object per line) to stdout.")
-    group.add_argument("--si", action="store_true", default=Defaults.si,
+    parser.add_option("--si", action="store_true", default=Defaults.si,
             help="Parse and print file sizes in units of 1K=1000 bytes instead of 1K=1024 bytes.")
 
     return parser

@@ -26,40 +26,13 @@ import subprocess
 
 from . import exceptions
 from .convert import time_formats
-from .arguments import HelpFormatter, create_parser
+from .arguments import create_parser
 from .__version__ import __version__
 
 bd = r"\fB"
 it = r"\fI"
 rs = r"\fR"
 br = ".br"
-
-
-class ManPageHelpFormatter(HelpFormatter):
-    """Produce help output from an argparse.ArgumentParser suitable for the manpage.
-    """
-
-    def add_usage(self, usage, actions, groups, prefix=None):
-        pass
-
-    def add_text(self, text):
-        pass
-
-    def start_section(self, heading):
-        super().start_section("    " + heading)
-
-    def _format_action(self, action):
-        action_header = self._format_action_invocation(action)
-        help_text = self._expand_help(action)
-        return f"\n    {action_header}  {help_text}\n\n"
-
-
-class ManPageUsageFormatter(HelpFormatter):
-    """Produce usage output from an argparse.ArgumentParser suitable for the manpage.
-    """
-
-    def _format_usage(self, usage, actions, groups, prefix):
-        return super()._format_usage(usage, actions, groups, "")
 
 
 class ManPage:
@@ -119,13 +92,13 @@ class ManPage:
         """
         if name == "help":
             fobj = io.StringIO()
-            parser = create_parser(formatter_class=ManPageHelpFormatter)
-            parser.print_help(file=fobj)
+            parser = create_parser()
+            parser.print_manpage_help(file=fobj)
             self.parse_lines(fobj.getvalue().splitlines())
 
         elif name == "usage":
             fobj = io.StringIO()
-            parser = create_parser(formatter_class=ManPageUsageFormatter)
+            parser = create_parser()
             parser.print_usage(file=fobj)
             self.parse_lines(fobj.getvalue().splitlines())
 
