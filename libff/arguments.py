@@ -144,7 +144,7 @@ def create_parser(formatter_class=HelpFormatter):
     group = parser.add_argument_group("Global options")
 
     group.add_argument("tests", nargs="*", metavar="<test/directory>",
-            help="A test expression for matching files or a directory to search.")
+            help="A test for file matching or a the path to a directory to search.")
     if __debug__:
         group.add_argument("--profile", action="store_true", default=False,
                 help="Do a profiling run on the given arguments and suppress the output.")

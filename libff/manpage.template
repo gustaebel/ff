@@ -10,17 +10,16 @@ DESCRIPTION
     at being more accessible and easier to use than find(1) and more versatile
     and powerful than fd(1).
 
-    ff(1) takes a set of expressions and directories as arguments and uses them
-    for searching the filesystem. If no arguments are specified, ff(1) lists all
-    files and directories below the directory you are currently in.
-
-    Whether an argument is a test or a directory is auto-detected.
-    Directories may be at the start or the end of the list of arguments. They are
-    identified as directories when they contain at least one '/' and point to an
-    existing name in the filesystem. However, directories can be explicitly
-    specified using the -D/--directory option, in which case auto-detection
-    will not be used. If no directory argument is found the current directory is
+    ff(1) evaluates an expression (a set of tests) for all entries it finds in
+    a set of directories and prints those that match. An empty expression
+    defaults to true. Without a directory argument the current directory is
     used as the starting point.
+
+    Directory names may be at the start or the end of the list of arguments.
+    They are identified as directories if they contain at least one '/' and
+    point to an existing name in the filesystem. However, directories can be
+    explicitly specified using the -D/--directory option, in which case
+    auto-detection will not be used.
 
     ff(1) uses parallel processes to speed up searching by default. The number of
     processes depends on the number of CPU cores and can be controlled with
@@ -30,58 +29,74 @@ OPTIONS
     ::help
 
 TESTS
-    All remaining command line arguments that do not point to directories will be
-    used as tests. Each filesystem entry is checked against this list of tests
-    and is included in the result if it matches.
+    The expression is made up of a set of tests. A test has the form:
 
-    A test basically has the form:
+    ``<[plugin.]attribute><operator><value>``
 
-    ``[<[plugin.]attribute><operator>]<value>``
+    A test compares a <value> (or pattern) with the value of an <attribute> of
+    a filesystem entry. The type of comparison performed is indicated by the
+    <operator>. For example:
 
-    So, a test compares a certain <value> (or pattern) with the value of a
-    certain <attribute> of a filesystem entry. The type of comparison performed
-    is indicated by the <operator>.
+    ``file.path:foo``
 
-    It is good practice to use full attribute names and to quote either the value
-    or the whole test to prevent the shell from interfering with characters like
-    '*', '(', ')', '<', '>', '!', etc.
-
-    Tests can be grouped with 'AND' and 'OR' operators and parenthesis, whereas
-    the 'AND' is always implied and can be omitted. Please note that parenthesis
-    must be escaped or quoted properly to prevent the shell from interpreting
-    them. It is recommended to use the alternative forms '{{' and '}}'.
+    The example test evaluates to true if the pathname attribute
+    ('path') of the filesystem entry (as provided by the 'file' plugin)
+    contains (':') the substring 'foo'.
 
 ATTRIBUTES
-    ff(1) lets you test for a wide variety of file attributes. Attributes are
+    ff(1) offers a wide variety of file attributes to test for. Attributes are
     provided by plugins. Essential plugins like 'file' and 'mime' are built in,
     but you can also add your own plugins written in python(1).
 
     The full name of an attribute consists of the <plugin> name, a dot, and the
-    <attribute> name. The plugin part of the attribute is optional unless the
-    same attribute name is provided by multiple plugins. It will produce an error
-    if an attribute name in a test is ambiguous. An exception is the 'file'
-    plugin whose attribute names are global, always take precedence and will
-    never produce an error. It is recommended to always use the full attribute
-    name.
+    <attribute> name. The <plugin> name is optional as long as the <attribute>
+    name is unique among all plugins. It is an error if an attribute name in a
+    test is ambiguous. The only exception is the 'file' plugin whose attribute
+    names are all global, always take precedence and will never produce an
+    error. However, it is good practice to always use the full attribute name.
+
+    It is recommended to quote either the value or the whole test to prevent
+    the shell from interpreting special characters like '*', '(', ')', '<',
+    '>', '!', etc.
+
+    Tests may be grouped with 'AND' and 'OR' operators and parenthesis. 'AND'
+    is implied and can be omitted. Please note that parenthesis '(' and ')'
+    must be escaped or quoted properly to prevent the shell from interpreting
+    them. It is recommended to use the alternative forms '{{' and '}}'.
 
     For more information about which attributes there are available use
     `ff --help-attributes`.
 
 TYPES
-    Each attribute has a certain type that describes how its value is supposed to
-    be interpreted and which operators it supports. Beside the common 'string',
-    'number' and 'boolean' types there are also types for file sizes, file
-    permissions, timestamps, durations etc.
+    Each attribute has a certain type assigned to it that describes how its
+    value is supposed to be interpreted and which operators it supports. Also,
+    the type defines how a value in a test provided by the user is supposed to
+    be parsed.
 
-    There are a number of predefined date and time parsing patterns for
-    attributes having a 'time' type.
+    Beside the common 'string', 'number' and 'boolean' types there are types
+    for file sizes, file permissions, timestamps, durations etc.
+
+    Boolean values may be one of 'true', 't', '1', 'yes', 'y', 'on' or 'false',
+    'f', '0', 'no', 'n', 'off'. Case is ignored.
+
+    File size values are parsed as positive integers or floating point numbers
+    followed by a size unit. The units 'K', 'M', 'G', 'T' etc. use 1024 as
+    base, the units 'KB', 'KiB', 'MB', 'MiB', 'GB', 'GiB', 'TB', 'TiB' use 1000
+    as base. Case is ignored.
+
+    File mode values are supposed to be input as an octal number or in symbolic
+    file mode notation (see find(1)'s -perm option).
+
+    Timestamps are stored as seconds since 1970-01-01 00:00:00. There are a
+    number of predefined date and time input parsing patterns:
 
     ::time_patterns
 
     If none of the patterns above matches and the value is a plain number it is
-    interpreted as seconds since 1970-01-01 00:00:00.
+    interpreted as seconds since 1970.
 
-    Durations consist of one or more partial time designations that are summed up, e.g.:
+    Durations consist of one or more partial time designations that are summed
+    up, e.g.:
 
         ``1h30m25s``
 
@@ -89,17 +104,20 @@ TYPES
     days, 'w' for weeks (7 days), 'M' for months (30 days) and 'y' for years (365
     days). If no unit is given 'm' for minutes is assumed.
 
+    For more information about types use `ff --help-types`. For information
+    about which attribute has which type use `ff --help-attributes`.
+
 OPERATORS
     The third component in a test beside the <attribute> and the <value> is the
     <operator>.
 
-    There are operators for numbers:
+    There are operators for number-based types:
 
-    =       attribute is equal to <value>
-    += >=   attribute is greater than or equal to <value>
-    -= <=   attribute is less than or equal to <value>
-    + >     attribute is greater than <value>
-    - <     attribute is less than <value>
+    =          attribute is equal to <value>
+    += or >=   attribute is greater than or equal to <value>
+    -= or <=   attribute is less than or equal to <value>
+    + or >     attribute is greater than <value>
+    - or <     attribute is less than <value>
 
     Please note that the `>` and `<` characters must be properly quoted to avoid
     being interpreted as redirections by the shell, which is why the `+` and `-`
@@ -121,10 +139,11 @@ OPERATORS
 
     Operators for booleans:
 
-    =       attribute is equal to <value>, which may be one of (true, t, 1, yes,
-            y, on) or (false, f, 0, no, n, off). The case is ignored.
+    =       attribute is equal to <value>, which may be one of 'true', 't',
+            '1', 'yes', 'y', 'on' or 'false', 'f', '0', 'no', 'n', 'off'. The
+            case is ignored.
 
-    Operators for mode:
+    Operators for file mode:
 
     =       all bits from the attribute are exactly equal to <value>
     :       all bits that are set in <value> are also set in the attribute
@@ -145,10 +164,10 @@ FILE REFERENCES
 
 OUTPUT
     The contents of what is printed to standard output can be controlled using
-    the -o/--output and the --sep options. -o/--output is a comma-separated list
-    of attribute names, that will be printed using the separator string from the
-    --sep option. -o/--output defaults to 'path'. Use --output=file as a
-    shorthand for all attributes from the 'file' plugin.
+    the -o/--output and the --sep options. -o/--output is supposed to be a
+    comma-separated list of attribute names, that will be printed using the
+    separator string from the --sep option. -o/--output defaults to 'path'. Use
+    --output=file as a shorthand for all attributes from the 'file' plugin.
 
     Entries that are missing a value for one of the attributes in the list from
     -o/--output will not be printed unless the --all option is given.
@@ -156,16 +175,16 @@ OUTPUT
     The -v/--verbose option produces output in the style of ls(1)'s long
     listing format.
 
-    The --json and --jsonl options print each record as a JSON object to standard
-    output. The attributes of the JSON object are the same as in -o/--output, but
-    --all is implied and missing attributes have a null value. The difference
-    between both options is that --json produces one big JSON list object
-    containing all the records, whereas the --jsonl prints one JSON object per
-    record per line.
+    The --json and --jsonl/--ndjson options print each record as a JSON object
+    to standard output. The attributes of the JSON object are the same as in
+    -o/--output, but --all is implied and missing attributes have a null value.
+    The difference between both options is that --json produces one big JSON
+    list object containing all the records, whereas the --jsonl/--ndjson prints
+    one JSON object per record per line.
 
     By default, pathnames are printed in color according to dircolors(1) rules,
-    unless NO_COLOR is set, --color is set to 'never', or ff(1) is not connected
-    to a terminal. Color output can be forced with --color=always.
+    unless NO_COLOR is set, --color is set to 'never', or the output is not
+    connected to a terminal. Color output can be forced with --color=always.
 
     Furthermore, the formatting of individual attribute values can be controlled
     with modifiers. The syntax is: <attribute-name>:<modifier>. <modifier> can be
@@ -181,37 +200,41 @@ OUTPUT
     $ ff --output size:h,perm:o,path --sort size
 
 
-EXECUTION
-    The -x/--exec and -X/--exec-batch options allow executing commands with
-    search results as their arguments. -x/--exec starts one process for every
-    result, whereas -X/--exec-batch starts one process that gets all search
-    results at once.
-    The exit status of ff(1) will be set accordingly if one of the commands
-    terminates with an error, see EXIT CODES below:
+COMMAND EXECUTION
+    The -x/--exec and -X/--exec-batch options allow executing external commands
+    with search results as their arguments. -x/--exec starts one process for
+    every search result, whereas -X/--exec-batch starts one process that gets
+    all results at once. The exit status of ff(1) will be set accordingly if
+    one of the commands terminates with an error, see EXIT CODES below.
+
+    The -x/--exec and the -X/--exec-batch options terminate ff(1)'s command
+    line. All arguments that follow make up the command template and will be
+    passed to the subprocess.
 
     The following placeholders are substituted in the command template:
 
-    {}  full path, alias for {file.path}
-    {/}  basename, alias for {file.name}
+    {}    full path, alias for {file.path}
+    {/}   basename, alias for {file.name}
     {//}  parent directory, alias for {file.dir}
-    {.}  path without file extension, alias for {file.pathx}
+    {.}   path without file extension, alias for {file.pathx}
     {/.}  basename without file extension, alias for {file.namex}
     {..}  file extension, alias for {file.ext}
     {attribute}  replaced with the value of attribute
 
     If no placeholder is found in the command template the full path is used as
-    the argument. The -o/--output option has no effect on -x/--exec and
+    the default argument. The -o/--output option has no effect on -x/--exec and
     -X/--exec-batch.
 
 EXCLUSION
-    The -e/--exclude option allows to exclude entries that match the <test>.
-    Excluding takes place before all other tests are evaluated. If a directory
-    matches it will not be descended into, so entries below it will not be
-    produced.
+    The -e/--exclude option takes a single test as argument. All entries that
+    match this test will be excluded from the list of results even before the
+    expression is evaluated. A matching directory will not be descended into,
+    so the entries it contains will not be produced. -e/--exclude may be
+    specified multiple times.
 
     If -H/--hide is given, all hidden files will be excluded using this method,
     i.e. the option translates to '--exclude hide=yes'. The same applies to
-    -I/--ignore which tranlates to '--exclude ignored=yes'.
+    -I/--ignore which translates to '--exclude ignored=yes'.
 
 IGNORE FILES
     By default, ff(1) reads .gitignore, .ignore, .fdignore, and .ffignore files
@@ -221,8 +244,8 @@ IGNORE FILES
 SORTING
     Sorting is controlled with the -S/--sort option. It is off by default, this
     way entries are processed and printed as soon as they are found instead of
-    being collected and sorted first. This makes better use of ff(1)'s parallel
-    processing capabilities and is much faster.
+    first being collected and then sorted. This makes better use of ff(1)'s
+    parallel processing capabilities and is much faster.
 
     -S/--sort takes an optional <attribute-list> argument. Without it, sorting is
     done alphabetically on the entry's path. <attribute-list> is a
@@ -234,19 +257,19 @@ COUNTING
     search, count the entries and the attributes from <attribute-list> and print
     these counts to standard output. If --count is given without a list of
     attributes the total size of all files and statistics about the different
-    file types is displayed. If <attribute-list> is present a total or a count of
-    these attributes is done. There is always a '_total' field that contains the
+    file types is displayed. If <attribute-list> is present these attributes
+    are used for counting. There is always a '_total' field that contains the
     number of all entries that matched.
 
     There are two possible ways in which attributes are counted that depend on
     their type. Types like file size or duration that vary widely are summed up
-    to a total and for all other types the number of occurrences of each
-    individual value is counted. This way you can get an overview on the variety
-    of values of an attribute. For some attributes --count makes not much sense,
-    e.g. path or time. It is best suited for attributes like type, perm, hidden,
-    depth, uid, gid, etc.
+    to a total. For all other types the number of occurrences of each
+    individual value is counted, this way you can get an overview on the
+    variety of values of an attribute. For some attributes --count makes not
+    much sense, e.g. path or time. It is best suited for attributes like type,
+    perm, hidden, depth, uid, gid, etc.
 
-    The way a type is counted can be checked with --help-types.
+    The way a type is counted can be checked with `ff --help-types`.
 
 CACHING
     Some plugins use a cache to store information between consecutive runs that
@@ -256,11 +279,11 @@ CACHING
     can turn off caching with the --no-cache option.
 
 OPTIMIZATIONS
-    ff(1) will automatically optimize the series of tests by grouping faster
-    tests before slower ones. This will lead to a considerable speedup in many
-    cases because a test sequence that is run for an entry is terminated as
-    soon as the first test fails. That way many of the slower tests at the end
-    of the sequence are more likely to be skipped.
+    ff(1) will automatically optimize the expression by reordering tests i.e.
+    grouping faster tests before slower ones, which will lead to a considerable
+    speedup in many cases. That is because the sequence of tests is terminated
+    as soon as it turns out that it will not evaluate to true, and so the slow
+    tests at the end are more likely to be skipped. 
 
 PLUGINS
     It is possible to write your own plugins and extend ff(1)'s functionality. A
@@ -276,7 +299,6 @@ LIMITATIONS
     prevent that.
 
 EXAMPLES
-
     Find only regular files in the current directory and all its subdirectories:
 
     $ ff type=f
@@ -287,7 +309,7 @@ EXAMPLES
 
     Find files matching the glob pattern:
 
-    $ ff -g '*.txt'
+    $ ff 'name%*.txt'
 
     Find files executable by the user:
 

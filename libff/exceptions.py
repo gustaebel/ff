@@ -72,6 +72,6 @@ class BadAttributeError(BaseError):
     exitcode = EX_BAD_ATTRIBUTE
 
 class ExpressionError(BaseError):
-    """There was an error in a test expression.
+    """There was an error in a test definition.
     """
     exitcode = EX_EXPRESSION
