@@ -77,7 +77,7 @@ class Logger:
         def debug(self, category, message):
             """Print a debug message to standard error output if --debug is switched on.
             """
-            if self.debug_categories is None or category in self.debug_categories:
+            if "all" in self.debug_categories or category in self.debug_categories:
                 print(f"DEBUG:{category}: {message}", file=sys.stderr)
 
         def debug_proc(self, index, message):

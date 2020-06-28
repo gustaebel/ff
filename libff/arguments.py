@@ -118,7 +118,7 @@ class HelpFormatter(argparse.HelpFormatter):
             else:
                 default = self._get_default_metavar_for_optional(action)
                 args_string = self._format_args(action, default)
-                for i, option_string in enumerate(action.option_strings):
+                for option_string in action.option_strings:
                     if len(option_string) == 2:
                         parts.append(option_string)
                     else:
@@ -148,9 +148,10 @@ def create_parser(formatter_class=HelpFormatter):
     if __debug__:
         group.add_argument("--profile", action="store_true", default=False,
                 help="Do a profiling run on the given arguments and suppress the output.")
-        group.add_argument("--debug", type=type_list, default=None,
-                help="Show only debug messages of certain categories, default is to show all.")
-    group.add_argument("--cache", default=Defaults.cache,
+        group.add_argument("--debug", type=type_list, default=["none"], metavar="<categories>",
+                help="Show debug messages. Specify either 'all', 'none' or a comma-separated list "\
+                     "of <categories>, default is to show 'none'.")
+    group.add_argument("--cache", default=Defaults.cache, metavar="<path>",
             help="Location of the metadata cache (default: %(default)s).")
     group.add_argument("--no-cache", action="store_const", dest="cache", const=None,
             help="Do not use the metadata cache.")
@@ -224,8 +225,8 @@ def create_parser(formatter_class=HelpFormatter):
             help="Count the attributes from <attribute-list> and print statistics, "\
                  "instead of the result, the default is to count the total size and "\
                  "the file types of the entries found. Add --json for JSON output.")
-    group.add_argument("-l", "--limit", action="store", type=type_number, default=None, metavar="N",
-            help="Limit output to at most N entries.")
+    group.add_argument("-l", "--limit", action="store", type=type_number, default=None,
+            metavar="<n>", help="Limit output to at most <n> entries.")
     group.add_argument("-1", action="store_const", const=1, dest="limit",
             help="Print only the first entry and exit immediately.")
     group.add_argument("-o", "--output", type=type_list, metavar="<attribute-list>",
