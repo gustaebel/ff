@@ -1,3 +1,10 @@
+### Version 579 - (2020-06-28)
+
+- Remove auto-detection of simple patterns.
+- Change --directories to --directory with only single arguments.
+- Fix: Don't fail if a file is not found or cannot be accessed.
+- Fix: Detect empty sub expressions.
+
 ### Version 578 - (2020-06-24)
 
 - Do not warn about "Permission denied" errors.

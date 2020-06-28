@@ -1,4 +1,4 @@
-.TH ff 1 "2020-06-24" "Version 578" "ff - Find files in the filesystem"
+.TH ff 1 "2020-06-28" "Version 579" "ff - Find files in the filesystem"
 .nh
 .SH NAME
 
@@ -7,7 +7,7 @@ ff \- Find files in the filesystem
 
 .SH SYNOPSIS
 
-ff [<options>] [<test/directory> ... | [\fB\-D\fR] <directory> ...]
+ff [<options>] [<test/directory> ... | \fB\-D\fR <directory> ...]
 
 
 .SH DESCRIPTION
@@ -16,7 +16,7 @@ ff [<options>] [<test/directory> ... | [\fB\-D\fR] <directory> ...]
 
 \fBff\fR(1) takes a set of expressions and directories as arguments and uses them for searching the filesystem. If no arguments are specified, \fBff\fR(1) lists all files and directories below the directory you are currently in.
 
-Whether an argument is a test or a directory is auto\-detected. Directories may be at the start or the end of the list of arguments. They are identified as directories when they contain at least one '\fI/\fR' and point to an existing name in the filesystem. However, directories can be explicitly specified using the \fB\-D\fR/\fB\-\-directories\fR option, in which case auto\-detection will not be used. If no directory argument is found the current directory is used as the starting point.
+Whether an argument is a test or a directory is auto\-detected. Directories may be at the start or the end of the list of arguments. They are identified as directories when they contain at least one '\fI/\fR' and point to an existing name in the filesystem. However, directories can be explicitly specified using the \fB\-D\fR/\fB\-\-directory\fR option, in which case auto\-detection will not be used. If no directory argument is found the current directory is used as the starting point.
 
 \fBff\fR(1) uses parallel processes to speed up searching by default. The number of processes depends on the number of CPU cores and can be controlled with \fB\-j\fR/\fB\-\-jobs\fR.
 
@@ -62,8 +62,8 @@ Set number of processes to use for searching and executing (default: the number 
 .PP
 
 
-.IP "\fB-D, --directories <path> [<path> ...]\fR" 4
-Search entries in these paths (default is current directory).
+.IP "\fB-D, --directory <path>\fR" 4
+Search entries in this path (default is current directory). May be specified multiple times.
 .PP
 
 Commands:
@@ -138,28 +138,6 @@ Follow symbolic links.
 
 .IP "\fB--one-file-system, --mount, --xdev\fR" 4
 Do not descend into different file systems.
-.PP
-
-Simple pattern options:
-
-
-.IP "\fB-g, --glob\fR" 4
-Treat the pattern as a \fBglob\fR(7) pattern.
-.PP
-
-
-.IP "\fB-r, --regex\fR" 4
-Perform a regular\-expression based search (default).
-.PP
-
-
-.IP "\fB-F, --fixed-strings\fR" 4
-Treat the pattern as a literal string.
-.PP
-
-
-.IP "\fB-p, --full-path\fR" 4
-Search full path (default: basename only).
 .PP
 
 Output options:
@@ -259,12 +237,6 @@ A test basically has the form:
 \fI[<[plugin.]attribute><operator>]<value>\fR
 
 So, a test compares a certain <value> (or pattern) with the value of a certain <attribute> of a filesystem entry. The type of comparison performed is indicated by the <operator>.
-
-The simplest form of a test is to just specify a <value> which means that each entry's basename will be matched against <value> which is a regular expression. It is short for a test with the following syntax:
-
-\fIfile.name~<value>\fR
-
-(The default behavior for this shorthand can be changed with the \fB\-r\fR/\fB\-\-regex\fR, \fB\-F\fR/\fB\-\-fixed\-strings\fR, \fB\-g\fR/\fB\-\-glob\fR and \fB\-p\fR/\fB\-\-full\-path\fR options.)
 
 It is good practice to use full attribute names and to quote either the value or the whole test to prevent the shell from interfering with characters like '\fI*\fR', '\fI(\fR', '\fI)\fR', '\fI<\fR', '\fI>\fR', '\fI!\fR', etc.
 
@@ -601,7 +573,7 @@ A plugin had an unrecoverable error.
 .PP
 
 .IP "\fB11\fR" 4
-An attribute was specified that does not exist.
+An attribute was specified that is invalid or does not exist.
 .PP
 
 .IP "\fB12\fR" 4
