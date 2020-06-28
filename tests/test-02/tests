@@ -65,3 +65,23 @@ image.png
 
 ff height+={width}image.png
 video.mp4
+
+
+
+# Check anchored glob matching. An anchored pattern should not match a non-path
+# string.
+
+ff name%image.*
+image.jpg
+image.png
+
+
+ff name%/image.*
+
+
+ff relpath%/image.*
+image.jpg
+image.png
+
+
+ff mime.type%/image*

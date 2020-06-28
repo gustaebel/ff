@@ -22,7 +22,7 @@ import re
 import collections
 
 from . import BaseClass
-from .type import Type
+from .type import Path, Type
 from .entry import Entry
 from .ignore import Glob
 from .attribute import Attribute
@@ -252,16 +252,7 @@ class FlatParser(BaseClass):
                     raise ExpressionError(f"Invalid regex pattern {value!r}: {exc}")
 
             elif operator == "%":
-                value = Glob(value)
-                if value.anchored and attribute == ("file", "name"):
-                    # If the glob pattern contains path separators it is supposed to match the
-                    # whole path name, so we implicitly adjust the attribute name.
-                    self.logger.hint(f"{value.pattern!r} is a full-path glob pattern that "\
-                            "will not match on the basename. Change the attribute from "\
-                            "'file.name' to 'file.path' or 'file.relpath' to make this "\
-                            "message go away.",
-                            tag="glob-anchored-name")
-                    attribute = Attribute("file", "relpath")
+                value = Glob(value, path_pattern=issubclass(type_cls, Path))
 
         return Test(attribute, operator, type_cls, value, ignore_case)
 

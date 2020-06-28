@@ -31,11 +31,11 @@ class Glob:
     """A single gitignore-style pattern.
     """
 
-    def __init__(self, pattern):
+    def __init__(self, pattern, path_pattern=True):
         self.pattern = pattern
 
         self.regex_pattern, self.include, self.anchored, self.directory = \
-                self.translate(self.pattern)
+                self.translate(self.pattern, path_pattern)
         self._regex = None
 
     @property
@@ -47,7 +47,7 @@ class Glob:
         return self._regex
 
     @staticmethod
-    def translate(pattern):
+    def translate(pattern, path_pattern=True):
         """Translate the pattern to a regular expression.
         """
         # pylint:disable=too-many-branches
@@ -66,13 +66,17 @@ class Glob:
 
         # Is there a slash at the beginning or in the middle of the pattern? Then the whole path
         # relative to the directory of the ignore file is matched against.
-        try:
-            anchored = pattern.index("/") < len(pattern) - 1
-        except ValueError:
-            anchored = False
+        if path_pattern:
+            try:
+                anchored = pattern.index("/") < len(pattern) - 1
+            except ValueError:
+                anchored = False
 
-        if anchored:
-            pattern = pattern.lstrip("/")
+            if anchored:
+                pattern = pattern.lstrip("/")
+
+        else:
+            anchored = False
 
         # Shall the patten match only directories?
         if pattern.endswith("/"):

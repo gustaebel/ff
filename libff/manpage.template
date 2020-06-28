@@ -149,6 +149,18 @@ OPERATORS
     :       all bits that are set in <value> are also set in the attribute
     ~       any of the bits that are set in <value> are set in the attribute
 
+PATTERN MATCHING
+    ff(1) is written in python(1) and uses the regular expressions provided by
+    the 're' module (https://docs.python.org/library/re.html).
+
+    ff(1) does not use 'glob' module but instead implements its own glob(7)
+    pattern matching that follows the design from gitignore(5). Deviating from
+    what you might expect, glob patterns that start with a '/' match path
+    attributes from the beginning of the string regardless of whether the
+    string itself actually starts with a '/'. This is more in accordance with
+    how gitignore(5) works and improves matching relative paths like
+    'file.relpath', 'file.link' etc.
+
 FILE REFERENCES
     It is possible to pass a path of a file as reference instead of a <value>. To
     use a reference you pass a '{}' followed by the path name. For example, to

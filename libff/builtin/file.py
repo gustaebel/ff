@@ -45,7 +45,7 @@ class File(Plugin):
         ("root",    Path,     "The start directory the file was found in."),
         ("relpath", Path,     "The pathname of the file relative to the start directory."),
         ("dir",     Path,     "The dirname portion of the file."),
-        ("name",    Path,     "The basename portion of the file"),
+        ("name",    String,   "The basename portion of the file"),
         ("ext",     String,   Entry.ext.__doc__),
         ("pathx",   Path,     Entry.pathx.__doc__),
         ("namex",   Path,     Entry.namex.__doc__),

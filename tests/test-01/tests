@@ -349,16 +349,19 @@ workdir/foo
 ( cd ..; ff -H type=f and {{ not name=baz and not name=empty }} workdir/ )
 workdir/foo
 
-# --glob, --fixed-strings, --regex
+
 ff name%ba?
 BAR
 baz
 
+
 ff name:ba?
+
 
 ff path:dir/empty
 dir/dir/empty
 dir/empty_dir
+
 
 ff name~ba.
 BAR
