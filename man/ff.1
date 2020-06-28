@@ -1,4 +1,4 @@
-.TH ff 1 "2020-06-28" "Version 580" "ff - Find files in the filesystem"
+.TH ff 1 "2020-06-28" "Version 581" "ff - Find files in the filesystem"
 .nh
 .SH NAME
 
@@ -26,41 +26,33 @@ Directory names may be at the start or the end of the list of arguments. They ar
 
 Global options:
 
-
 .IP "\fB<test/directory>\fR" 4
 A test for file matching or a the path to a directory to search.
 .PP
-
 
 .IP "\fB--profile\fR" 4
 Do a profiling run on the given arguments and suppress the output.
 .PP
 
-
 .IP "\fB--debug <categories>\fR" 4
 Show debug messages. Specify either '\fIall\fR', '\fInone\fR' or a comma\-separated list of <categories>, default is to show '\fInone\fR'.
 .PP
 
-
 .IP "\fB--cache <path>\fR" 4
-Location of the metadata cache (default: /home/lars/.cache/ff.db).
+Location of the metadata cache, the default is ~/.cache/ff.db.
 .PP
-
 
 .IP "\fB--no-cache\fR" 4
 Do not use the metadata cache.
 .PP
 
-
 .IP "\fB--clean-cache\fR" 4
 Remove stale entries from the metadata cache.
 .PP
 
-
 .IP "\fB-j, --jobs <num>\fR" 4
 Set number of processes to use for searching and executing (default: the number of CPU cores).
 .PP
-
 
 .IP "\fB-D, --directory <path>\fR" 4
 Search entries in this path (default is current directory). May be specified multiple times.
@@ -68,31 +60,25 @@ Search entries in this path (default is current directory). May be specified mul
 
 Commands:
 
-
 .IP "\fB-h, --help [<plugin>]\fR" 4
 Show this help message or the help message for a particular plugin.
 .PP
-
 
 .IP "\fB--version\fR" 4
 Show program's version number and exit.
 .PP
 
-
 .IP "\fB--help-full\fR" 4
 Show a full help in man page format.
 .PP
-
 
 .IP "\fB--help-attributes\fR" 4
 Show a list of available attributes to use for searching, sorting and output.
 .PP
 
-
 .IP "\fB--help-plugins\fR" 4
 Show a list of available plugins.
 .PP
-
 
 .IP "\fB--help-types\fR" 4
 Show a list of available types.
@@ -100,41 +86,33 @@ Show a list of available types.
 
 Search options:
 
+.IP "\fB-e, --exclude <test>\fR" 4
+Exclude entries that match the given test.
+.PP
 
 .IP "\fB-H, --hide\fR" 4
 Do not show hidden files and directories.
 .PP
 
-
 .IP "\fB-I, --ignore\fR" 4
 Do not show files that are excluded by patterns from .(git|fd|ff)ignore files.
 .PP
-
-
-.IP "\fB-d, --depth <range>\fR" 4
-Show only files that are located at a certain depth level of the directory tree that is within the given <range>. A <range> is a string of the form '\fI<start>\-<stop>\fR'. <start> and <stop> are optional and may be omitted. <range> may also be a single number. It is possible to specify multiple ranges separated by comma.
-.PP
-
 
 .IP "\fB--no-parent-ignore\fR" 4
 Do not read patterns from ignore files from parent directories.
 .PP
 
-
-.IP "\fB-e, --exclude <test>\fR" 4
-Exclude entries that match the given test.
+.IP "\fB-d, --depth <range>\fR" 4
+Show only files that are located at a certain depth level of the directory tree that is within the given <range>. A <range> is a string of the form '\fI<start>\-<stop>\fR'. <start> and <stop> are optional and may be omitted. <range> may also be a single number. It is possible to specify multiple ranges separated by comma.
 .PP
-
 
 .IP "\fB-c, --case <mode>\fR" 4
 How to treat the case of text attributes (smart, ignore or sensitive).
 .PP
 
-
 .IP "\fB-L, --follow\fR" 4
 Follow symbolic links.
 .PP
-
 
 .IP "\fB--one-file-system, --mount, --xdev\fR" 4
 Do not descend into different file systems.
@@ -142,86 +120,69 @@ Do not descend into different file systems.
 
 Output options:
 
-
-.IP "\fB-x, --exec <cmd>\fR" 4
+.IP "\fB-x, --exec\fR" 4
 Execute a command for each search result.
 .PP
 
-
-.IP "\fB-X, --exec-batch <cmd>\fR" 4
+.IP "\fB-X, --exec-batch\fR" 4
 Execute a command with all search results at once.
 .PP
-
 
 .IP "\fB-C, --color <when>\fR" 4
 When to use colors: never, *auto*, always.
 .PP
 
-
 .IP "\fB-a, --absolute-path\fR" 4
 Show absolute instead of relative paths.
 .PP
-
 
 .IP "\fB-0, --print0\fR" 4
 Separate results by the null character.
 .PP
 
-
 .IP "\fB-v, --verbose\fR" 4
 Produce output similar to \fBls \-l\fR.
 .PP
-
 
 .IP "\fB-S, --sort [<attribute-list>]\fR" 4
 Sort entries by path or any other attribute.
 .PP
 
-
 .IP "\fB-R, --reverse\fR" 4
 Reverse the sort order.
 .PP
-
 
 .IP "\fB--count [<attribute-list>]\fR" 4
 Count the attributes from <attribute\-list> and print statistics, instead of the result, the default is to count the total size and the file types of the entries found. Add \fB\-\-json\fR for JSON output.
 .PP
 
-
 .IP "\fB-l, --limit <n>\fR" 4
 Limit output to at most <n> entries.
 .PP
-
 
 .IP "\fB-1\fR" 4
 Print only the first entry and exit immediately.
 .PP
 
-
 .IP "\fB-o, --output <attribute-list>\fR" 4
 Print each entry by using a template of comma\-separated attributes. The special value '\fIfile\fR' stands for all file attributes.
 .PP
-
 
 .IP "\fB--sep <string>\fR" 4
 Separate each attribute of \fB\-\-output\fR with <string>, default is a single space.
 .PP
 
-
 .IP "\fB--all\fR" 4
 Show all entries including the ones with missing attribute values.
 .PP
-
 
 .IP "\fB--json\fR" 4
 Print attributes as one big json object to stdout.
 .PP
 
-
 .IP "\fB--jsonl, --ndjson\fR" 4
 Print attributes as jsonl (one json object per line) to stdout.
 .PP
-
 
 .IP "\fB--si\fR" 4
 Parse and print file sizes in units of 1K=1000 bytes instead of 1K=1024 bytes.

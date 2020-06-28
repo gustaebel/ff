@@ -1,3 +1,7 @@
+### Version 581 - (2020-06-28)
+
+- No longer use argparse.
+
 ### Version 580 - (2020-06-28)
 
 - Improve glob pattern matching.
