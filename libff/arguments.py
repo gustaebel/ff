@@ -145,7 +145,7 @@ def create_parser():
     parser.add_group("Search options")
     parser.add_option("-e", "--exclude", action="append", default=[], metavar="<test>",
             help="Exclude entries that match the given test.")
-    parser.add_option("-H", "--hide", action="store_true",  default=False,
+    parser.add_option("-H", "--hide", action="store_true", default=False,
             help="Do not show hidden files and directories.")
     parser.add_option("-I", "--ignore", action="store_true", default=False,
             help="Do not show files that are excluded by patterns from .(git|fd|ff)ignore files.")
