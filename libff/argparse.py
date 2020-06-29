@@ -243,7 +243,7 @@ class ArgumentParser:
 
         raise ArgumentError("argument found but parser takes no arguments")
 
-    def resolve_combined_options(self, argv):
+    def parse_combined_short_options(self, argv):
         """Disassemble a bundle of short options.
         """
         arg = argv.pop(0)[1:]
@@ -263,6 +263,22 @@ class ArgumentParser:
             i += 1
         return argv
 
+    def parse_long_option_with_value(self, argv):
+        """Parse a long option with an attached argument.
+        """
+        arg = argv.pop(0)
+
+        long_option, value = arg.split("=", 1)
+        option = self.get_option(long_option)
+
+        if option.action in ("store", "store_optional", "append"):
+            argv.insert(0, long_option)
+            argv.insert(1, value)
+        else:
+            raise ArgumentError(f"option {long_option} does not take an argument")
+
+        return argv
+
     def parse_args(self, argv):
         """Parse a list of command line arguments.
         """
@@ -272,11 +288,19 @@ class ArgumentParser:
 
         try:
             while argv:
-                if argv[0].startswith("-"):
-                    if argv[0][:2] != "--" and len(argv[0]) > 2:
-                        # Not a long option but a bundle of short options.
-                        argv = self.resolve_combined_options(argv)
+                arg = argv[0]
+
+                if arg.startswith("-"):
+                    if arg[:2] != "--" and len(arg) > 2:
+                        # This is not a long option but a bundle of short options.
+                        argv = self.parse_combined_short_options(argv)
+
+                    elif arg[:2] == "--" and "=" in arg:
+                        # This is a long option with an attached argument.
+                        argv = self.parse_long_option_with_value(argv)
+
                     self.parse_option(argv)
+
                 else:
                     self.parse_arguments(argv)
 
