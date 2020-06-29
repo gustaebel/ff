@@ -325,9 +325,6 @@ class ArgumentParser:
         if option.action == "store_true":
             self.namespace.set(option.dest, True)
 
-        elif option.action == "store_false":
-            self.namespace.set(option.dest, True)
-
         elif option.action == "store_const":
             self.namespace.set(option.dest, option.const)
 
