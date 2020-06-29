@@ -1,3 +1,7 @@
+### Version 582 - (2020-06-29)
+
+- Allow long options with an argument attached.
+
 ### Version 581 - (2020-06-28)
 
 - No longer use argparse.
