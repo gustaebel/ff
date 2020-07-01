@@ -7,9 +7,9 @@ die() {
 
 set -e
 
-if git diff --quiet libff/__version__.py; then
-    die "ERROR: please use ./prepare first!"
-fi
+#if git diff --quiet libff/__version__.py; then
+#    die "ERROR: please use ./prepare first!"
+#fi
 
 version=$(grep ^__version__ libff/__version__.py | cut -d = -f 2 | tr -d '[:space:]')
 

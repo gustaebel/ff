@@ -25,8 +25,6 @@ clean:
 create-pypi-pkgs:
 	python setup.py sdist
 	python setup.py bdist_wheel
-	python setup-cython.py build -j8
-	python setup-cython.py bdist_wheel
 
 upload: create-pypi-pkgs
 	twine upload -r find-ff dist/*
