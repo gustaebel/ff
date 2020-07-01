@@ -51,6 +51,7 @@ kwargs = {
                      "Topic :: Utilities",
                      "Programming Language :: Python :: 3"],
     "python_requires": ">=3.6",
+    "install_requires": ["pymediainfo", "file-magic"],
 
     "packages":     ["ff", "libff", "libff.builtin"],
     "scripts":      ["bin/ff"],
