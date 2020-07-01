@@ -30,7 +30,7 @@ if int(__version__.split(".", 1)[0]) < 3:
     raise SystemExit("cython >= 3.0 required")
 
 def extension(name, sources):
-    return setuptools.Extension(name, sources, cython_c_in_temp=True,
+    return setuptools.Extension(name, sources,
             extra_compile_args=["-DCYTHON_WITHOUT_ASSERTIONS"])
 
 kwargs["packages"] = ["ff"]
