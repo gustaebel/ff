@@ -22,7 +22,7 @@ clean:
 	rm -rf __pycache__
 	python -m ff ext=so or ext=c libff/ -x rm
 
-create-pypi-pkgs:
+create-pypi-pkgs: clean
 	python setup.py sdist
 	python setup.py bdist_wheel
 
