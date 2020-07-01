@@ -1,3 +1,7 @@
+### Version 583 - (2020-07-01)
+
+- Improve Cython build process.
+
 ### Version 582 - (2020-06-29)
 
 - Allow long options with an argument attached.
