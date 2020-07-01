@@ -57,8 +57,13 @@ or
 $ pip install find-ff
 ```
 
-This installs the python sources, the `ff` script, the man page and a set of
-plugins.
+Building with [Cython](https://cython.org/) is also supported. Cython >= 3.0 is
+required. Depending on the set of arguments this may offer a significant
+speed-up.
+
+```sh
+$ python setup-cython.py install
+```
 
 ### Python API
 
