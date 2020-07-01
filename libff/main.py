@@ -40,6 +40,10 @@ from .exceptions import EX_OK, EX_PROCESS, EX_SUBPROCESS, BaseError, \
 from .processing import ImmediateExecProcessing, CollectiveExecProcessing, \
     ImmediateConsoleProcessing, CollectiveConsoleProcessing
 
+try:
+    import cython
+except ImportError:
+    pass
 
 class _Base(BaseClass):
 
@@ -165,9 +169,15 @@ class _Base(BaseClass):
 
             walker.put([Directory(StartDirectory(self.context.args, path), "", ignores)])
 
-    def show_tests(self):
-        """Show debug information about the tests to perform.
+    def show_debug_info(self):
+        """Show general debug information and the tests to be performed.
         """
+        try:
+            if cython.compiled:
+                self.logger.debug("info", "This is a cythonized build.")
+        except NameError:
+            pass
+
         self.logger.debug("info", f"Using {self.context.processing.__class__.__name__}.")
 
         if not self.context.excluder.is_empty():
@@ -194,7 +204,7 @@ class Main(_Base):
             self.setup_components()
             self.setup_processing()
             if __debug__:
-                self.show_tests()
+                self.show_debug_info()
             self.setup_walker()
 
         except BaseError as exc:

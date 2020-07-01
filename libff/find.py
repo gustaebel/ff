@@ -97,7 +97,7 @@ class Find(_Base):
         self.setup_components()
         self.setup_processing()
         if __debug__:
-            self.show_tests()
+            self.show_debug_info()
         self.setup_walker()
 
     def setup_processing(self):
