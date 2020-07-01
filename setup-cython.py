@@ -25,6 +25,9 @@ from Cython.Build import cythonize
 
 from setup import kwargs
 
+if int(__version__.split(".", 1)[0]) < 3:
+    raise SystemExit("cython >= 3.0 required")
+
 extra_compile_args = ["-O3", "-DCYTHON_WITHOUT_ASSERTIONS"]
 
 del kwargs["packages"]
