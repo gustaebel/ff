@@ -14,22 +14,27 @@ test-v:
 	python tests/runtests.py -v
 
 inplace:
-	python setup-cython.py build_ext --parallel 32 --inplace
+	python setup-cython.py build_ext -j8 --inplace
 
 clean:
 	rm -rf build dist
 	rm -rf *.egg-info
 	rm -rf __pycache__
-	python -m ff ext=so libff/ -x rm
+	python -m ff ext=so or ext=c libff/ -x rm
 
-create-pypi-pkg:
-	python setup.py sdist bdist_wheel
+create-pypi-pkgs:
+	python setup.py sdist
+	python setup.py bdist_wheel
+	python setup-cython.py build -j8
+	python setup-cython.py bdist_wheel
+
+upload: create-pypi-pkgs
 	twine upload -r find-ff dist/*
 
 create-arch-pkg:
 	cd ~/box/packages/ff && arch-pkg publish
 
-publish: create-pypi-pkg create-arch-pkg
+publish: upload create-arch-pkg
 
 man/ff.1: ff/*.py libff/*.py libff/builtin/*.py libff/manpage.template
 	mkdir -p man

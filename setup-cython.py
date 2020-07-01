@@ -26,13 +26,17 @@ from Cython.Build import cythonize
 from setup import kwargs
 
 if int(__version__.split(".", 1)[0]) < 3:
+    # Cython < 3.0 has problems with __init_subclass__().
     raise SystemExit("cython >= 3.0 required")
 
-extra_compile_args = ["-O3", "-DCYTHON_WITHOUT_ASSERTIONS"]
+def extension(name, sources):
+    return setuptools.Extension(name, sources, cython_c_in_temp=True,
+            extra_compile_args=["-DCYTHON_WITHOUT_ASSERTIONS"])
 
-del kwargs["packages"]
-kwargs["ext_modules"] = cythonize(["libff/[!_]*.py", "libff/builtin/*.py"], language_level=3)
-for ext in kwargs["ext_modules"]:
-    ext.extra_compile_args += extra_compile_args
+kwargs["packages"] = ["ff"]
+kwargs["ext_modules"] = cythonize([
+        extension("libff.*", ["libff/[!_]*.py"]),
+        extension("libff.builtin.*", ["libff/builtin/*.py"])],
+        language_level=3)
 
 setuptools.setup(**kwargs)
