@@ -186,7 +186,7 @@ def create_parser():
     parser.add_option("-R", "--reverse", action="store_true", default=False,
             help="Reverse the sort order.")
     parser.add_option("--count", action="store_optional", type=type_list,
-            const="file.size:h,file.type", metavar="<attribute-list>",
+            const="", metavar="<attribute-list>",
             help="Count the attributes from <attribute-list> and print statistics, "\
                  "instead of the result, the default is to count the total size and "\
                  "the file types of the entries found. Add --json for JSON output.")
@@ -304,6 +304,40 @@ class ArgumentsPostProcessor:
                 if os.path.commonpath([directory, subdir]) == subdir:
                     raise UsageError(f"{directory!r} is a sub-directory of {subdir!r}")
 
+    def process_depth_argument(self):
+        """Translate the argument to -d/--depth to a test expression.
+        """
+        # Look for an upper limit in the given ranges and exclude everything above it, so we go
+        # only as deep into the tree as necessary.
+        if not [stop for start, stop in self.args.depth if stop is None]:
+            stop = max(stop for start, stop in self.args.depth)
+            self.args.exclude.append(f"depth+{stop}")
+
+        # Construct a set of tests for all the given ranges and embed the existing set of tests
+        # in it.
+        tests = []
+        tests.append("{{")
+
+        for i, (start, stop) in enumerate(self.args.depth):
+            if start == stop:
+                tests.append(f"depth={start}")
+            else:
+                tests.append(f"depth+={start}")
+                if stop is not None:
+                    tests.append(f"depth-={stop}")
+
+            if i < len(self.args.depth) - 1:
+                tests.append("OR")
+
+        tests.append("}}")
+
+        if self.args.tests:
+            tests.append("{{")
+            tests += self.args.tests
+            tests.append("}}")
+
+        self.args.tests = tests
+
     def process_arguments(self):
         """Check existing arguments and arrange them in specific ways.
         """
@@ -321,36 +355,13 @@ class ArgumentsPostProcessor:
             self.args.exclude.append("hide=yes")
 
         if self.args.depth:
-            # Look for an upper limit in the given ranges and exclude everything above it, so we go
-            # only as deep into the tree as necessary.
-            if not [stop for start, stop in self.args.depth if stop is None]:
-                stop = max(stop for start, stop in self.args.depth)
-                self.args.exclude.append(f"depth+{stop}")
+            self.process_depth_argument()
 
-            # Construct a set of tests for all the given ranges and embed the existing set of tests
-            # in it.
-            tests = []
-            tests.append("{{")
-
-            for i, (start, stop) in enumerate(self.args.depth):
-                if start == stop:
-                    tests.append(f"depth={start}")
-                else:
-                    tests.append(f"depth+={start}")
-                    if stop is not None:
-                        tests.append(f"depth-={stop}")
-
-                if i < len(self.args.depth) - 1:
-                    tests.append("OR")
-
-            tests.append("}}")
-
-            if self.args.tests:
-                tests.append("{{")
-                tests += self.args.tests
-                tests.append("}}")
-
-            self.args.tests = tests
+        if self.args.count == [""]:
+            if self.args.json is not None:
+                self.args.count = ["file.size", "file.type"]
+            else:
+                self.args.count = ["file.size:h", "file.type"]
 
 
 def parse_arguments():

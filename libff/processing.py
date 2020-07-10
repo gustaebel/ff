@@ -317,6 +317,7 @@ class CollectiveMixin(BaseProcessing):
         # Print the count to stdout.
         if self.args.json is not None:
             json.dump(count, sys.stdout, sort_keys=True)
+            print()
 
         else:
             for key, value in sorted(count.items()):
