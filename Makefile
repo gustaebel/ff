@@ -36,10 +36,10 @@ publish: upload create-arch-pkg
 
 man/ff.1: ff/*.py libff/*.py libff/builtin/*.py libff/manpage.template
 	mkdir -p man
-	python -c "from ff import Find; Find().registry.get_full_manpage().print()" > $@
+	python -O -c "from ff import Find; Find().registry.get_full_manpage().print()" > $@
 
 man/ff.7: ff/*.py libff/*.py libff/builtin/*.py plugins/*.py
 	mkdir -p man
-	python -c "from ff import Find; Find().registry.get_attributes_manpage().print()" > $@
+	python -O -c "from ff import Find; Find().registry.get_attributes_manpage().print()" > $@
 
 manpages: man/ff.1 man/ff.7
