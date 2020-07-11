@@ -1,3 +1,8 @@
+### Version 584 - (2020-07-11)
+
+- Do not use human readable file.size with --count and --json.
+- Fix ff.1 manpage.
+
 ### Version 583 - (2020-07-01)
 
 - Improve Cython build process.
