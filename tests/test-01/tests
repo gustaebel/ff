@@ -248,7 +248,7 @@ ff -H -S -1
 BAR
 
 
-
+# --limit
 ff -H -S -R -l 5
 foo
 dir/empty_dir
@@ -258,12 +258,27 @@ dir
 
 
 
-ff -H -S -R -l -5
+ff -H -S -R -l 5:
+baz
+BAR
+
+
+
+ff -H -S -R -l -5:
 dir/dir/empty
 dir/dir
 dir
 baz
 BAR
+
+
+
+ff -H -S -R -l -2:-1
+baz
+
+
+
+ff -H -S -R -l 2:1
 
 
 

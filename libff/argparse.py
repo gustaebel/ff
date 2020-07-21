@@ -98,6 +98,35 @@ def type_ranges(string):
     return segments
 
 
+regex_slice = re.compile(r"^(?:(?P<single>-?\d+)|(?P<start>\d*|-?\d+):(?P<stop>\d*|-\d+))$")
+
+def type_slice(string):
+    """Parse python-like slice notation.
+    """
+    match = regex_slice.match(string)
+    if match is None:
+        raise ValueError("invalid slice")
+
+    if match.group("single") is not None:
+        start = 0
+        stop = int(match.group("single"))
+
+    else:
+        start = match.group("start")
+        if start:
+            start = int(start)
+        else:
+            start = 0
+
+        stop = match.group("stop")
+        if stop:
+            stop = int(stop)
+        else:
+            stop = None
+
+    return start, stop
+
+
 class Option:
     """An option container similar to the one in argparse.
     """
@@ -378,8 +407,15 @@ class ArgumentParser:
     def get_argument(self, option, argv):
         """Fetch the next argument from the argument list.
         """
-        if not argv or (argv[0].startswith("-") and \
-                not (option.type is type_number and argv[0].lstrip("-").isdigit())):
+        if not argv:
+            raise ArgumentError(f"{option.repr} requires an argument")
+        else:
+            return option.type(argv.pop(0))
+
+    def get_optional_argument(self, option, argv):
+        """Fetch an optional argument from the argument list.
+        """
+        if not argv or argv[0].startswith("-"):
             raise ArgumentError(f"{option.repr} requires an argument")
         else:
             return option.type(argv.pop(0))
@@ -403,7 +439,7 @@ class ArgumentParser:
 
         elif option.action == "store_optional":
             if argv and not argv[0].startswith("-"):
-                self.namespace.set(option.dest, self.get_argument(option, argv))
+                self.namespace.set(option.dest, self.get_optional_argument(option, argv))
             else:
                 self.namespace.set(option.dest, option.type(option.const))
 

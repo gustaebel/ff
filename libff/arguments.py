@@ -23,7 +23,7 @@ import sys
 import shlex
 
 from . import MAX_CPU
-from .argparse import ArgumentParser, type_jobs, type_list, type_number, \
+from .argparse import ArgumentParser, type_jobs, type_list, type_slice, \
     type_ranges
 from .exceptions import EX_OK, UsageError
 
@@ -131,10 +131,10 @@ def create_parser():
             help="Count the attributes from <attribute-list> and print statistics, "\
                  "instead of the result, the default is to count the total size and "\
                  "the file types of the entries found. Add --json for JSON output.")
-    parser.add_option("-l", "--limit", action="store", type=type_number, metavar="<n>",
+    parser.add_option("-l", "--limit", action="store", type=type_slice, metavar="<n>",
             help="Limit output to at most <n> entries. If <n> is negative print "\
                  "the last <n> entries instead of the first <n>.")
-    parser.add_option("-1", action="store_const", const=1, dest="limit",
+    parser.add_option("-1", action="store_const", const=(0, 1), dest="limit",
             help="Print only the first entry and exit immediately.")
     parser.add_option("-o", "--output", type=type_list, metavar="<attribute-list>",
             help="Print each entry by using a template of comma-separated attributes. "\

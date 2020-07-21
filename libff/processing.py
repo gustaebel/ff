@@ -226,16 +226,10 @@ class CollectiveMixin(BaseProcessing):
         """Limit the list of entries according to the -l/--limit option.
         """
         if self.args.limit is None:
-            # Print all entries.
             return self.entries
-
-        elif self.args.limit >= 0:
-            # Print only the first N entries.
-            return self.entries[:self.args.limit]
-
         else:
-            # Print only the last N entries.
-            return self.entries[self.args.limit:]
+            start, stop = self.args.limit
+            return self.entries[start:stop]
 
     def loop(self):
         while True:
