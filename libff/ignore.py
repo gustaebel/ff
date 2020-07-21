@@ -147,31 +147,18 @@ class GitIgnore:
     IGNORE_NAMES = set([".gitignore", ".ignore", ".fdignore", ".ffignore"])
 
     @classmethod
-    def find_ignore_files(cls, dirname):
-        """Find ignore files in the current and in the parent directories of 'dirname', that must
-           be applied.
+    def from_parent_directories(cls, path):
+        """Return a list of GitIgnore objects from the parent directories of 'path'.
         """
-        assert os.path.isabs(dirname)
+        dirname = os.path.dirname(os.path.abspath(path))
         ignores = []
         parent = os.sep
         for part in dirname.split(os.sep):
             parent = join(parent, part)
             for name in cls.IGNORE_NAMES:
-                if os.path.exists(join(parent, name)):
-                    ignores.append((parent, name))
-        return ignores
-
-    @classmethod
-    def from_parent_directories(cls, context, path):
-        """Return a list of GitIgnore objects from the parent directories of 'path'.
-        """
-        path = os.path.abspath(path)
-        ignores = []
-        for parent, name in cls.find_ignore_files(os.path.dirname(path)):
-            try:
-                ignores.append(cls(parent, name))
-            except OSError as exc:
-                context.logger.warning(exc)
+                path = join(parent, name)
+                if os.path.exists(path):
+                    ignores.append(path)
         return ignores
 
     def __init__(self, dirname, name):

@@ -156,7 +156,7 @@ class _Base(BaseClass):
             else:
                 # Find ignore files in parent directories.
                 if self.context.args.ignore:
-                    ignores = GitIgnore.from_parent_directories(self.context, os.path.dirname(path))
+                    ignores = GitIgnore.from_parent_directories(os.path.dirname(path))
                 else:
                     ignores = []
 
@@ -165,7 +165,7 @@ class _Base(BaseClass):
                         f"  {path if path != '.' else os.path.abspath(path)}")
                 for ignore in ignores:
                     self.logger.debug("info",
-                            f"    found ignorefile in parent: {ignore.path}")
+                            f"    found ignorefile in parent: {ignore}")
 
             walker.put([Directory(StartDirectory(self.context.args, path), "", ignores)])
 
