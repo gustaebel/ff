@@ -199,9 +199,6 @@ class ArgumentsPostProcessor:
         """
         warnings = []
 
-        if self.args.sort and self.args.exec and self.args.jobs != 1:
-            warnings.append("Using both --sort and --exec makes no sense unless you set --jobs=1!")
-
         if self.args.output != ["path"] and (self.args.exec or self.args.exec_batch):
             self.args.output = ["path"]
             warnings.append(
