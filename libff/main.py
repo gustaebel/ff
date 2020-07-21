@@ -162,16 +162,18 @@ class _Base(BaseClass):
 
             if __debug__:
                 self.logger.debug("info",
-                        f"    {path if path != '.' else os.path.abspath(path)}")
+                        f"  {path if path != '.' else os.path.abspath(path)}")
                 for ignore in ignores:
                     self.logger.debug("info",
-                            f"        found ignorefile in parent: {ignore.path}")
+                            f"    found ignorefile in parent: {ignore.path}")
 
             walker.put([Directory(StartDirectory(self.context.args, path), "", ignores)])
 
     def show_debug_info(self):
         """Show general debug information and the tests to be performed.
         """
+        self.logger.debug("info", f"Executable: {sys.argv[0]}.")
+
         try:
             if cython.compiled:
                 self.logger.debug("info", "This is a cythonized build.")
