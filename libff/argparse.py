@@ -20,16 +20,82 @@
 
 # pylint:disable=redefined-builtin
 
+import re
 import sys
 import textwrap
 
-from . import OUTPUT_WIDTH
+from . import MAX_CPU, OUTPUT_WIDTH
 from .exceptions import EX_USAGE
 
 
 class ArgumentError(Exception):
     """Exception raised if the ArgumentParser is misconfigured or argument parsing fails.
     """
+
+
+def type_number(string):
+    """Parse a number.
+    """
+    return int(string)
+
+
+def type_positive_number(string):
+    """Parse a number greater than zero.
+    """
+    num = type_number(string)
+    if num < 0:
+        raise ValueError("number must be greater than zero")
+    return num
+
+
+def type_jobs(string):
+    """Parse the number of jobs using a default of MAX_CPU if it is zero.
+    """
+    num = type_positive_number(string)
+    if num == 0:
+        num = MAX_CPU
+    return max(min(num, MAX_CPU), 1)
+
+
+def type_list(string):
+    """Parse a comma separated string into a list.
+    """
+    return [s.strip() for s in string.split(",")]
+
+
+regex_range = re.compile(r"^(?:(?P<single>\d+)|(?P<start>\d*)-(?P<stop>\d*))$")
+
+def type_ranges(string):
+    """Parse a comma separated list of ranges.
+    """
+    segments = []
+    for range_ in type_list(string):
+        match = regex_range.match(range_)
+        if match is None:
+            raise ValueError("invalid range")
+
+        if match.group("single") is not None:
+            number = int(match.group("single"))
+            segments.append((number, number))
+
+        else:
+            start = match.group("start")
+            if start:
+                start = int(start)
+            else:
+                start = 0
+
+            stop = match.group("stop")
+            if stop:
+                stop = int(stop)
+                if stop < start:
+                    stop, start = start, stop
+            else:
+                stop = None
+
+            segments.append((start, stop))
+
+    return segments
 
 
 class Option:
@@ -312,7 +378,8 @@ class ArgumentParser:
     def get_argument(self, option, argv):
         """Fetch the next argument from the argument list.
         """
-        if not argv or argv[0].startswith("-"):
+        if not argv or (argv[0].startswith("-") and \
+                not (option.type is type_number and argv[0].lstrip("-").isdigit())):
             raise ArgumentError(f"{option.repr} requires an argument")
         else:
             return option.type(argv.pop(0))

@@ -19,12 +19,12 @@
 # -----------------------------------------------------------------------
 
 import os
-import re
 import sys
 import shlex
 
 from . import MAX_CPU
-from .argparse import ArgumentParser
+from .argparse import ArgumentParser, type_jobs, type_list, type_number, \
+    type_ranges
 from .exceptions import EX_OK, UsageError
 
 
@@ -38,65 +38,6 @@ class Defaults:
     jobs = MAX_CPU
     cache = os.path.expanduser("~/.cache/ff.db")
     si = False
-
-
-def type_jobs(string):
-    """Parse the number of jobs using a default of MAX_CPU if it is zero.
-    """
-    num = type_number(string)
-    if num == 0:
-        num = MAX_CPU
-    return max(min(num, MAX_CPU), 1)
-
-
-def type_number(string):
-    """Parse a number greater than zero.
-    """
-    num = int(string)
-    if num < 0:
-        raise ValueError("number must be greater than zero")
-    return num
-
-
-def type_list(string):
-    """Parse a comma separated string into a list.
-    """
-    return [s.strip() for s in string.split(",")]
-
-
-regex_range = re.compile(r"^(?:(?P<single>\d+)|(?P<start>\d*)-(?P<stop>\d*))$")
-
-def type_ranges(string):
-    """Parse a comma separated list of ranges.
-    """
-    segments = []
-    for range_ in type_list(string):
-        match = regex_range.match(range_)
-        if match is None:
-            raise ValueError("invalid range")
-
-        if match.group("single") is not None:
-            number = int(match.group("single"))
-            segments.append((number, number))
-
-        else:
-            start = match.group("start")
-            if start:
-                start = int(start)
-            else:
-                start = 0
-
-            stop = match.group("stop")
-            if stop:
-                stop = int(stop)
-                if stop < start:
-                    stop, start = start, stop
-            else:
-                stop = None
-
-            segments.append((start, stop))
-
-    return segments
 
 
 def create_parser():
@@ -190,8 +131,9 @@ def create_parser():
             help="Count the attributes from <attribute-list> and print statistics, "\
                  "instead of the result, the default is to count the total size and "\
                  "the file types of the entries found. Add --json for JSON output.")
-    parser.add_option("-l", "--limit", action="store", type=type_number,
-            metavar="<n>", help="Limit output to at most <n> entries.")
+    parser.add_option("-l", "--limit", action="store", type=type_number, metavar="<n>",
+            help="Limit output to at most <n> entries. If <n> is negative print "\
+                 "the last <n> entries instead of the first <n>.")
     parser.add_option("-1", action="store_const", const=1, dest="limit",
             help="Print only the first entry and exit immediately.")
     parser.add_option("-o", "--output", type=type_list, metavar="<attribute-list>",

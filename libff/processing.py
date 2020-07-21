@@ -222,6 +222,21 @@ class CollectiveMixin(BaseProcessing):
     def process(self, entries):
         self.out_queue.put(entries)
 
+    def entries_range(self):
+        """Limit the list of entries according to the -l/--limit option.
+        """
+        if self.args.limit is None:
+            # Print all entries.
+            return self.entries
+
+        elif self.args.limit >= 0:
+            # Print only the first N entries.
+            return self.entries[:self.args.limit]
+
+        else:
+            # Print only the last N entries.
+            return self.entries[self.args.limit:]
+
     def loop(self):
         while True:
             try:
@@ -241,7 +256,7 @@ class CollectiveMixin(BaseProcessing):
             # sorting is enabled in which case we want to collect all entries first, sort them and
             # then print the first N entries.
             if self.args.sort is None and self.args.limit is not None and \
-                    len(self.entries) >= self.args.limit:
+                    self.args.limit >= 0 and len(self.entries) >= self.args.limit:
                 self.context.stop()
                 break
 
@@ -337,8 +352,7 @@ class CollectiveConsoleProcessing(CollectiveMixin, BaseConsoleProcessing):
     def finalize(self):
         super().finalize()
 
-        # If a limit is set, print only the first N entries.
-        for entry in self.entries[:self.args.limit]:
+        for entry in self.entries_range():
             self.console.process(entry)
 
 
@@ -351,11 +365,11 @@ class CollectiveExecProcessing(CollectiveMixin, BaseProcessing):
 
         if self.args.exec is not None:
             with Parallel(self.context) as parallel:
-                for entry in self.entries[:self.args.limit]:
+                for entry in self.entries_range():
                     parallel.add_job(entry)
 
         elif self.args.exec_batch is not None:
-            args = self.args.exec_batch.render(self.entries[:self.args.limit])
+            args = self.args.exec_batch.render(self.entries_range())
 
             try:
                 process = subprocess.run(args, check=False)

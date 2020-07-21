@@ -33,6 +33,8 @@ tests_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
 
 class ShellTest(unittest.TestCase):
 
+    maxDiff = None
+
     @classmethod
     def add_test(cls, test, test_number, workdir, command, output, keep_order):
         def shell(self):

@@ -264,6 +264,15 @@ dir
 
 
 
+ff -H -S -R -l -5
+dir/dir/empty
+dir/dir
+dir
+baz
+BAR
+
+
+
 # no_order
 ff -H -o mode:h,links,size:5h,path:h
 lrwxrwxrwx 1     0 BAR -> foo
