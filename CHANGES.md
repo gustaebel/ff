@@ -1,3 +1,7 @@
+### Version 586 - (2020-07-22)
+
+- Remove an optimization that no longer works.
+
 ### Version 585 - (2020-07-22)
 
 - Allow slice notation with -l/--limit.
