@@ -357,13 +357,18 @@ class CollectiveExecProcessing(CollectiveMixin, BaseProcessing):
     def finalize(self):
         super().finalize()
 
+        entries = self.entries_range()
+
+        if not entries:
+            return
+
         if self.args.exec is not None:
             with Parallel(self.context) as parallel:
-                for entry in self.entries_range():
+                for entry in entries:
                     parallel.add_job(entry)
 
         elif self.args.exec_batch is not None:
-            args = self.args.exec_batch.render(self.entries_range())
+            args = self.args.exec_batch.render(entries)
 
             try:
                 process = subprocess.run(args, check=False)
