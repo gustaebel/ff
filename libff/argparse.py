@@ -246,14 +246,14 @@ class ArgumentParser:
             if isinstance(item, Option):
                 option_string = self.format_option(item)
 
-                help_text = textwrap.fill(item.help, width=OUTPUT_WIDTH - 27,
-                        subsequent_indent=" " * 27)
+                help_text = textwrap.fill(item.help, width=OUTPUT_WIDTH,
+                        initial_indent=" " * 27, subsequent_indent=" " * 27)
 
                 if len(option_string) > 25:
                     print(f"  {option_string}", file=file)
-                    print(f"                           {help_text}", file=file)
+                    print(help_text, file=file)
                 else:
-                    print(f"  {option_string:25s}{help_text}", file=file)
+                    print(f"  {option_string:25s}{help_text.lstrip()}", file=file)
             else:
                 print(file=file)
                 print(f"{item}:", file=file)
