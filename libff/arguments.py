@@ -131,11 +131,14 @@ def create_parser():
             help="Count the attributes from <attribute-list> and print statistics, "\
                  "instead of the result, the default is to count the total size and "\
                  "the file types of the entries found. Add --json for JSON output.")
-    parser.add_option("-l", "--limit", action="store", type=type_slice, metavar="<n>",
-            help="Limit output to at most <n> entries. If <n> is negative print "\
-                 "the last <n> entries instead of the first <n>.")
+    parser.add_option("-l", "--limit", action="store", type=type_slice, metavar="<slice>",
+            help="Limit output to a slice of entries. A <slice> has the form '<stop>' or "\
+                 "'<start>:<stop>'. In the latter form both <start> and <stop> may be empty which "\
+                 "means they default to the beginning and end of the list of entries "\
+                 "respectively. If <start> or <stop> are negative their position is relative to "\
+                 "the end rather than to the beginning of the list.")
     parser.add_option("-1", action="store_const", const=(0, 1), dest="limit",
-            help="Print only the first entry and exit immediately.")
+            help="Limit output to only the first entry.")
     parser.add_option("-o", "--output", type=type_list, metavar="<attribute-list>",
             help="Print each entry by using a template of comma-separated attributes. "\
                  "The special value 'file' stands for all file attributes.")
