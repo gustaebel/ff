@@ -1,4 +1,4 @@
-.TH ff 1 "2020-07-11" "Version 584" "ff - Find files in the filesystem"
+.TH ff 1 "2020-07-22" "Version 585" "ff - Find files in the filesystem"
 .nh
 .SH NAME
 
@@ -148,12 +148,12 @@ Reverse the sort order.
 Count the attributes from <attribute\-list> and print statistics, instead of the result, the default is to count the total size and the file types of the entries found. Add \fB\-\-json\fR for JSON output.
 .PP
 
-.IP "\fB-l, --limit <n>\fR" 4
-Limit output to at most <n> entries.
+.IP "\fB-l, --limit <slice>\fR" 4
+Limit output to a slice of entries. A <slice> has the form '\fI<stop>\fR' or '\fI<start>:<stop>\fR'. In the latter form both <start> and <stop> may be empty which means they default to the beginning and end of the list of entries respectively. If <start> or <stop> are negative their position is relative to the end rather than to the beginning of the list.
 .PP
 
 .IP "\fB-1\fR" 4
-Print only the first entry and exit immediately.
+Limit output to only the first entry.
 .PP
 
 .IP "\fB-o, --output <attribute-list>\fR" 4

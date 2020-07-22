@@ -1,3 +1,10 @@
+### Version 585 - (2020-07-22)
+
+- Allow slice notation with -l/--limit.
+- Fix ignore files from parent directories.
+- Do not call subprocesses when there are no results.
+- Fix help formatting.
+
 ### Version 584 - (2020-07-11)
 
 - Do not use human readable file.size with --count and --json.
