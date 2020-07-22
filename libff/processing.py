@@ -246,14 +246,6 @@ class CollectiveMixin(BaseProcessing):
 
             self.entries += entries
 
-            # Exit prematurely if there are already enough entries to satisfy the limit, unless
-            # sorting is enabled in which case we want to collect all entries first, sort them and
-            # then print the first N entries.
-            if self.args.sort is None and self.args.limit is not None and \
-                    self.args.limit >= 0 and len(self.entries) >= self.args.limit:
-                self.context.stop()
-                break
-
     def finalize(self):
         if self.args.sort is not None:
             self.entries.sort(key=self.args.sort.render, reverse=self.args.reverse)
