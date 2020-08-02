@@ -84,9 +84,9 @@ def format_duration(seconds):
     seconds %= 60
 
     if hours:
-        return "%dh%dm%ds" % (hours, minutes, seconds)
+        return f"{hours}h{minutes:02}m{seconds:02}s"
     else:
-        return "%dm%ds" % (minutes, seconds)
+        return f"{minutes}m{seconds:02}s"
 
 
 regex_duration = re.compile(r"(\d+)([smhdwMy])?")
