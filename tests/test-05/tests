@@ -38,6 +38,20 @@ ff type=f -x echo {size} {/}
 
 
 
+ff type=f -x echo {{size}} {/}
+{size} foo
+{size} bar
+{size} baz
+
+
+
+ff type=f -x echo {{ }} {/}
+{ } foo
+{ } bar
+{ } baz
+
+
+
 ff type=f -x test -e {name} 2>/dev/null; echo $?
 2
 

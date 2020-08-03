@@ -233,6 +233,9 @@ COMMAND EXECUTION
     {..}  file extension, alias for {file.ext}
     {attribute}  replaced with the value of attribute
 
+    Use '{{' and '}}' in the command template if you need literal '{' and '}'
+    in the command.
+
     If no placeholder is found in the command template the full path is used as
     the default argument. The -o/--output option has no effect on -x/--exec and
     -X/--exec-batch.

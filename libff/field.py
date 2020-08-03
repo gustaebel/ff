@@ -123,12 +123,16 @@ class ExecFields(Fields):
     """Store a list of fields that help with calling subprocesses.
     """
 
-    regex_placeholder = re.compile(r"({[^}]*})")
+    regex_placeholder = re.compile(r"({{|}}|{[^}]*})")
 
     def replace(self, part):
         """Replace a placeholder with a Field.
         """
-        if part == "{}":
+        if part == "{{":
+            field = "{"
+        elif part == "}}":
+            field = "}"
+        elif part == "{}":
             field = self.make_field("file.path")
         elif part == "{/}":
             field = self.make_field("file.name")
@@ -210,8 +214,7 @@ class ExecFields(Fields):
                             raise
 
             else:
-                assert len(subfields) == 1
-                output.append(subfields[0])
+                output.append("".join(subfields))
 
         return output
 
