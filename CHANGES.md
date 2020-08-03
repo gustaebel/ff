@@ -1,3 +1,8 @@
+### Version 587 - (2020-08-03)
+
+- Improve readability of durations.
+- Allow escaping { and } in command templates.
+
 ### Version 586 - (2020-07-22)
 
 - Remove an optimization that no longer works.

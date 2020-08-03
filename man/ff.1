@@ -1,4 +1,4 @@
-.TH ff 1 "2020-07-22" "Version 586" "ff - Find files in the filesystem"
+.TH ff 1 "2020-08-03" "Version 587" "ff - Find files in the filesystem"
 .nh
 .SH NAME
 
@@ -433,6 +433,8 @@ file extension, alias for {file.ext}
 .IP "\fB{attribute}\fR" 4
 replaced with the value of attribute
 .PP
+
+Use '\fI{{\fR' and '\fI}}\fR' in the command template if you need literal '\fI{\fR' and '\fI}\fR' in the command.
 
 If no placeholder is found in the command template the full path is used as the default argument. The \fB\-o\fR/\fB\-\-output\fR option has no effect on \fB\-x\fR/\fB\-\-exec\fR and \fB\-X\fR/\fB\-\-exec\-batch\fR.
 
