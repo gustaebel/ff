@@ -28,6 +28,21 @@ from .exceptions import UsageError
 Field = collections.namedtuple("Field", "attribute type width modifier")
 
 
+class AttributeDict(dict):
+    """Allow attribute access to a dictionary. Dot field separators are replaced with underscores.
+    """
+
+    def __init__(self, fields):
+        super().__init__()
+        self._fields = {field.replace(".", "_"): field for field in fields}
+
+    def __getattr__(self, name):
+        if name not in self._fields:
+            raise KeyError(name)
+        else:
+            return self[self._fields[name]]
+
+
 class Fields(list):
     """A class that stores a list of attributes as fields.
     """
@@ -65,6 +80,11 @@ class OutputFields(Fields):
     """Store a list of fields that help with formatting output.
     """
 
+    def __init__(self, context, argument):
+        super().__init__(context, argument)
+
+        self.fields = [str(field.attribute) for field in self]
+
     def store(self, argument):
         for string in argument:
             self.append(self.make_field(string))
@@ -72,7 +92,7 @@ class OutputFields(Fields):
     def to_dict(self, entry):
         """Create a dictionary from the list of fields.
         """
-        record = {}
+        record = AttributeDict(self.fields)
         for field in self:
             try:
                 value, type_cls = \

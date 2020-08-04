@@ -100,6 +100,14 @@ class Find(_Base):
             self.show_debug_info()
         self.setup_walker()
 
+    def setup_components(self):
+        super().setup_components()
+
+        for field in self.args.output:
+            if field.modifier is not None and field.modifier != "n":
+                raise ValueError(f"disallowed field modifier {field.modifier!r} in "\
+                        f"attribute {str(field.attribute)!r}")
+
     def setup_processing(self):
         if self.context.args.sort:
             self.context.processing = CollectiveGenerator(self.context)
