@@ -37,6 +37,7 @@ class FindNamespace(argparse.Namespace):
     json = None
 
     depth = None
+    limit = None
 
     # Options that have no relevance for the Python API but will be referenced somewhere in the
     # code. Would be nice to remove these one day.

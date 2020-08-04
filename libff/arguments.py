@@ -216,6 +216,11 @@ class ArgumentsPostProcessor:
                 self.args.output = ["path"]
                 warnings.append("Switching off --output, it has no effect with --count.")
 
+        if self.args.limit is not None and not self.args.sort:
+            warnings.append(
+                    "You should use --sort together with --limit to ensure a stable order "\
+                    "of entries.")
+
         return warnings
 
     def process_directories(self):
