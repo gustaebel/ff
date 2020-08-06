@@ -1,3 +1,9 @@
+### Version 588 - (2020-08-06)
+
+- Allow attribute access to Find() records.
+- Warn about using --limit and not using --sort.
+- Fix: Subsequent calls to Find() did not produce output.
+
 ### Version 587 - (2020-08-03)
 
 - Improve readability of durations.
