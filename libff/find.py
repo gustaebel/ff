@@ -78,7 +78,7 @@ class Find(_Base):
         args.tests = tests
         args.directories = directories.copy()
         args.exclude = exclude.copy()
-        args.output = output
+        args.output = output.copy()
         args.sort = sort
         args.reverse = reverse
         args.hide = hide
