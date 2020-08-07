@@ -276,12 +276,18 @@ class Entry:
             # FilesystemWalker, so that we don't have to call os.scandir() two times for every
             # directory. But the way FilesystemWalker is designed makes this impossible: the
             # directory has already been yielded before we find out if it is empty or not.
-            with os.scandir(self.path) as entries:
-                for _ in entries:
-                    return False
-                return True
+            try:
+                with os.scandir(self.path) as entries:
+                    for _ in entries:
+                        return False
+                    return True
+            except OSError:
+                # If we cannot access the directory's contents, we declare it non-empty.
+                return False
+
         elif stat.S_ISREG(self.status.st_mode):
             return self.size == 0
+
         else:
             return False
 
