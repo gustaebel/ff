@@ -1,3 +1,7 @@
+### Version 589 - (2020-08-07)
+
+- Fix: file.empty attribute failed for inaccessible directories.
+
 ### Version 588 - (2020-08-06)
 
 - Allow attribute access to Find() records.
