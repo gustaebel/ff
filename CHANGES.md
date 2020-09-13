@@ -1,3 +1,7 @@
+### Version 590 - (2020-09-13)
+
+- Fix: Don't show a traceback for invalid -l/--limit values.
+
 ### Version 589 - (2020-08-07)
 
 - Fix: file.empty attribute failed for inaccessible directories.
