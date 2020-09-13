@@ -40,8 +40,8 @@ class Elf(Plugin):
         # pylint:disable=global-statement,import-outside-toplevel,global-variable-not-assigned
         global ELFFile, DynamicSection, ELFError
         try:
-            from elftools.elf.elffile import ELFFile
             from elftools.elf.dynamic import DynamicSection
+            from elftools.elf.elffile import ELFFile
             from elftools.common.exceptions import ELFError
         except ImportError:
             raise MissingImport("pyelftools")
