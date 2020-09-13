@@ -105,7 +105,7 @@ def type_slice(string):
     """
     match = regex_slice.match(string)
     if match is None:
-        raise ValueError("invalid slice")
+        raise ArgumentError(f"invalid slice {string!r}")
 
     if match.group("single") is not None:
         start = 0
