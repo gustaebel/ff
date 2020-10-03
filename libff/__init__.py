@@ -73,8 +73,9 @@ class BaseClass:
     def __getattr__(self, name):
         try:
             attr = getattr(self.context, name)
-        except AttributeError:
-            raise AttributeError(f"{self.__class__.__name__} object has no attribute {name!r}")
+        except AttributeError as exc:
+            raise AttributeError(f"{self.__class__.__name__} object has no attribute {name!r}") \
+                    from exc
 
         if name in self.component_names:
             setattr(self, name, attr)

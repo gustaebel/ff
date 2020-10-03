@@ -175,5 +175,5 @@ def parse_time(string):
 
     try:
         return int(time.time() - parse_duration(string))
-    except ValueError:
-        raise ValueError(f"{string!r} is no valid time")
+    except ValueError as exc:
+        raise ValueError(f"{string!r} is no valid time") from exc

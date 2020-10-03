@@ -46,5 +46,5 @@ class Grep(Plugin):
                     yield "text", True
                     yield "linecount", len(lines)
                     yield "lines", lines
-        except OSError:
-            raise NoData
+        except OSError as exc:
+            raise NoData from exc

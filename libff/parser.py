@@ -180,9 +180,9 @@ class FlatParser(BaseClass):
         # Check if both attributes are comparable, i.e. they have a similar type.
         try:
             self.get_common_super_type(type_cls, ref_type_cls)
-        except ValueError:
+        except ValueError as exc:
             raise ExpressionError(f"{attribute} and {ref_attribute} have different types "\
-                    "and cannot be compared")
+                    "and cannot be compared") from exc
 
         entry = Entry.as_reference(self.args, value)
         return self.registry.get_attribute(entry, ref_attribute)
@@ -206,7 +206,7 @@ class FlatParser(BaseClass):
         """Create the Test object. Before that, do some sanity checks, handle case sensitivity,
            prepare regular expressions and fetch the value from a reference file if required.
         """
-        # pylint:disable=broad-except,too-many-branches
+        # pylint:disable=too-many-branches
         type_cls = self.registry.get_attribute_type(attribute)
 
         if operator not in type_cls.operators:
@@ -224,7 +224,7 @@ class FlatParser(BaseClass):
                 value = type_cls.input(value)
 
         except Exception as exc:
-            raise UsageError(str(exc))
+            raise UsageError(str(exc)) from exc
 
         if type_cls.choices is not None and value not in type_cls.choices:
             raise ExpressionError(f"You specified an invalid value {value!r} "\
@@ -249,7 +249,7 @@ class FlatParser(BaseClass):
                 try:
                     value = re.compile(value)
                 except re.error as exc:
-                    raise ExpressionError(f"Invalid regex pattern {value!r}: {exc}")
+                    raise ExpressionError(f"Invalid regex pattern {value!r}: {exc}") from exc
 
             elif operator == "%":
                 value = Glob(value, path_pattern=issubclass(type_cls, Path))

@@ -78,7 +78,7 @@ class Parallel(BaseClass):
                 if process.returncode != 0:
                     self.context.set_exitcode(EX_SUBPROCESS)
             except OSError as exc:
-                raise SubprocessError(str(exc))
+                raise SubprocessError(str(exc)) from exc
 
     def add_job(self, entry):
         """Add a subprocess to the queue for an Entry object.
@@ -367,7 +367,7 @@ class CollectiveExecProcessing(CollectiveMixin, BaseProcessing):
                 if process.returncode != 0:
                     self.context.set_exitcode(EX_SUBPROCESS)
             except OSError as exc:
-                raise SubprocessError(str(exc))
+                raise SubprocessError(str(exc)) from exc
 
         else:
             raise AssertionError("wrong usage of CollectiveExecProcessing class")

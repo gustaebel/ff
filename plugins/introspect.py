@@ -43,8 +43,8 @@ class Elf(Plugin):
             from elftools.elf.dynamic import DynamicSection
             from elftools.elf.elffile import ELFFile
             from elftools.common.exceptions import ELFError
-        except ImportError:
-            raise MissingImport("pyelftools")
+        except ImportError as exc:
+            raise MissingImport("pyelftools") from exc
 
     def extract_sonames(self, path):
         """Yield the names of the shared objects required by an ELF executable.
@@ -60,8 +60,8 @@ class Elf(Plugin):
                     for tag in section.iter_tags():
                         if tag.entry.d_tag == "DT_NEEDED":
                             yield tag.needed
-        except (OSError, ELFError):
-            raise NoData
+        except (OSError, ELFError) as exc:
+            raise NoData from exc
 
     def can_handle(self, entry):
         if entry.is_file():
@@ -151,5 +151,5 @@ class Py(Plugin):
     def process(self, entry, cached):
         try:
             yield "imports", sorted(self.parse_imports(entry))
-        except (OSError, SyntaxError, UnicodeDecodeError):
-            raise NoData
+        except (OSError, SyntaxError, UnicodeDecodeError) as exc:
+            raise NoData from exc

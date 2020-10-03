@@ -53,8 +53,8 @@ class Medium(Plugin):
         global pymediainfo
         try:
             import pymediainfo
-        except ImportError:
-            raise MissingImport("pymediainfo")
+        except ImportError as exc:
+            raise MissingImport("pymediainfo") from exc
 
     def prepare_tracks(self, entry):
         """Prepare a more accessible structure of tracks from a media file.
@@ -71,8 +71,8 @@ class Medium(Plugin):
                     tracks.setdefault(track_type, []).append(track)
             return tracks
 
-        except (OSError, RuntimeError):
-            raise NoData
+        except (OSError, RuntimeError) as exc:
+            raise NoData from exc
 
     def can_handle(self, entry):
         mimetype = mimetypes.guess_type(entry.name)[0]

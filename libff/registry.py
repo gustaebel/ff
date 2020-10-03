@@ -130,12 +130,11 @@ class Registry(BaseClass):
                                 direntry.name.startswith("_"):
                             continue
 
-                        # pylint:disable=broad-except
                         try:
                             self.load_plugin(direntry.name[:-3], source, direntry.path)
-                        except Exception:
+                        except Exception as exc:
                             raise BadPluginError.from_exception(
-                                    f"Plugin file {direntry.path!r} failed to load")
+                                    f"Plugin file {direntry.path!r} failed to load") from exc
 
             except OSError:
                 continue
@@ -157,9 +156,10 @@ class Registry(BaseClass):
                 self.cache.register_plugin(plugin_cls)
             self.plugins[name] = plugin_cls()
         except MissingImport as exc:
-            raise BadPluginError(f"Plugin {name!r} needs the following module: {exc.module!r}")
-        except Exception:
-            raise BadPluginError.from_exception(f"Unable to setup plugin {name!r}")
+            raise BadPluginError(f"Plugin {name!r} needs the following module: {exc.module!r}") \
+                    from exc
+        except Exception as exc:
+            raise BadPluginError.from_exception(f"Unable to setup plugin {name!r}") from exc
 
         if plugin_cls.speed is Speed.SLOW:
             # See FilesystemWalker for an explanation.
@@ -171,7 +171,7 @@ class Registry(BaseClass):
         """
         try:
             attribute = Attribute(*name.split(".", 1))
-        except TypeError:
+        except TypeError as exc:
             plugin_names = self.get_plugin_for_attribute(name)
 
             # The file plugin always has precedence. This way we avoid
@@ -185,13 +185,14 @@ class Registry(BaseClass):
 
             elif not plugin_names:
                 # We could not find the attribute in any of the plugins.
-                raise BadAttributeError(f"No plugin found for attribute {name!r}")
+                raise BadAttributeError(f"No plugin found for attribute {name!r}") from exc
 
             else:
                 # There is more than one plugin providing this attribute, we
                 # cannot continue.
                 raise BadAttributeError(f"Attribute {name!r} is ambiguous (choose between " \
-                        f"{', '.join(f'{plugin_name}.{name}' for plugin_name in plugin_names)})")
+                        f"{', '.join(f'{plugin_name}.{name}' for plugin_name in plugin_names)})") \
+                        from exc
 
         return attribute
 
@@ -214,18 +215,17 @@ class Registry(BaseClass):
     def get_data(self, entry, plugin):
         """Return all attribute values that are associated with entry.
         """
-        # pylint:disable=broad-except
         plugin = self.plugins[plugin]
         try:
             return self.get_data_from_plugin(entry, plugin)
         except NoData:
             return {}
-        except NotImplementedError:
+        except NotImplementedError as exc:
             raise BadPluginError.from_exception(
-                    f"Plugin {plugin.name!r} is not completely implemented")
-        except Exception:
+                    f"Plugin {plugin.name!r} is not completely implemented") from exc
+        except Exception as exc:
             raise BadPluginError.from_exception(
-                    f"Plugin {plugin.name!r} had an unhandled exception")
+                    f"Plugin {plugin.name!r} had an unhandled exception") from exc
 
     def get_data_from_plugin(self, entry, plugin):
         """Let the plugin process the entry.
@@ -289,9 +289,9 @@ class Registry(BaseClass):
         """
         try:
             return self.attributes[attribute]
-        except KeyError:
+        except KeyError as exc:
             raise BadAttributeError(
-                    f"{attribute.plugin!r} plugin has no attribute {attribute.name!r}")
+                    f"{attribute.plugin!r} plugin has no attribute {attribute.name!r}") from exc
 
     def get_plugin_speed(self, attribute):
         """Return the speed score of the plugin associated with the attribute.
@@ -320,8 +320,8 @@ class Registry(BaseClass):
         """
         try:
             plugin = self.registered_plugins[name]
-        except KeyError:
-            raise UsageError(f"Plugin {name!r} not found")
+        except KeyError as exc:
+            raise UsageError(f"Plugin {name!r} not found") from exc
 
         return PluginManPage(plugin)
 

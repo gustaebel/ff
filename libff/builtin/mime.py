@@ -45,8 +45,8 @@ class Mime(Plugin):
         global magic
         try:
             import magic
-        except ImportError:
-            raise MissingImport("file-magic")
+        except ImportError as exc:
+            raise MissingImport("file-magic") from exc
 
     def can_handle(self, entry):
         return entry.is_file()
@@ -56,8 +56,8 @@ class Mime(Plugin):
         try:
             detected = magic.detect_from_filename(entry.path)
             return detected.mime_type, detected.encoding, detected.name
-        except (OSError, ValueError):
-            raise NoData
+        except (OSError, ValueError) as exc:
+            raise NoData from exc
 
     def process(self, entry, cached):
         mime, encoding, name = cached

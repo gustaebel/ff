@@ -383,6 +383,6 @@ class Entry:
             # We have to check if the AttributeError that was raised was actually about
             # attribute.name, so we don't hide programming errors inside the Entry object.
             if exc.name != name:
-                raise AttributeError(exc.name)
+                raise AttributeError(exc.name) from exc
 
-            raise KeyError(name)
+            raise KeyError(name) from exc

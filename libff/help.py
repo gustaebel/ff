@@ -261,10 +261,10 @@ class ManPage:
         """
         try:
             subprocess.run(["man", "-l", "-"], input="\n".join(self.lines), text=True, check=True)
-        except FileNotFoundError:
-            raise SystemExit("unable to call man(1), is it installed?")
-        except subprocess.CalledProcessError:
-            raise SystemExit("calling man(1) failed")
+        except FileNotFoundError as exc:
+            raise SystemExit("unable to call man(1), is it installed?") from exc
+        except subprocess.CalledProcessError as exc:
+            raise SystemExit("calling man(1) failed") from exc
 
 
 class FullManPage(ManPage):

@@ -135,7 +135,7 @@ class _Base(BaseClass):
             matcher = Matcher(self.context, args.tests)
             self.context.matcher = matcher
         except ParserError as exc:
-            raise UsageError(f"unable to parse tests: {exc}")
+            raise UsageError(f"unable to parse tests: {exc}") from exc
 
         # Setup the excluder from the command line arguments.
         excluder = Excluder(self.context, args.exclude)
@@ -274,13 +274,13 @@ class Main(_Base):
                 stats.sort_stats("cumulative")
                 stats.print_stats(.1)
 
-        except KeyboardInterrupt:
+        except KeyboardInterrupt as exc:
             # Stop all processes immediately.
             self.context.stop()
             if __debug__:
                 raise
             else:
-                raise SystemExit("keyboard interrupt")
+                raise SystemExit("keyboard interrupt") from exc
 
         except BrokenPipeError:
             self.context.stop()

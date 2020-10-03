@@ -52,8 +52,8 @@ class Tar(Plugin):
         try:
             with tarfile.open(entry.path) as tar:
                 return set(name for name in tar.getnames())
-        except (OSError, EOFError):
-            raise NoData
+        except (OSError, EOFError) as exc:
+            raise NoData from exc
 
     def process(self, entry, cached):
         yield "members", cached

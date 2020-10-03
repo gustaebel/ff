@@ -252,8 +252,8 @@ class Number(Type):
     def input(cls, value):
         try:
             value = int(value)
-        except ValueError:
-            raise ValueError(f"unable to parse {value!r}")
+        except ValueError as exc:
+            raise ValueError(f"unable to parse {value!r}") from exc
         if value < 0:
             raise ValueError("value must not be less than 0")
         return value
