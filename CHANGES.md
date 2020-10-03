@@ -1,3 +1,8 @@
+### Version 591 - (2020-10-03)
+
+- Properly print usage errors.
+- Detect nested directory arguments more accurately.
+
 ### Version 590 - (2020-09-13)
 
 - Fix: Don't show a traceback for invalid -l/--limit values.
