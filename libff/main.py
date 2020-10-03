@@ -35,8 +35,9 @@ from .logger import Logger
 from .parser import ParserError
 from .context import Context
 from .registry import Registry
-from .exceptions import EX_OK, EX_PROCESS, EX_SUBPROCESS, BaseError, \
-    UsageError, ProcessError, SubprocessError
+from .arguments import parse_arguments
+from .exceptions import EX_OK, EX_USAGE, EX_PROCESS, EX_SUBPROCESS, \
+    BaseError, UsageError, ProcessError, SubprocessError
 from .processing import ImmediateExecProcessing, CollectiveExecProcessing, \
     ImmediateConsoleProcessing, CollectiveConsoleProcessing
 
@@ -55,7 +56,7 @@ class _Base(BaseClass):
         """
         raise NotImplementedError
 
-    def setup_context(self, args, warnings):
+    def setup_context(self, args, error=None, warnings=None):
         """Initialize the central Context object which will be passed to all components.
         """
         self.context.args = args
@@ -65,8 +66,12 @@ class _Base(BaseClass):
         if __debug__:
             self.context.logger.set_debug(args.debug)
 
-        for warning in warnings:
-            self.logger.warning(warning)
+        if error is not None:
+            self.logger.error(error, EX_USAGE)
+
+        if warnings is not None:
+            for warning in warnings:
+                self.logger.warning(warning)
 
     def setup_components(self):
         """Set up all remaining components like the registry, the cache and so on.
@@ -197,10 +202,10 @@ class Main(_Base):
     """The main entry point for the ff(1) script.
     """
 
-    def __init__(self, args, warnings):
+    def __init__(self):
         super().__init__()
 
-        self.setup_context(args, warnings)
+        self.setup_context(*parse_arguments())
 
         try:
             self.setup_components()

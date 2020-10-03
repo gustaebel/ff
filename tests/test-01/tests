@@ -442,3 +442,10 @@ dir/empty_dir
 ff -e depth+1 name=usr or name=etc /
 /usr
 /etc
+
+# Check that usage errors are properly printed.
+ff --count -D . -D ./dir 2>&1
+ERROR: './dir' is a sub-directory of '.'
+
+ff --count --limit :10
+ERROR: You cannot use --limit together with --count!

@@ -328,6 +328,12 @@ def parse_arguments():
         raise SystemExit(EX_OK)
 
     processor = ArgumentsPostProcessor(args)
-    warnings = processor.process()
 
-    return args, warnings
+    error = None
+    warnings = []
+    try:
+        warnings = processor.process()
+    except UsageError as exc:
+        error = exc.message
+
+    return args, error, warnings

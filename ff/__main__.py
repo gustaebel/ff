@@ -19,8 +19,6 @@
 # -----------------------------------------------------------------------
 
 from libff.main import Main
-from libff.arguments import parse_arguments
 
-args, warnings = parse_arguments()
-main = Main(args, warnings)
+main = Main()
 main.loop()

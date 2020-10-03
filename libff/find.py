@@ -94,7 +94,7 @@ class Find(_Base):
         processor = ArgumentsPostProcessor(args)
         processor.process()
 
-        self.setup_context(args, [])
+        self.setup_context(args)
         self.setup_components()
         self.setup_processing()
         if __debug__:
