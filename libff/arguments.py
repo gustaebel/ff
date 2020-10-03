@@ -248,7 +248,9 @@ class ArgumentsPostProcessor:
             for subdir in self.args.directories:
                 if subdir == directory:
                     continue
-                if os.path.commonpath([directory, subdir]) == subdir:
+                abs_directory = os.path.abspath(directory)
+                abs_subdir = os.path.abspath(subdir)
+                if os.path.commonpath([abs_directory, abs_subdir]) == abs_subdir:
                     raise UsageError(f"{directory!r} is a sub-directory of {subdir!r}")
 
     def process_depth_argument(self):
