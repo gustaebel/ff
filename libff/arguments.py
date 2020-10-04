@@ -252,6 +252,9 @@ class ArgumentsPostProcessor:
             for subdir in self.args.directories:
                 if subdir == directory:
                     continue
+                # XXX With --one-file-system it would be okay to specify a directory argument that
+                # only looks like a subdirectory of another argument but actually lives on a
+                # different mount. We should take this into account here.
                 abs_directory = os.path.abspath(directory)
                 abs_subdir = os.path.abspath(subdir)
                 if os.path.commonpath([abs_directory, abs_subdir]) == abs_subdir:
