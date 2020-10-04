@@ -426,6 +426,30 @@ ff -H --count file.size,type --json
 
 
 
+# --halt tests
+ff -H -j1 -S --halt never -x ../test.sh
+BAR
+baz
+dir
+dir/dir
+dir/dir/empty
+dir/empty_dir
+foo
+ERROR: One or more -x/--exec commands had errors
+
+
+ff -H -j1 -S --halt soon -x ../test.sh
+BAR
+baz
+ERROR: One or more -x/--exec commands had errors
+
+
+ff -H -j1 -S --halt now -x ../test.sh
+BAR
+baz
+ERROR: One or more -x/--exec commands had errors
+
+
 # Regression testing
 
 # Check if sort using a missing field works.
