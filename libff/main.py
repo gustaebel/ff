@@ -251,6 +251,8 @@ class Main(_Base):
     def walk(self):
         """Walk through the filesystem and process the results.
         """
+        # pylint:disable=too-many-branches
+
         try:
             if __debug__ and self.context.args.profile:
                 # Start profiling. No multiprocessing is involved, Walker.loop() is run in the main
@@ -298,7 +300,11 @@ class Main(_Base):
                 self.logger.debug("cache", "Cache was not used")
 
         if self.context.exitcode == EX_SUBPROCESS:
-            raise SubprocessError("One or more --exec/--exec-batch commands had errors")
+            if self.args.exec:
+                raise SubprocessError("One or more -x/--exec commands had errors")
+            else:
+                raise SubprocessError("One or more -X/--exec-batch commands had errors")
+
         elif self.context.exitcode == EX_PROCESS:
             raise ProcessError("One or more ff processes had unrecoverable errors! "\
                     "Result is probably incomplete!")
