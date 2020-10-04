@@ -303,7 +303,7 @@ class Main(_Base):
             if self.args.exec:
                 raise SubprocessError("One or more -x/--exec commands had errors")
             else:
-                raise SubprocessError("One or more -X/--exec-batch commands had errors")
+                raise SubprocessError("The -X/--exec-batch command had an error")
 
         elif self.context.exitcode == EX_PROCESS:
             raise ProcessError("One or more ff processes had unrecoverable errors! "\
