@@ -36,13 +36,14 @@ from .exceptions import EX_PROCESS, EX_SUBPROCESS, SubprocessError
 
 
 class Parallel(BaseClass):
-    """Implement a pool of threads each running a subprocess.
+    """Implement a pool of threads each running a subprocess. Normally -x/--exec commands are
+       issued directly in FilesystemWalker, but when entries are collated first (e.g. by --sort) we
+       use this pool afterwards to call -x/--exec commands in parallel.
     """
 
     def __init__(self, context):
         super().__init__(context)
 
-        self.stop_event = threading.Event()
         self.queue = queue.Queue()
 
         self.threads = []
@@ -63,22 +64,16 @@ class Parallel(BaseClass):
     def thread(self):
         """Loop over a queue and execute subprocesses.
         """
-        while not self.stop_event.is_set():
+        while not self.context.is_stopping():
             try:
                 args = self.queue.get(timeout=TIMEOUT)
             except queue.Empty:
                 continue
 
             if args is None:
-                self.stop_event.set()
                 break
 
-            try:
-                process = subprocess.run(args, check=False)
-                if process.returncode != 0:
-                    self.context.set_exitcode(EX_SUBPROCESS)
-            except OSError as exc:
-                raise SubprocessError(str(exc)) from exc
+            self.context.run_exec_process(args)
 
     def add_job(self, entry):
         """Add a subprocess to the queue for an Entry object.

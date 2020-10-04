@@ -112,6 +112,10 @@ def create_parser():
             help="Execute a command for each search result.")
     parser.add_option("-X", "--exec-batch", action="store_remainder", metavar="<cmd>",
             help="Execute a command with all search results at once.")
+    parser.add_option("--halt", "--halt-on-error", choices=["never", "soon", "now"],
+            default="never", metavar="<when>",
+            help="When to terminate in case one of the -x/--exec commands fails: "\
+                 "*never*, soon, now.")
     parser.add_option("-C", "--color", choices=["auto", "never", "always"],
             default="never" if "NO_COLOR" in os.environ else "auto",
             metavar="<when>", help="When to use colors: never, *auto*, always.")

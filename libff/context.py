@@ -18,12 +18,13 @@
 #
 # -----------------------------------------------------------------------
 
-import queue
 import threading
+import subprocess
 import multiprocessing
 import multiprocessing.sharedctypes
 
 from . import TIMEOUT
+from .exceptions import EX_SUBPROCESS
 
 
 class Context:
@@ -114,15 +115,46 @@ class Context:
     def is_stopping(self):
         """Return True all Processes are supposed to stop.
         """
-        try:
-            self.stop_queue.get_nowait()
-        except queue.Empty:
-            return False
-        else:
-            return True
+        return self.stop_queue.qsize() > 0
 
     def stop(self):
         """Stop all processes immediately.
         """
-        for _ in range(self.args.jobs):
+        if not self.is_stopping():
             self.stop_queue.put(None)
+
+    def run_exec_process(self, args):
+        """Run a subprocess with the arguments from --exec. If the process fails, terminate the
+           main loop and all other running subprocesses depending on the value of the --halt
+           option.
+        """
+        exitcode = 1
+
+        try:
+            process = subprocess.Popen(args)
+
+            if self.args.halt in ("never", "soon"):
+                # Let this process finish regardless of the state of the main loop.
+                exitcode = process.wait()
+
+            elif self.args.halt == "now":
+                # If the main loop is stopped, stop this process as well.
+                while not self.is_stopping():
+                    try:
+                        exitcode = process.wait(0.1)
+                        break
+                    except subprocess.TimeoutExpired:
+                        continue
+
+                else:
+                    process.terminate()
+
+        except OSError as exc:
+            self.logger.error(exc, None)
+
+        if exitcode != 0:
+            self.set_exitcode(EX_SUBPROCESS)
+
+            # Stop the main loop (and all running subprocesses).
+            if self.args.halt in ("soon", "now"):
+                self.stop()

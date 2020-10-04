@@ -22,14 +22,13 @@ import os
 import queue
 import signal
 import traceback
-import subprocess
 import multiprocessing
 
 from . import TIMEOUT, Entries, BaseClass, Directory
 from .path import join
 from .entry import Entry
 from .ignore import GitIgnore
-from .exceptions import EX_PROCESS, EX_SUBPROCESS
+from .exceptions import EX_PROCESS
 
 
 class FilesystemWalker(BaseClass):
@@ -238,10 +237,4 @@ class FilesystemWalker(BaseClass):
     def process_arguments(self, arguments):
         """Call a subprocess with a list of arguments and wait for its completion.
         """
-        try:
-            process = subprocess.run(arguments, check=False)
-            if process.returncode != 0:
-                self.context.set_exitcode(EX_SUBPROCESS)
-        except OSError as exc:
-            # Show an error, but don't kill this FilesystemWalker process.
-            self.context.error(exc, None)
+        self.context.run_exec_process(arguments)
