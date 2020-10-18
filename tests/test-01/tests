@@ -435,19 +435,19 @@ dir/dir
 dir/dir/empty
 dir/empty_dir
 foo
-ERROR: One or more -x/--exec commands had errors
+ERROR: One or more -x/--exec commands had errors (success: 6, failure: 1)
 
 
 ff -H -j1 -S --halt soon -x ../test.sh
 BAR
 baz
-ERROR: One or more -x/--exec commands had errors
+ERROR: One or more -x/--exec commands had errors (success: 1, failure: 1)
 
 
 ff -H -j1 -S --halt now -x ../test.sh
 BAR
 baz
-ERROR: One or more -x/--exec commands had errors
+ERROR: One or more -x/--exec commands had errors (success: 1, failure: 1)
 
 
 # Regression testing

@@ -50,6 +50,8 @@ class Context:
         self.stop_queue = None
         self.barrier = None
         self.exitcode_object = None
+        self.process_succeeded = None
+        self.process_failed = None
 
         self.cache_hits = None
         self.cache_misses = None
@@ -73,6 +75,8 @@ class Context:
         # The exitcode object provides a way for --exec and --exec-batch processes to feed back
         # errors to the main process.
         self.exitcode_object = multiprocessing.sharedctypes.RawValue("i", 0)
+        self.process_succeeded = multiprocessing.Value("L")
+        self.process_failed = multiprocessing.Value("L")
 
         # Provide a shared counter for cache hits and misses.
         self.cache_hits = multiprocessing.Value("L")
@@ -154,7 +158,13 @@ class Context:
 
         if exitcode != 0:
             self.set_exitcode(EX_SUBPROCESS)
+            with self.process_failed.get_lock():
+                self.process_failed.value += 1
 
             # Stop the main loop (and all running subprocesses).
             if self.args.halt in ("soon", "now"):
                 self.stop()
+
+        else:
+            with self.process_succeeded.get_lock():
+                self.process_succeeded.value += 1

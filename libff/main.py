@@ -301,7 +301,10 @@ class Main(_Base):
 
         if self.context.exitcode == EX_SUBPROCESS:
             if self.args.exec:
-                raise SubprocessError("One or more -x/--exec commands had errors")
+                succeeded = self.context.process_succeeded.value
+                failed = self.context.process_failed.value
+                raise SubprocessError("One or more -x/--exec commands had errors "\
+                        f"(success: {succeeded}, failure: {failed})")
             else:
                 raise SubprocessError("The -X/--exec-batch command had an error")
 
