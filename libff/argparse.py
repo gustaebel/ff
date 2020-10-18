@@ -444,6 +444,9 @@ class ArgumentParser:
                 self.namespace.set(option.dest, option.type(option.const))
 
         elif option.action == "store_remainder":
+            if not argv:
+                raise ArgumentError(f"{option.repr} requires an argument")
+
             while argv:
                 self.namespace.append(option.dest, argv.pop(0))
 
