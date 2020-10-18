@@ -1,3 +1,9 @@
+### Version 592 - (2020-10-18)
+
+- Add --halt={never,soon,now} option.
+- No longer allow empty -x/--exec and -X/--exec-batch options.
+- Show statistics about failed processes for -x/--exec.
+
 ### Version 591 - (2020-10-03)
 
 - Properly print usage errors.

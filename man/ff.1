@@ -1,4 +1,4 @@
-.TH ff 1 "2020-10-03" "Version 591" "ff - Find files in the filesystem"
+.TH ff 1 "2020-10-18" "Version 592" "ff - Find files in the filesystem"
 .nh
 .SH NAME
 
@@ -118,6 +118,10 @@ Execute a command for each search result.
 
 .IP "\fB-X, --exec-batch\fR" 4
 Execute a command with all search results at once.
+.PP
+
+.IP "\fB--halt, --halt-on-error <when>\fR" 4
+When to terminate in case one of the \fB\-x\fR/\fB\-\-exec\fR commands fails: *never*, soon, now.
 .PP
 
 .IP "\fB-C, --color <when>\fR" 4
