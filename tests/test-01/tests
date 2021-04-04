@@ -463,7 +463,7 @@ dir/dir/empty
 dir/empty_dir
 
 # Check that absolute paths don't have two leading slashes.
-ff -e depth+1 name=usr or name=etc /
+ff -e depth+0 name=usr or name=etc /
 /usr
 /etc
 
