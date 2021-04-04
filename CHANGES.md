@@ -1,3 +1,7 @@
+### Version 595 - (2021-04-04)
+
+- Fix issues with directories containing large numbers of entries.
+
 ### Version 594 - (2021-04-04)
 
 - Fix natural (version) sort order.
