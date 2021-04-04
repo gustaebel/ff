@@ -1,0 +1,46 @@
+# keep_order
+
+ff -S name
+1. Episode One.mp3
+10. Episode Ten.mp3
+2. Episode Two.mp3
+3. Episode Three.mp3
+bar-1.0.0.tar.gz
+bar-1.0.1.tar.gz
+bar-1.0.10.tar
+bar-1.0.2.tar.gz
+bar-1.0.20.tar.gz
+bar-1.0.tar.gz
+bar-1.1.0.tar.gz
+bar-1.tar.gz
+foo-1.0.0.tar.gz
+foo-1.0.1.tar.gz
+foo-1.0.10.tar
+foo-1.0.2.tar.gz
+foo-1.0.20.tar.gz
+foo-1.0.tar.gz
+foo-1.1.0.tar.gz
+foo-1.tar.gz
+
+
+ff -S name:v
+1. Episode One.mp3
+2. Episode Two.mp3
+3. Episode Three.mp3
+10. Episode Ten.mp3
+bar-1.tar.gz
+bar-1.0.tar.gz
+bar-1.0.0.tar.gz
+bar-1.0.1.tar.gz
+bar-1.0.2.tar.gz
+bar-1.0.10.tar
+bar-1.0.20.tar.gz
+bar-1.1.0.tar.gz
+foo-1.tar.gz
+foo-1.0.tar.gz
+foo-1.0.0.tar.gz
+foo-1.0.1.tar.gz
+foo-1.0.2.tar.gz
+foo-1.0.10.tar
+foo-1.0.20.tar.gz
+foo-1.1.0.tar.gz

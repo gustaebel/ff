@@ -18,6 +18,7 @@
 #
 # -----------------------------------------------------------------------
 
+import os
 import re
 import itertools
 import collections
@@ -124,6 +125,44 @@ class SortFields(OutputFields):
     """Store a list of fields that help with sorting Entry objects.
     """
 
+    regex_digits = re.compile(r"(\d+)")
+
+    def prepare_component(self, component):
+        """Prepare a path component to act as a part of a sort key.
+        """
+        # Strip away all file extensions that don't contain digits.
+        extensions = []
+        while component:
+            comp, ext = os.path.splitext(component)
+            ext = ext.lstrip(os.extsep)
+            if not ext or ext[0].isdigit():
+                break
+            component = comp
+            extensions.insert(0, ext)
+
+        # Split the component into string and number parts. Make sure the list starts with a
+        # string.
+        parts = self.regex_digits.split(component)
+        if parts[0].isdigit():
+            parts.insert(0, "")
+
+        # Yield a list of tokens with all numbers converted to ints.
+        yield [int(p) if p.isdigit() else p for p in parts]
+
+        # Yield extensions separately.
+        if extensions:
+            yield extensions
+
+    def prepare_sort_key(self, value):
+        """Prepare a sort key from a path for natural/version sorting.
+        """
+        # Split a full path in its components and prepare each component separately. This should
+        # produce output similar to natsort.os_sort_key().
+        cmp_key = []
+        for component in os.path.normpath(value).split(os.sep):
+            cmp_key += list(self.prepare_component(component))
+        return cmp_key
+
     def render(self, entry):
         """Create a sort key from an Entry object.
         """
@@ -136,7 +175,7 @@ class SortFields(OutputFields):
             else:
                 value = field.type.sort_key(value)
                 if field.modifier == "v":
-                    value = tuple(int(x) if x.isdigit() else x for x in re.split(r"(\d+)", value))
+                    value = self.prepare_sort_key(value)
                 output.append(value)
         return tuple(output)
 
