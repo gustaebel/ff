@@ -231,8 +231,11 @@ class FilesystemWalker(BaseClass):
             for i in range(0, len(search), chunk_size):
                 self.queue.put(search[i:i + chunk_size])
 
-        if process:
-            self.processing.process(process)
+        while process:
+            # Reduce number of Entry object that are sent in one go. This resolves issues with
+            # directories that contain a large number of entries.
+            self.processing.process(process[:100])
+            process = process[100:]
 
     def process_arguments(self, arguments):
         """Call a subprocess with a list of arguments and wait for its completion.
