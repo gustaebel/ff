@@ -473,3 +473,16 @@ ERROR: './dir' is a sub-directory of '.'
 
 ff --count --limit :10
 ERROR: You cannot use --limit together with --count!
+
+
+# no_order
+# Using -x together with -S hangs ff.
+timeout 3 ff -H -S -x echo; echo $?
+foo
+BAR
+baz
+dir
+dir/dir
+dir/dir/empty
+dir/empty_dir
+0

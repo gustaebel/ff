@@ -57,7 +57,8 @@ class Parallel(BaseClass):
         return self
 
     def __exit__(self, *exc):
-        self.queue.put(None)
+        for thread in self.threads:
+            self.queue.put(None)
         for thread in self.threads:
             thread.join()
 
