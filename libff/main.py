@@ -174,6 +174,16 @@ class _Base(BaseClass):
 
             walker.put([Directory(StartDirectory(self.context.args, path), "", ignores)])
 
+    def setup(self, args, error=None, warnings=None):
+        """Set up context, components, processing and walkers.
+        """
+        self.setup_context(args, error, warnings)
+        self.setup_components()
+        self.setup_processing()
+        if __debug__:
+            self.show_debug_info()
+        self.setup_walker()
+
     def show_debug_info(self):
         """Show general debug information and the tests to be performed.
         """
@@ -205,15 +215,8 @@ class Main(_Base):
     def __init__(self):
         super().__init__()
 
-        self.setup_context(*parse_arguments())
-
         try:
-            self.setup_components()
-            self.setup_processing()
-            if __debug__:
-                self.show_debug_info()
-            self.setup_walker()
-
+            self.setup(*parse_arguments())
         except BaseError as exc:
             self.handle_exception(exc)
 

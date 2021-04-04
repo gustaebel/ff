@@ -94,12 +94,7 @@ class Find(_Base):
         processor = ArgumentsPostProcessor(args)
         processor.process()
 
-        self.setup_context(args)
-        self.setup_components()
-        self.setup_processing()
-        if __debug__:
-            self.show_debug_info()
-        self.setup_walker()
+        self.setup(args)
 
     def setup_components(self):
         super().setup_components()
