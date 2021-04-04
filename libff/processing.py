@@ -408,9 +408,6 @@ class CollectiveGenerator(ImmediateGenerator):
 
         self.entries = []
 
-    def process(self, entries):
-        self.out_queue.put(entries)
-
     def loop(self):
         while True:
             try:
