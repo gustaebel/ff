@@ -198,19 +198,8 @@ OUTPUT
     unless NO_COLOR is set, --color is set to 'never', or the output is not
     connected to a terminal. Color output can be forced with --color=always.
 
-    Furthermore, the formatting of individual attribute values can be controlled
-    with modifiers. The syntax is: <attribute-name>:<modifier>. <modifier> can be
-    one of:
-
-    h  human-readable formatting for size types
-    x  hexadecimal representation for number types
-    o  octal representation for number types, e.g. 'file.mode' and 'file.perm'.
-    n  ignore null values (otherwise the whole record would not be printed)
-
-    Example:
-
-    $ ff --output size:h,perm:o,path --sort size
-
+    In addition, output of attribute values can be controlled using modifiers,
+    see section MODIFIERS.
 
 COMMAND EXECUTION
     The -x/--exec and -X/--exec-batch options allow executing external commands
@@ -265,7 +254,8 @@ SORTING
     -S/--sort takes an optional <attribute-list> argument. Without it, sorting is
     done alphabetically on the entry's path. <attribute-list> is a
     comma-separated list of attribute names that will be used as sort criteria.
-    The sort order can be reversed with -R/--reverse.
+    The sort order can be reversed with -R/--reverse. In addition, sorting of
+    attribute values can be controlled using modifiers, see section MODIFIERS.
 
 COUNTING
     If the --count option is specified, instead of printing the results of the
@@ -285,6 +275,27 @@ COUNTING
     perm, hidden, depth, uid, gid, etc.
 
     The way a type is counted can be checked with `ff --help-types`.
+
+MODIFIERS
+    How individual attribute values are output and sorted can be controlled
+    using modifiers. The syntax is: <attribute-name>:<modifier>. Possible
+    values for <modifier> are listed below.
+
+    Output modifiers:
+    h  human-readable formatting for size types
+    x  hexadecimal representation for number types
+    o  octal representation for number types, e.g. 'file.mode' and 'file.perm'.
+    n  ignore null values (otherwise the whole record would not be printed)
+
+    Sort modifiers:
+    v  natural sort order instead of alphabetical order, e.g. for version
+       numbers within filenames
+
+    Example:
+
+    $ ff --output size:h,perm:o,path
+
+    $ ff --sort name:v
 
 CACHING
     Some plugins use a cache to store information between consecutive runs that

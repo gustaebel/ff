@@ -48,7 +48,7 @@ class Fields(list):
     """
 
     regex = re.compile(r"^((?:[a-zA-Z][a-zA-Z0-9_]+\.)?[a-zA-Z][a-zA-Z0-9_]+?)"\
-            r"(?::(-?\d+)?(h|o|x|n)?)?$")
+            r"(?::(-?\d+)?(h|o|x|n|v)?)?$")
 
     def __init__(self, context, argument):
         super().__init__()
@@ -135,6 +135,8 @@ class SortFields(OutputFields):
                 output.append(field.type.sort_none)
             else:
                 value = field.type.sort_key(value)
+                if field.modifier == "v":
+                    value = tuple(int(x) if x.isdigit() else x for x in re.split(r"(\d+)", value))
                 output.append(value)
         return tuple(output)
 

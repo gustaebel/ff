@@ -1,4 +1,4 @@
-.TH ff 1 "2020-10-18" "Version 592" "ff - Find files in the filesystem"
+.TH ff 1 "2021-04-04" "Version 592" "ff - Find files in the filesystem"
 .nh
 .SH NAME
 
@@ -376,29 +376,7 @@ The \fB\-\-json\fR and \fB\-\-jsonl\fR/\fB\-\-ndjson\fR options print each recor
 
 By default, pathnames are printed in color according to \fBdircolors\fR(1) rules, unless NO_COLOR is set, \fB\-\-color\fR is set to '\fInever\fR', or the output is not connected to a terminal. Color output can be forced with \fB\-\-color\fR=always.
 
-Furthermore, the formatting of individual attribute values can be controlled with modifiers. The syntax is: <attribute\-name>:<modifier>. <modifier> can be one of:
-
-
-.IP "\fBh\fR" 4
-human\-readable formatting for size types
-.PP
-
-.IP "\fBx\fR" 4
-hexadecimal representation for number types
-.PP
-
-.IP "\fBo\fR" 4
-octal representation for number types, e.g. '\fIfile.mode\fR' and '\fIfile.perm\fR'.
-.PP
-
-.IP "\fBn\fR" 4
-ignore null values (otherwise the whole record would not be printed)
-.PP
-
-Example:
-
-\fB    $ ff --output size:h,perm:o,path --sort size\fR
-
+In addition, output of attribute values can be controlled using modifiers, see section MODIFIERS.
 
 
 .SH COMMAND EXECUTION
@@ -459,7 +437,7 @@ By default, \fBff\fR(1) reads .gitignore, .ignore, .fdignore, and .ffignore file
 
 Sorting is controlled with the \fB\-S\fR/\fB\-\-sort\fR option. It is off by default, this way entries are processed and printed as soon as they are found instead of first being collected and then sorted. This makes better use of \fBff\fR(1)'s parallel processing capabilities and is much faster.
 
-\fB\-S\fR/\fB\-\-sort\fR takes an optional <attribute\-list> argument. Without it, sorting is done alphabetically on the entry's path. <attribute\-list> is a comma\-separated list of attribute names that will be used as sort criteria. The sort order can be reversed with \fB\-R\fR/\fB\-\-reverse\fR.
+\fB\-S\fR/\fB\-\-sort\fR takes an optional <attribute\-list> argument. Without it, sorting is done alphabetically on the entry's path. <attribute\-list> is a comma\-separated list of attribute names that will be used as sort criteria. The sort order can be reversed with \fB\-R\fR/\fB\-\-reverse\fR. In addition, sorting of attribute values can be controlled using modifiers, see section MODIFIERS.
 
 
 .SH COUNTING
@@ -469,6 +447,42 @@ If the \fB\-\-count\fR option is specified, instead of printing the results of t
 There are two possible ways in which attributes are counted that depend on their type. Types like file size or duration that vary widely are summed up to a total. For all other types the number of occurrences of each individual value is counted, this way you can get an overview on the variety of values of an attribute. For some attributes \fB\-\-count\fR makes not much sense, e.g. path or time. It is best suited for attributes like type, perm, hidden, depth, uid, gid, etc.
 
 The way a type is counted can be checked with \fBff \-\-help\-types\fR.
+
+
+.SH MODIFIERS
+
+How individual attribute values are output and sorted can be controlled using modifiers. The syntax is: <attribute\-name>:<modifier>. Possible values for <modifier> are listed below.
+
+Output modifiers:
+
+.IP "\fBh\fR" 4
+human\-readable formatting for size types
+.PP
+
+.IP "\fBx\fR" 4
+hexadecimal representation for number types
+.PP
+
+.IP "\fBo\fR" 4
+octal representation for number types, e.g. '\fIfile.mode\fR' and '\fIfile.perm\fR'.
+.PP
+
+.IP "\fBn\fR" 4
+ignore null values (otherwise the whole record would not be printed)
+.PP
+
+Sort modifiers:
+
+.IP "\fBv\fR" 4
+natural sort order instead of alphabetical order, e.g. for version numbers within filenames
+.PP
+
+
+Example:
+
+\fB    $ ff --output size:h,perm:o,path\fR
+
+\fB    $ ff --sort name:v\fR
 
 
 .SH CACHING
