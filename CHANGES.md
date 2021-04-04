@@ -1,3 +1,7 @@
+### Version 594 - (2021-04-04)
+
+- Fix natural (version) sort order and add tests.
+
 ### Version 593 - (2021-04-04)
 
 - Add natural (version) sort order.
