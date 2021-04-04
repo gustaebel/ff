@@ -1,3 +1,8 @@
+### Version 593 - (2021-04-04)
+
+- Add natural (version) sort order.
+- Fix: Using --exec together with --sort causes hang.
+
 ### Version 592 - (2020-10-18)
 
 - Add --halt={never,soon,now} option.
