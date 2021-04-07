@@ -94,8 +94,6 @@ regex_duration = re.compile(r"(\d+)([smhdwMy])?")
 def parse_duration(string):
     """Convert a human readable duration from a string to seconds.
     """
-    string = string.lower()
-
     try:
         return int(string) * 60
     except ValueError:
