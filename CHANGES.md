@@ -1,3 +1,8 @@
+### Version 596 - (2021-04-07)
+
+- Fix: month durations did not work.
+- Fix a quirk with the cython build.
+
 ### Version 595 - (2021-04-04)
 
 - Fix issues with directories containing large numbers of entries.
