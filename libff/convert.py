@@ -153,10 +153,14 @@ def parse_time(string):
     """Convert a date and time or a duration to the corresponding number of seconds. A simple
        integer or float is taken as seconds since epoch.
     """
+    # Accept float epoch times but convert them to int.
     try:
-        return int(float(string))
+        # XXX Cython can't handle int(float(string)).
+        number = float(string)
     except ValueError:
         pass
+    else:
+        return int(number)
 
     if len(string) >= 4:
         for typ, fmt in time_formats:
