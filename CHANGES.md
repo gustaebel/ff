@@ -1,3 +1,7 @@
+### Version 599 - (2021-04-09)
+
+- Allow ignore files in root directory.
+
 ### Version 598 - (2021-04-09)
 
 - Fix: Use correct plugin directories when used as a module.
