@@ -206,7 +206,7 @@ class GitIgnore:
         ignore_path = None
         exclude = False
         for ignore in ignores:
-            relpath = path[len(ignore.dirname) + 1:]
+            relpath = path[len(ignore.dirname):].lstrip(os.sep)
 
             for key, pattern in ignore.patterns:
                 if key.directory and not is_dir:
