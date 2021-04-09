@@ -1,10 +1,14 @@
+### Version 598 - (2021-04-09)
+
+- Fix: Use correct plugin directories when used as a module.
+
 ### Version 597 - (2021-04-09)
 
 - Add --ignore-files option.
 
 ### Version 596 - (2021-04-07)
 
-- Fix: month durations did not work.
+- Fix: Month durations did not work.
 - Fix a quirk with the cython build.
 
 ### Version 595 - (2021-04-04)
