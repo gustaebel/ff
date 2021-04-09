@@ -1,3 +1,7 @@
+### Version 600 - (2021-04-09)
+
+- Fix pattern matching in the filesystem root.
+
 ### Version 599 - (2021-04-09)
 
 - Allow ignore files in root directory.
