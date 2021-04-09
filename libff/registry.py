@@ -61,8 +61,12 @@ class Registry(BaseClass):
         """
         yield "builtin", self.PLUGIN_DIR_BUILTIN
 
-        if __debug__:
-            yield "contrib", os.path.realpath(os.path.join(os.path.dirname(__file__), "../plugins"))
+        # Return different plugin directories depending on whether we are in the git working tree.
+        dirname = os.path.dirname(__file__)
+        git_dir = os.path.join(dirname, "../.git")
+        plugin_dir = os.path.join(dirname, "../plugins")
+        if __debug__ and os.path.isdir(git_dir) and os.path.isdir(plugin_dir):
+            yield "contrib", os.path.realpath(plugin_dir)
         else:
             yield "contrib", self.PLUGIN_DIR_CONTRIB
 
