@@ -162,6 +162,8 @@ class GitIgnore:
         return ignores
 
     def __init__(self, dirname, name):
+        if not dirname:
+            dirname = os.sep
         assert os.path.isabs(dirname)
         self.dirname = dirname
         self.path = join(dirname, name)
