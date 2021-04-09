@@ -1,3 +1,7 @@
+### Version 597 - (2021-04-09)
+
+- Add --ignore-files option.
+
 ### Version 596 - (2021-04-07)
 
 - Fix: month durations did not work.

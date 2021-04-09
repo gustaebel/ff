@@ -1,4 +1,4 @@
-.TH ff 7 "2021-04-07" "Version 596" "ff Plugin Attributes Reference"
+.TH ff 7 "2021-04-09" "Version 597" "ff Plugin Attributes Reference"
 .nh
 .SH DESCRIPTION
 This is a list of all the attributes that are available. Attributes are provided by plugins. For more details on a specific plugin use '\fIff \-\-help <plugin>\fR'. Please note that if you got this help text by using '\fIman 7 ff\fR', the information you get is limited to the builtin plugins. Use '\fIff \-\-help\-attributes\fR' to get the full attribute list from all plugins that are available right now.
@@ -245,12 +245,12 @@ The lines of the file.
 
 .SH IGNORE PLUGIN
 
-The "ignore" plugin shows whether files match patterns from .(git|fd|ff)ignore files. It is useful e.g. inside working copies of git repositories.
+The "ignore" plugin shows whether files match patterns from .{,git,fd,ff}ignore files. It is useful e.g. inside working copies of git repositories.
 
 .IP "\fBignore.ignored\fR" 4
 Type: boolean ( = )
 .br
-Whether the file matches patterns in a .(git|fd|ff)ignore file.
+Whether the file matches patterns in a .{,git,fd,ff}ignore file.
 
 .IP "\fBignore.path\fR" 4
 Type: string ( = : ~ % )

@@ -1,4 +1,4 @@
-.TH ff 1 "2021-04-07" "Version 596" "ff - Find files in the filesystem"
+.TH ff 1 "2021-04-09" "Version 597" "ff - Find files in the filesystem"
 .nh
 .SH NAME
 
@@ -87,11 +87,15 @@ Do not show hidden files and directories.
 .PP
 
 .IP "\fB-I, --ignore\fR" 4
-Do not show files that are excluded by patterns from .(git|fd|ff)ignore files.
+Do not show files that are excluded by patterns from .{,git,fd,ff}ignore files.
 .PP
 
 .IP "\fB--no-parent-ignore\fR" 4
 Do not read patterns from ignore files from parent directories.
+.PP
+
+.IP "\fB--ignore-files <filename-list>\fR" 4
+A comma\-separated list of filenames that contain ignore patterns. Default is .fdignore,.ffignore,.gitignore,.ignore.
 .PP
 
 .IP "\fB-d, --depth <range>\fR" 4
@@ -430,7 +434,7 @@ If \fB\-H\fR/\fB\-\-hide\fR is given, all hidden files will be excluded using th
 
 .SH IGNORE FILES
 
-By default, \fBff\fR(1) reads .gitignore, .ignore, .fdignore, and .ffignore files and excludes all entries that match the set of patterns in one of these files. The syntax of these files is described in \fBgitignore\fR(5).
+With \fB\-I\fR/\fB\-\-ignore\fR, \fBff\fR(1) reads .fdignore, .ffignore, .gitignore, and .ignore files and excludes all entries that match the set of patterns in one of these files. The list of ignore files can be altered with \fB\-\-ignore\-files\fR. The syntax of these files is described in \fBgitignore\fR(5).
 
 
 .SH SORTING
