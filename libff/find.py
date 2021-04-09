@@ -22,6 +22,7 @@ import shlex
 import argparse
 
 from .main import _Base
+from .ignore import IGNORE_FILES
 from .arguments import Defaults, ArgumentsPostProcessor
 from .processing import ImmediateGenerator, CollectiveGenerator
 
@@ -57,7 +58,7 @@ class Find(_Base):
 
     def __init__(self, query=None, directories=["."], exclude=[], output=["file"],
             sort=[], reverse=False,
-            hide=False, ignore=False, one_file_system=False,
+            hide=False, ignore=False, ignore_files=IGNORE_FILES, one_file_system=False,
             case=Defaults.case,
             si=Defaults.si,
             follow_symlinks=Defaults.follow_symlinks,
@@ -83,6 +84,7 @@ class Find(_Base):
         args.reverse = reverse
         args.hide = hide
         args.ignore = ignore
+        args.ignore_files = ignore_files
         args.one_file_system = one_file_system
         args.case = case
         args.si = si

@@ -24,6 +24,8 @@ import collections
 
 from .path import join
 
+IGNORE_FILES = set([".gitignore", ".ignore", ".fdignore", ".ffignore"])
+
 GroupKey = collections.namedtuple("GroupKey", "include anchored directory")
 
 
@@ -144,10 +146,8 @@ class GitIgnore:
     # in the manpage yet. It does not read $GIT_DIR/info/exclude or read core.excludesFile from the
     # git(1) configuration.
 
-    IGNORE_NAMES = set([".gitignore", ".ignore", ".fdignore", ".ffignore"])
-
     @classmethod
-    def from_parent_directories(cls, path):
+    def from_parent_directories(cls, ignore_files, path):
         """Return a list of GitIgnore objects from the parent directories of 'path'.
         """
         dirname = os.path.dirname(os.path.abspath(path))
@@ -155,7 +155,7 @@ class GitIgnore:
         parent = os.sep
         for part in dirname.split(os.sep):
             parent = join(parent, part)
-            for name in cls.IGNORE_NAMES:
+            for name in ignore_files:
                 path = join(parent, name)
                 if os.path.exists(path):
                     ignores.append(path)

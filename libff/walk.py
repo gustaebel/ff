@@ -27,7 +27,6 @@ import multiprocessing
 from . import TIMEOUT, Entries, BaseClass, Directory
 from .path import join
 from .entry import Entry
-from .ignore import GitIgnore
 from .exceptions import EX_PROCESS
 
 
@@ -160,7 +159,7 @@ class FilesystemWalker(BaseClass):
 
                     entries.append(entry)
 
-                    if entry.name in GitIgnore.IGNORE_NAMES:
+                    if entry.name in self.args.ignore_files:
                         if __debug__:
                             self.logger.debug("walk", f"Found ignore file {entry.name!r} "\
                                     f"in {entry.dirname!r}")

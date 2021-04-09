@@ -23,8 +23,9 @@ import sys
 import shlex
 
 from . import MAX_CPU
-from .argparse import ArgumentParser, type_jobs, type_list, type_slice, \
-    type_ranges
+from .ignore import IGNORE_FILES
+from .argparse import ArgumentParser, type_set, type_jobs, type_list, \
+    type_slice, type_ranges
 from .exceptions import EX_OK, UsageError
 
 
@@ -89,9 +90,13 @@ def create_parser():
     parser.add_option("-H", "--hide", action="store_true", default=False,
             help="Do not show hidden files and directories.")
     parser.add_option("-I", "--ignore", action="store_true", default=False,
-            help="Do not show files that are excluded by patterns from .(git|fd|ff)ignore files.")
+            help="Do not show files that are excluded by patterns from .{,git,fd,ff}ignore files.")
     parser.add_option("--no-parent-ignore", action="store_true", default=False,
             help="Do not read patterns from ignore files from parent directories.")
+    parser.add_option("--ignore-files", type=type_set, metavar="<filename-list>",
+            default=IGNORE_FILES,
+            help="A comma-separated list of filenames that contain ignore patterns. Default is "\
+                f"{','.join(sorted(IGNORE_FILES))}.")
     parser.add_option("-d", "--depth", type=type_ranges, metavar="<range>",
             help="Show only files that are located at a certain depth level of the directory "\
                  "tree that is within the given <range>. A <range> is a string of the form "\

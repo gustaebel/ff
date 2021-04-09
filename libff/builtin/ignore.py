@@ -24,14 +24,14 @@ from libff.plugin import *
 
 
 class Ignore(Plugin):
-    """The "ignore" plugin shows whether files match patterns from .(git|fd|ff)ignore files. It is
+    """The "ignore" plugin shows whether files match patterns from .{,git,fd,ff}ignore files. It is
        useful e.g. inside working copies of git repositories.
     """
 
     speed = Speed.SLOW
 
     attributes = [
-        ("ignored", Boolean, "Whether the file matches patterns in a .(git|fd|ff)ignore file."),
+        ("ignored", Boolean, "Whether the file matches patterns in a .{,git,fd,ff}ignore file."),
         ("path", String, "The path to the ignore file that contained the matching pattern."),
     ]
 

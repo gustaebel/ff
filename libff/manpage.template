@@ -241,9 +241,10 @@ EXCLUSION
     -I/--ignore which translates to '--exclude ignored=yes'.
 
 IGNORE FILES
-    By default, ff(1) reads .gitignore, .ignore, .fdignore, and .ffignore files
-    and excludes all entries that match the set of patterns in one of these
-    files. The syntax of these files is described in gitignore(5).
+    With -I/--ignore, ff(1) reads .fdignore, .ffignore, .gitignore, and .ignore
+    files and excludes all entries that match the set of patterns in one of
+    these files. The list of ignore files can be altered with
+    --ignore-files. The syntax of these files is described in gitignore(5).
 
 SORTING
     Sorting is controlled with the -S/--sort option. It is off by default, this

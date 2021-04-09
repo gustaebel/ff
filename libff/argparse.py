@@ -63,6 +63,12 @@ def type_list(string):
     return [s.strip() for s in string.split(",")]
 
 
+def type_set(string):
+    """Parse a comma separated string into a set.
+    """
+    return {s.strip() for s in string.split(",")}
+
+
 regex_range = re.compile(r"^(?:(?P<single>\d+)|(?P<start>\d*)-(?P<stop>\d*))$")
 
 def type_ranges(string):

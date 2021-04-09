@@ -7,3 +7,9 @@ dir/a
 dir/c
 dir/c/c.txt
 dir/d.txt
+
+
+ff -HI --ignore-files .ignore-test
+foo
+bar
+baz
