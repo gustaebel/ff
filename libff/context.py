@@ -135,6 +135,7 @@ class Context:
         exitcode = 1
 
         try:
+            # pylint:disable=consider-using-with
             process = subprocess.Popen(args)
 
             if self.args.halt in ("never", "soon"):
