@@ -1,3 +1,7 @@
+### Version 601 - (2021-08-21)
+
+- Fix: Exception when using --color auto|always with unset LS_COLORS.
+
 ### Version 600 - (2021-04-09)
 
 - Fix pattern matching in the filesystem root.
