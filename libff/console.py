@@ -261,6 +261,7 @@ class ColorConsole(Console):
     def __init__(self, context):
         super().__init__(context)
 
+        self.colors = {}
         self.extensions = {}
         rules = {}
 
@@ -292,7 +293,6 @@ class ColorConsole(Console):
 
         # Prepare escape sequences for directories, executables, symlinks and orphans. There are
         # some more we might add in the future.
-        self.colors = {}
         for rule in ("di", "ex", "ln", "or"):
             if rule in rules:
                 self.colors[rule] = (esc(rules[rule]), self.reset)
