@@ -44,6 +44,8 @@ def split(path:str) -> Tuple[str, str]:
     sep:int = path.rfind(separator)
     if sep < 0:
         return "", path
+    elif sep == 0:
+        return separator, path[1:]
     else:
         return path[:sep], path[sep + 1:]
 
