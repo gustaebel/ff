@@ -38,12 +38,13 @@ class Pacman(Plugin):
     def setup(self):
         self.pkglist = {}
         self.filelist = set()
-        for line in subprocess.Popen(["pacman", "-Ql"], stdout=subprocess.PIPE, text=True).stdout:
-            line = line.strip()
-            pkgname, path = line.split(None, 1)
-            path = path.rstrip(os.sep)
-            self.filelist.add(path)
-            self.pkglist.setdefault(pkgname, set()).add(path)
+        with subprocess.Popen(["pacman", "-Ql"], stdout=subprocess.PIPE, text=True) as proc:
+            for line in proc.stdout:
+                line = line.strip()
+                pkgname, path = line.split(None, 1)
+                path = path.rstrip(os.sep)
+                self.filelist.add(path)
+                self.pkglist.setdefault(pkgname, set()).add(path)
 
     def can_handle(self, entry):
         return True

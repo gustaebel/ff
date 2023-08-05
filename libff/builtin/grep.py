@@ -37,6 +37,7 @@ class Grep(Plugin):
 
     def process(self, entry, cached):
         try:
+            # pylint:disable=unspecified-encoding
             with open(entry.path) as fobj:
                 try:
                     lines = fobj.readlines()

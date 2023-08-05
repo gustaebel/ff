@@ -296,7 +296,7 @@ class ExecBatchFields(ExecFields):
         if any(isinstance(field, Field) for field in self[0]):
             raise UsageError("The first part of the command must not contain placeholders!")
 
-    # pylint:disable=arguments-differ
+    # pylint:disable=arguments-renamed
     def render(self, entries):
         """Create a list of arguments from multiple Entry objects for calling a subprocess.
         """

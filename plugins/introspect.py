@@ -123,6 +123,7 @@ class Py(Plugin):
     def parse_imports(self, entry):
         """Extract the names of modules and packages that a Python script imports.
         """
+        # pylint:disable=unspecified-encoding
         with open(entry.path) as fobj:
             data = fobj.read()
 

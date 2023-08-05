@@ -13,7 +13,6 @@ module-rgx=([a-z_][a-z0-9_\-]*)$
 max-args=7
 
 [MESSAGES CONTROL]
-disable=bad-whitespace,bad-continuation,no-self-use,
-    wildcard-import,unused-wildcard-import,
+disable=wildcard-import,unused-wildcard-import,
     no-else-return,no-else-raise,no-else-break,no-else-continue,
     missing-module-docstring,too-few-public-methods

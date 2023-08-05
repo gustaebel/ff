@@ -274,6 +274,7 @@ class FullManPage(ManPage):
     def render(self):
         super().render()
 
+        # pylint:disable=unspecified-encoding
         with open(os.path.join(os.path.dirname(__file__), "manpage.template")) as lines:
             self.parse_lines(lines)
 

@@ -168,6 +168,7 @@ class GitIgnore:
         self.dirname = dirname
         self.path = join(dirname, name)
 
+        # pylint:disable=unspecified-encoding
         with open(self.path) as lines:
             self.lines = list(lines)
 

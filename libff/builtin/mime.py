@@ -39,8 +39,7 @@ class Mime(Plugin):
         ("name", String, "The full text description of the type of the file."),
     ]
 
-    @classmethod
-    def setup(cls):
+    def setup(self):
         # pylint:disable=global-statement,import-outside-toplevel
         global magic
         try:

@@ -47,8 +47,7 @@ class Medium(Plugin):
         ("height", Number, "The height of a visual medium (image, video) in pixel.")
     ]
 
-    @classmethod
-    def setup(cls):
+    def setup(self):
         # pylint:disable=global-statement,import-outside-toplevel
         global pymediainfo
         try:
