@@ -1,3 +1,7 @@
+### Version 603 - (2023-08-05)
+
+- Fix dirname for files located directly in the root directory.
+
 ### Version 601 - (2021-08-21)
 
 - Fix: Exception when using --color auto|always with unset LS_COLORS.
