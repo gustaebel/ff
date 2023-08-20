@@ -1,3 +1,7 @@
+### Version 604 - (2023-08-20)
+
+- Add mpath, devname and fstype attributes to the file plugin.
+
 ### Version 603 - (2023-08-05)
 
 - Fix dirname for files located directly in the root directory.
