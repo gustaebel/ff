@@ -1,4 +1,4 @@
-.TH ff 7 "2023-08-05" "Version 603" "ff Plugin Attributes Reference"
+.TH ff 7 "2023-08-20" "Version 603" "ff Plugin Attributes Reference"
 .nh
 .SH DESCRIPTION
 This is a list of all the attributes that are available. Attributes are provided by plugins. For more details on a specific plugin use '\fIff \-\-help <plugin>\fR'. Please note that if you got this help text by using '\fIman 7 ff\fR', the information you get is limited to the builtin plugins. Use '\fIff \-\-help\-attributes\fR' to get the full attribute list from all plugins that are available right now.
@@ -171,6 +171,21 @@ Whether the target of a symbolic link points to a file that does not exist.
 Type: boolean ( = )
 .br
 Whether the entry is a mountpoint.
+
+.IP "\fB[file.]mpath\fR" 4
+Type: string ( = : ~ % )
+.br
+The path of the nearest mountpoint.
+
+.IP "\fB[file.]devname\fR" 4
+Type: string ( = : ~ % )
+.br
+The name of the device the file is located.
+
+.IP "\fB[file.]fstype\fR" 4
+Type: string ( = : ~ % )
+.br
+The type of the filesystem the file is located.
 
 
 .SH ELF PLUGIN

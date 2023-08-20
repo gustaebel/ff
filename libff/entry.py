@@ -22,9 +22,37 @@ import os
 import grp
 import pwd
 import stat
+from functools import lru_cache
 
 from .path import join, split, splitext
 from .type import Mode
+
+
+class Mountpoints:
+    """A list of mountpoints and their device name and filesystem type.
+    """
+
+    def __init__(self):
+        self.entries = []
+        try:
+            # pylint:disable=unspecified-encoding
+            with open("/proc/mounts") as lines:
+                for line in lines:
+                    devname, mpath, fstype, _ = line.split(None, 3)
+                    self.entries.append((mpath.rstrip(os.sep) + os.sep, devname, fstype))
+        except OSError:
+            pass
+        else:
+            self.entries.sort(reverse=True)
+
+    @lru_cache(maxsize=512)
+    def get(self, path):
+        """Get the mountpoint, device name and filesystem type for path.
+        """
+        for mpath, devname, fstype in self.entries:
+            if mpath == path or path.startswith(mpath):
+                return mpath, devname, fstype
+        return os.sep, "root_device", "rootfs"
 
 
 class EntryAttributeError(AttributeError):
@@ -57,6 +85,7 @@ class Entry:
 
     _pwd_cache = {}
     _grp_cache = {}
+    _mountpoints = Mountpoints()
 
     @classmethod
     def as_reference(cls, args, path):
@@ -321,6 +350,24 @@ class Entry:
             return False
 
         return self.status.st_dev != status.st_dev
+
+    @property
+    def mpath(self):
+        """The path of the nearest mountpoint.
+        """
+        return self._mountpoints.get(self.abspath)[0]
+
+    @property
+    def devname(self):
+        """The name of the device the file is located.
+        """
+        return self._mountpoints.get(self.abspath)[1]
+
+    @property
+    def fstype(self):
+        """The type of the filesystem the file is located.
+        """
+        return self._mountpoints.get(self.abspath)[2]
 
     #
     # Private properties.
