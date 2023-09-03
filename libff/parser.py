@@ -84,9 +84,12 @@ class Test(collections.namedtuple("Test", "attribute operator type value ignore_
         return repr(str(self))
 
 
-class FlatParser(BaseClass):
-    """Parse a list of test expressions into a test sequence.
+class Parser(BaseClass):
+    """Parse a list of test expressions and operators into a nested test structure.
     """
+
+    OPENING_BRACKETS = ("(", "{{")
+    CLOSING_BRACKETS = (")", "}}")
 
     expression_regex = re.compile(r"^\s*((?:\w+\.)?\w+?)\s*"\
                                   r"(=|:|~|%|>=|>|<=|<|\+=|\+|\-=|\-)"\
@@ -101,50 +104,66 @@ class FlatParser(BaseClass):
 
         self.optimize(self.sequence)
 
-    def get_speed_score(self, test):
-        """Return the speed score from a single test or the sum of scores from all tests of a sub
-           sequence.
-        """
-        if isinstance(test, Test):
-            return self.registry.get_plugin_speed(test.attribute)
-        else:
-            return sum(self.get_speed_score(t) for t in test)
-
-    def optimize(self, sequence):
-        """Optimize a test sequence, i.e. sort all sequences and their tests according to speed
-           score, so that faster tests are evaluated first.
-        """
-        sequence.sort(key=self.get_speed_score)
-
-        for seq in sequence:
-            if isinstance(seq, list):
-                self.optimize(seq)
-
     def __iter__(self):
         yield from self.sequence
 
     def parse(self):
         """Parse a list of tokens into a test structure.
         """
-        sequences = AND()
+        sequences = OR(AND())
         self.parse_sequence(sequences)
+        if self.tokens:
+            raise ParserError(f"superfluous closing bracket {self.tokens[0]!r}")
         return sequences
 
-    def format(self, tests=None, level=0):
-        """Format a list of tests for output.
+    def parse_sequence(self, sequences):
+        """Parse a part of a list of tokens into a sequence of tests.
         """
-        if tests is None:
-            tests = self.sequence
+        # pylint:disable=too-many-branches
 
-        yield ("    " *  level) + tests.name + "("
+        while self.tokens:
+            token = self.tokens.pop(0)
+            utoken = token.upper()
 
-        for test in tests:
-            if isinstance(test, list):
-                yield from self.format(test, level + 1)
-            else:
-                yield ("    " * (level + 1)) + str(test)
+            if token in self.OPENING_BRACKETS:
+                self.parse_bracket_sequence(sequences, OR(AND()))
+                continue
 
-        yield ("    " *  level) + ")"
+            elif token in self.CLOSING_BRACKETS:
+                if not sequences[-1]:
+                    raise ParserError("empty expression")
+                self.tokens.insert(0, token)
+                return
+
+            elif utoken == "AND":
+                continue
+
+            elif utoken == "OR":
+                sequences.append(AND())
+                continue
+
+            elif utoken == "NOT":
+                if not self.tokens:
+                    raise ParserError("premature eof")
+
+                utoken = self.tokens[0].upper()
+
+                if utoken in self.OPENING_BRACKETS:
+                    self.tokens.pop(0)
+                    self.parse_bracket_sequence(sequences, NOT(AND()))
+
+                elif utoken in ("AND", "OR", "NOT") + self.CLOSING_BRACKETS:
+                    raise ParserError(f"unexpected token {utoken!r}")
+
+                else:
+                    sequences[-1].append(NOT(AND(self.parse_test(self.tokens.pop(0)))))
+
+                continue
+
+            sequences[-1].append(self.parse_test(token))
+
+        if len(sequences) > 1 and any(not seq for seq in sequences):
+            raise ParserError("empty expression")
 
     def parse_test(self, test):
         """Parse an expression and return a Test object.
@@ -166,6 +185,52 @@ class FlatParser(BaseClass):
 
         else:
             raise ExpressionError(f"Invalid expression {test!r}!")
+
+    def parse_bracket_sequence(self, sequences, sub_sequences):
+        """Parse a part of a list of tokens inside brackets.
+        """
+        self.parse_sequence(sub_sequences)
+
+        if not self.tokens:
+            raise ParserError("incomplete sub sequence")
+        self.tokens.pop(0)
+
+        sequences[-1].append(sub_sequences)
+
+    def format(self, tests=None, level=0):
+        """Format a list of tests for output.
+        """
+        if tests is None:
+            tests = self.sequence
+
+        yield ("    " *  level) + tests.name + "("
+
+        for test in tests:
+            if isinstance(test, list):
+                yield from self.format(test, level + 1)
+            else:
+                yield ("    " * (level + 1)) + str(test)
+
+        yield ("    " *  level) + ")"
+
+    def get_speed_score(self, test):
+        """Return the speed score from a single test or the sum of scores from all tests of a sub
+           sequence.
+        """
+        if isinstance(test, Test):
+            return self.registry.get_plugin_speed(test.attribute)
+        else:
+            return sum(self.get_speed_score(t) for t in test)
+
+    def optimize(self, sequence):
+        """Optimize a test sequence, i.e. sort all sequences and their tests according to speed
+           score, so that faster tests are evaluated first.
+        """
+        sequence.sort(key=self.get_speed_score)
+
+        for seq in sequence:
+            if isinstance(seq, list):
+                self.optimize(seq)
 
     def get_reference_value(self, type_cls, attribute, reference, value):
         """Fetch the value from the reference.
@@ -255,87 +320,3 @@ class FlatParser(BaseClass):
                 value = Glob(value, path_pattern=issubclass(type_cls, Path))
 
         return Test(attribute, operator, type_cls, value, ignore_case)
-
-    def parse_sequence(self, sequences):
-        """Parse a part of a list of tokens into a sequence of tests.
-        """
-        while self.tokens:
-            token = self.tokens.pop(0)
-            sequences.append(self.parse_test(token))
-
-
-class Parser(FlatParser):
-    """Parse a list of test expressions and operators into a nested test structure.
-    """
-
-    OPENING_BRACKETS = ("(", "{{")
-    CLOSING_BRACKETS = (")", "}}")
-
-    def parse(self):
-        """Parse a list of tokens into a test structure.
-        """
-        sequences = OR(AND())
-        self.parse_sequence(sequences)
-        if self.tokens:
-            raise ParserError(f"superfluous closing bracket {self.tokens[0]!r}")
-        return sequences
-
-    def parse_bracket_sequence(self, sequences, sub_sequences):
-        """Parse a part of a list of tokens inside brackets.
-        """
-        self.parse_sequence(sub_sequences)
-
-        if not self.tokens:
-            raise ParserError("incomplete sub sequence")
-        self.tokens.pop(0)
-
-        sequences[-1].append(sub_sequences)
-
-    def parse_sequence(self, sequences):
-        """Parse a part of a list of tokens into a sequence of tests.
-        """
-        # pylint:disable=too-many-branches
-
-        while self.tokens:
-            token = self.tokens.pop(0)
-            utoken = token.upper()
-
-            if token in self.OPENING_BRACKETS:
-                self.parse_bracket_sequence(sequences, OR(AND()))
-                continue
-
-            elif token in self.CLOSING_BRACKETS:
-                if not sequences[-1]:
-                    raise ParserError("empty expression")
-                self.tokens.insert(0, token)
-                return
-
-            elif utoken == "AND":
-                continue
-
-            elif utoken == "OR":
-                sequences.append(AND())
-                continue
-
-            elif utoken == "NOT":
-                if not self.tokens:
-                    raise ParserError("premature eof")
-
-                utoken = self.tokens[0].upper()
-
-                if utoken in self.OPENING_BRACKETS:
-                    self.tokens.pop(0)
-                    self.parse_bracket_sequence(sequences, NOT(AND()))
-
-                elif utoken in ("AND", "OR", "NOT") + self.CLOSING_BRACKETS:
-                    raise ParserError(f"unexpected token {utoken!r}")
-
-                else:
-                    sequences[-1].append(NOT(AND(self.parse_test(self.tokens.pop(0)))))
-
-                continue
-
-            sequences[-1].append(self.parse_test(token))
-
-        if len(sequences) > 1 and any(not seq for seq in sequences):
-            raise ParserError("empty expression")
