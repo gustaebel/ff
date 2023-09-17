@@ -45,6 +45,12 @@ List all files that have multiple hard links to their inode.
 $ ff type=f links+1
 ```
 
+Find all git repositories under ~/repos and do `git gc` for each one.
+
+```sh
+ff ~/repos name=.git -x git -C {//} gc
+```
+
 ### Media plugin
 
 Find video files that are at least 1080 pixels high and order them
