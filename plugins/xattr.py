@@ -33,7 +33,7 @@ class Xattr(Plugin):
     ]
 
     def can_handle(self, entry):
-        return entry.is_file()
+        return entry.is_dir() or entry.is_file()
 
     def process(self, entry, cached):
         xattrs = []
