@@ -1,3 +1,7 @@
+### Version 605 - (2023-09-17)
+
+- Fix: Allow reading xattrs from directories.
+
 ### Version 604 - (2023-08-20)
 
 - Add mpath, devname and fstype attributes to the file plugin.
