@@ -81,7 +81,8 @@ class File(Plugin):
         ("mount",   Boolean,  Entry.mount.__doc__),
         ("mpath",   String,   Entry.mpath.__doc__),
         ("devname", String,   Entry.devname.__doc__),
-        ("fstype",  String,   Entry.fstype.__doc__)
+        ("fstype",  String,   Entry.fstype.__doc__),
+        ("pseudofs", Boolean, Entry.pseudofs.__doc__)
     ]
 
     def can_handle(self, entry):

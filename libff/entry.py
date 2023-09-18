@@ -27,6 +27,11 @@ from functools import lru_cache
 from .path import join, split, splitext
 from .type import Mode
 
+# List of Linux pseudo-filesystems, it is possibly not exhaustive.
+pseudo_fs = {"binfmt_misc", "bpf", "cgroup2", "configfs", "debugfs", "devpts", "devtmpfs",
+             "efivarfs", "hugetlbfs", "mqueue", "proc", "pstore", "securityfs", "sysfs",
+             "tmpfs", "tracefs"}
+
 
 class Mountpoints:
     """A list of mountpoints and their device name and filesystem type.
@@ -368,6 +373,12 @@ class Entry:
         """The type of the filesystem the file is located.
         """
         return self._mountpoints.get(self.abspath)[2]
+
+    @property
+    def pseudofs(self):
+        """Whether the file is located on a pseudo filesystem.
+        """
+        return self.fstype in pseudo_fs
 
     #
     # Private properties.
