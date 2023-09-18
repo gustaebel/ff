@@ -1,3 +1,7 @@
+### Version 606 - (2023-09-18)
+
+- Add pseudofs attribute.
+
 ### Version 605 - (2023-09-17)
 
 - Fix: Allow reading xattrs from directories.
