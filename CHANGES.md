@@ -1,3 +1,7 @@
+### Version 607 - (2023-10-31)
+
+- The -l/--limit option now also takes a <pagesize>,<page> argument.
+
 ### Version 606 - (2023-09-18)
 
 - Add pseudofs attribute.
