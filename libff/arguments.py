@@ -141,11 +141,15 @@ def create_parser():
                  "instead of the result, the default is to count the total size and "\
                  "the file types of the entries found. Add --json for JSON output.")
     parser.add_option("-l", "--limit", action="store", type=type_slice, metavar="<slice>",
-            help="Limit output to a slice of entries. A <slice> has the form '<stop>' or "\
-                 "'<start>:<stop>'. In the latter form both <start> and <stop> may be empty which "\
-                 "means they default to the beginning and end of the list of entries "\
-                 "respectively. If <start> or <stop> are negative their position is relative to "\
-                 "the end rather than to the beginning of the list.")
+            help="Limit output to a slice of the search results. A <slice> is defined by either "\
+                 "'<start>:<stop>' or '<pagesize>,<page>'. In the first form both <start> and "\
+                 "<stop> may be omitted which means they default to the beginning and end of the "\
+                 "list of results respectively. If <start> or <stop> are negative their position "\
+                 "is relative to the end of the list. The second form creates a slice of "\
+                 "<pagesize> results starting at a page offset specified by <page> (starting with "\
+                 "0). Note: It is recommended to sort the result list with -S/--sort when using "\
+                 "this option, otherwise the order of results between consecutive runs is "\
+                 "probably inconsistent.")
     parser.add_option("-1", action="store_const", const=(0, 1), dest="limit",
             help="Limit output to only the first entry.")
     parser.add_option("-o", "--output", type=type_list, metavar="<attribute-list>",
@@ -227,8 +231,8 @@ class ArgumentsPostProcessor:
 
         if self.args.limit is not None and not self.args.sort:
             warnings.append(
-                    "You should use --sort together with --limit to ensure a stable order "\
-                    "of entries.")
+                    "It is recommended to use --limit together with --sort to ensure a stable "\
+                    "order of entries.")
 
         return warnings
 

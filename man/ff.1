@@ -1,4 +1,4 @@
-.TH ff 1 "2023-09-18" "Version 606" "ff - Find files in the filesystem"
+.TH ff 1 "2023-10-15" "Version 606" "ff - Find files in the filesystem"
 .nh
 .SH NAME
 
@@ -157,7 +157,7 @@ Count the attributes from <attribute\-list> and print statistics, instead of the
 .PP
 
 .IP "\fB-l, --limit <slice>\fR" 4
-Limit output to a slice of entries. A <slice> has the form '\fI<stop>\fR' or '\fI<start>:<stop>\fR'. In the latter form both <start> and <stop> may be empty which means they default to the beginning and end of the list of entries respectively. If <start> or <stop> are negative their position is relative to the end rather than to the beginning of the list.
+Limit output to a slice of the search results. A <slice> is defined by either '\fI<start>:<stop>\fR' or '\fI<pagesize>,<page>\fR'. In the first form both <start> and <stop> may be omitted which means they default to the beginning and end of the list of results respectively. If <start> or <stop> are negative their position is relative to the end of the list. The second form creates a slice of <pagesize> results starting at a page offset specified by <page> (starting with 0). Note: It is recommended to sort the result list with \fB\-S\fR/\fB\-\-sort\fR when using this option, otherwise the order of results between runs is probably inconsistent.
 .PP
 
 .IP "\fB-1\fR" 4

@@ -104,20 +104,17 @@ def type_ranges(string):
     return segments
 
 
-regex_slice = re.compile(r"^(?:(?P<single>-?\d+)|(?P<start>\d*|-?\d+):(?P<stop>\d*|-\d+))$")
+regex_slice = re.compile(r"^(?:(?P<start>\d*|-?\d+):(?P<stop>\d*|-?\d+)"\
+                         r"|(?P<pagesize>\d+),(?P<page>\d+))$")
 
 def type_slice(string):
-    """Parse python-like slice notation.
+    """Parse python-like slice and pagesize,page notation.
     """
     match = regex_slice.match(string)
     if match is None:
         raise ArgumentError(f"invalid slice {string!r}")
 
-    if match.group("single") is not None:
-        start = 0
-        stop = int(match.group("single"))
-
-    else:
+    if match.group("start") is not None:
         start = match.group("start")
         if start:
             start = int(start)
@@ -129,6 +126,12 @@ def type_slice(string):
             stop = int(stop)
         else:
             stop = None
+
+    else:
+        pagesize = int(match.group("pagesize"))
+        page = int(match.group("page"))
+        start = pagesize * page
+        stop = pagesize * (page + 1)
 
     return start, stop
 

@@ -249,7 +249,7 @@ BAR
 
 
 # --limit
-ff -H -S -R -l 5
+ff -H -S -R -l :5
 foo
 dir/empty_dir
 dir/dir/empty
@@ -279,6 +279,23 @@ baz
 
 
 ff -H -S -R -l 2:1
+
+
+
+ff -H -S -R -l 2,0
+foo
+dir/empty_dir
+
+ff -H -S -R -l 2,1
+dir/dir/empty
+dir/dir
+
+ff -H -S -R -l 2,2
+dir
+baz
+
+ff -H -S -R -l 2,3
+BAR
 
 
 
