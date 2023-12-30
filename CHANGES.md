@@ -1,3 +1,7 @@
+### Version 608 - (2023-12-30)
+
+- Add --fail option.
+
 ### Version 607 - (2023-10-31)
 
 - The -l/--limit option now also takes a <pagesize>,<page> argument.
