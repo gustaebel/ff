@@ -113,6 +113,8 @@ def create_parser():
             help="Do not descend into different file systems.")
 
     parser.add_group("Output options")
+    parser.add_option("--fail", action="store_true", default=False,
+            help="Fail with exitcode 1 if there are no search results.")
     parser.add_option("-x", "--exec", action="store_remainder", metavar="<cmd>",
             help="Execute a command for each search result.")
     parser.add_option("-X", "--exec-batch", action="store_remainder", metavar="<cmd>",

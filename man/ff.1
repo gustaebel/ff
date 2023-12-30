@@ -1,4 +1,4 @@
-.TH ff 1 "2023-10-31" "Version 607" "ff - Find files in the filesystem"
+.TH ff 1 "2023-11-14" "Version 607" "ff - Find files in the filesystem"
 .nh
 .SH NAME
 
@@ -115,6 +115,10 @@ Do not descend into different file systems.
 .PP
 
 Output options:
+
+.IP "\fB--fail\fR" 4
+Fail with exitcode 1 if there are no search results.
+.PP
 
 .IP "\fB-x, --exec\fR" 4
 Execute a command for each search result.
@@ -555,14 +559,18 @@ View a list of all available types and their supported operators:
 
 
 .IP "\fB1\fR" 4
-There was an error in the arguments provided by the user.
+The \fB\-\-fail\fR option was specified and there were no search results.
 .PP
 
 .IP "\fB2\fR" 4
-One or more \fB\-\-exec\fR or \fB\-\-exec\-batch\fR subprocesses had errors.
+There was an error in the arguments provided by the user.
 .PP
 
 .IP "\fB3\fR" 4
+One or more \fB\-\-exec\fR or \fB\-\-exec\-batch\fR subprocesses had errors.
+.PP
+
+.IP "\fB4\fR" 4
 One or more ff processes had unrecoverable errors.
 .PP
 

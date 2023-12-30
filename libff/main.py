@@ -37,7 +37,7 @@ from .context import Context
 from .registry import Registry
 from .arguments import parse_arguments
 from .exceptions import EX_OK, EX_USAGE, EX_PROCESS, EX_SUBPROCESS, \
-    BaseError, UsageError, ProcessError, SubprocessError
+    BaseError, UsageError, ProcessError, NoResultError, SubprocessError
 from .processing import ImmediateExecProcessing, CollectiveExecProcessing, \
     ImmediateConsoleProcessing, CollectiveConsoleProcessing
 
@@ -234,6 +234,8 @@ class Main(_Base):
         """
         if exc.traceback is not None:
             self.logger.exception(exc.message, exc.traceback, exc.exitcode)
+        elif isinstance(exc, NoResultError):
+            raise SystemExit(exc.exitcode)
         else:
             self.logger.error(exc.message, exc.exitcode)
 
@@ -315,3 +317,6 @@ class Main(_Base):
         elif self.context.exitcode == EX_PROCESS:
             raise ProcessError("One or more ff processes had unrecoverable errors! "\
                     "Result is probably incomplete!")
+
+        elif self.args.fail and not self.context.has_result():
+            raise NoResultError("there were no search results")

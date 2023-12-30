@@ -360,15 +360,15 @@ foo
 
 
 ff name=baz or 2>/dev/null; echo $?
-1
+2
 
 
 ff or name=baz 2>/dev/null; echo $?
-1
+2
 
 
 ff name=baz or or name=foo 2>/dev/null; echo $?
-1
+2
 
 
 # usage
@@ -503,3 +503,61 @@ dir/dir
 dir/dir/empty
 dir/empty_dir
 0
+
+
+# Test --fail
+ff name=foo --fail; echo $?
+foo
+0
+
+
+ff name=quux --fail; echo $?
+1
+
+
+ff name=foo --fail -x ls; echo $?
+foo
+0
+
+
+ff name=quux --fail -x ls; echo $?
+1
+
+
+ff name=foo --fail -X ls; echo $?
+foo
+0
+
+
+ff name=quux --fail -X ls; echo $?
+1
+
+
+ff name=foo --fail -S; echo $?
+foo
+0
+
+
+ff name=quux --fail -S; echo $?
+1
+
+
+ff name=foo --fail -S -x ls; echo $?
+foo
+0
+
+
+ff name=quux --fail -S -x ls; echo $?
+1
+
+
+ff name=foo --fail -S -X ls; echo $?
+foo
+0
+
+
+ff name=quux --fail -S -X ls; echo $?
+1
+
+
+

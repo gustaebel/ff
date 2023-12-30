@@ -53,7 +53,7 @@ ff type=f -x echo {{ }} {/}
 
 
 ff type=f -x test -e {name} 2>/dev/null; echo $?
-2
+3
 
 
 

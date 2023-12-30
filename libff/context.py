@@ -56,6 +56,8 @@ class Context:
         self.cache_hits = None
         self.cache_misses = None
 
+        self._has_result = None
+
     def setup(self):
         """Set up multiprocessing and inter-process communication.
         """
@@ -82,6 +84,9 @@ class Context:
         self.cache_hits = multiprocessing.Value("L")
         self.cache_misses = multiprocessing.Value("L")
 
+        # Tell the main process that there were search results.
+        self._has_result = multiprocessing.Value("B", 0)
+
     def close(self):
         """Close the Context and clean up.
         """
@@ -97,6 +102,16 @@ class Context:
         """The exitcode to use as the main exit code.
         """
         return self.exitcode_object.value
+
+    def set_has_result(self):
+        """Tell the main process that there were search results.
+        """
+        self._has_result.value = 1
+
+    def has_result(self):
+        """Return True if there were search results.
+        """
+        return self._has_result.value == 1
 
     def barrier_wait(self, timeout=TIMEOUT):
         """Wait for all processes to reach the Barrier. If all processes do that means that there

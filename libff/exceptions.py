@@ -21,9 +21,10 @@
 import traceback
 
 EX_OK = 0
-EX_USAGE = 1
-EX_SUBPROCESS = 2
-EX_PROCESS = 3
+EX_NORESULT = 1
+EX_USAGE = 2
+EX_SUBPROCESS = 3
+EX_PROCESS = 4
 EX_BAD_PLUGIN = 10
 EX_BAD_ATTRIBUTE = 11
 EX_EXPRESSION = 12
@@ -45,6 +46,11 @@ class BaseError(Exception):
         """Create a BaseError exception with the traceback of the current exception.
         """
         return cls(message, traceback.format_exc())
+
+class NoResultError(BaseError):
+    """The --fail option was specified and there were no search results.
+    """
+    exitcode = EX_NORESULT
 
 class UsageError(BaseError):
     """There was an error in the arguments provided by the user.

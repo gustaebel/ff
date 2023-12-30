@@ -174,6 +174,9 @@ class BaseConsoleProcessing(ImmediateBaseProcessing):
         self.console = console_cls(self.context)
 
     def process(self, entries):
+        if entries:
+            self.context.set_has_result()
+
         for entry in entries:
             self.console.process(entry)
 
@@ -191,6 +194,9 @@ class ImmediateExecProcessing(ImmediateBaseProcessing):
     """
 
     def process(self, entries):
+        if entries:
+            self.context.set_has_result()
+
         for entry in entries:
             try:
                 self.walker.put([self.args.exec.render(entry)])
@@ -245,6 +251,9 @@ class CollectiveMixin(BaseProcessing):
     def finalize(self):
         if self.args.sort is not None:
             self.entries.sort(key=self.args.sort.render, reverse=self.args.reverse)
+
+        if self.entries:
+            self.context.set_has_result()
 
     def close(self):
         super().close()
