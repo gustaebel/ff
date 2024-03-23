@@ -1,3 +1,9 @@
+### Version 609 - (2024-03-23)
+
+- Divide overlong argument lists to -X/--exec-batch into multiple calls instead
+  of failing with E2BIG.
+- Add hash plugin.
+
 ### Version 608 - (2023-12-30)
 
 - Add --fail option.
