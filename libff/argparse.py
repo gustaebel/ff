@@ -226,6 +226,7 @@ class Namespace(dict):
 class ArgumentParser:
     """Parse command line arguments in way similar to argparse.ArgumentParser.
     """
+    # pylint:disable=too-many-arguments
 
     usage = "ff [<options>] [<test/directory> ... | -D <directory> ...]"
 
