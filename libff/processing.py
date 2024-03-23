@@ -22,6 +22,7 @@
 import sys
 import json
 import time
+import errno
 import queue
 import threading
 import subprocess
@@ -365,14 +366,27 @@ class CollectiveExecProcessing(CollectiveMixin, BaseProcessing):
                     parallel.add_job(entry)
 
         elif self.args.exec_batch is not None:
-            args = self.args.exec_batch.render(entries)
-
-            try:
-                process = subprocess.run(args, check=False)
-                if process.returncode != 0:
-                    self.context.set_exitcode(EX_SUBPROCESS)
-            except OSError as exc:
-                raise SubprocessError(str(exc)) from exc
+            remainder = []
+            while entries:
+                args = self.args.exec_batch.render(entries)
+                try:
+                    process = subprocess.run(args, check=False)
+                    if process.returncode != 0:
+                        self.context.set_exitcode(EX_SUBPROCESS)
+                except OSError as exc:
+                    if exc.errno == errno.E2BIG:
+                        # As long as the command line is too long to pass to a subprocess, split
+                        # the list of entries list in two and try again. This is much easier than
+                        # to come up with a reliable heuristic based on SC_ARG_MAX, which is the
+                        # maximum allowed size of the command line *plus* the environment.
+                        split = len(entries) // 2
+                        remainder = entries[split:] + remainder
+                        entries = entries[:split]
+                    else:
+                        raise SubprocessError(str(exc)) from exc
+                else:
+                    entries = remainder
+                    remainder = []
 
         else:
             raise AssertionError("wrong usage of CollectiveExecProcessing class")
